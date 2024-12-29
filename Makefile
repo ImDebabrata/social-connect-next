@@ -1,7 +1,5 @@
-# Makefile for Next.js Project with Prisma
-
-# Define package manager (npm)
-PACKAGE_MANAGER = npm
+# Define package manager (yarn)
+PACKAGE_MANAGER = yarn
 
 # Install dependencies
 install:
@@ -9,23 +7,23 @@ install:
 
 # Run the development server (Next.js)
 dev:
-	$(PACKAGE_MANAGER) run dev
+	$(PACKAGE_MANAGER) dev
 
 # Build the project (Next.js)
 build:
-	$(PACKAGE_MANAGER) run build
+	$(PACKAGE_MANAGER) build
 
 # Start the production server (Next.js)
 start:
-	$(PACKAGE_MANAGER) run start
+	$(PACKAGE_MANAGER) start
 
 # Lint the code with Next.js ESLint setup
 lint:
-	$(PACKAGE_MANAGER) run lint
+	$(PACKAGE_MANAGER) lint
 
 # Run Prisma generate (to generate Prisma client)
 prisma:
-	$(PACKAGE_MANAGER) run prisma generate
+	$(PACKAGE_MANAGER) prisma generate
 
 # Clean the build directory (e.g., delete `.next` folder)
 clean:
