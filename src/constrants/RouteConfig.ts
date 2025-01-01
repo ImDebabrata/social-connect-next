@@ -1,0 +1,19 @@
+// Auth screens
+const authScreens = {
+  SIGN_IN: "/sign-in",
+  SIGN_UP: "/sign-up",
+};
+
+// App Screens
+const protectedRoute = {
+  MAIN_SCREEN: "/",
+};
+
+const RouteConfig = {
+  //Auth Screens
+  authScreens,
+  //App Screens
+  protectedRoute,
+};
+
+export default RouteConfig;
