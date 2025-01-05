@@ -4,8 +4,10 @@ import { signUpSchema, SignUpValues } from "@/lib/validation";
 // import streamServerClient from "@/lib/stream";
 import prisma from "@/lib/prisma";
 import { v4 as uuidv4 } from "uuid";
-import { createSession } from "@/lib/stateless-session";
+// import { createSession } from "@/lib/stateless-session";
 import { isRedirectError } from "next/dist/client/components/redirect-error";
+import { redirect } from "next/navigation";
+import RouteConfig from "@/constrants/RouteConfig";
 
 export async function signup(
   credentials: SignUpValues
@@ -69,15 +71,16 @@ export async function signup(
     });
 
     // 4. Create a session for the user
-    await createSession(userId);
+    // await createSession(userId);
+    redirect(RouteConfig.authScreens.SIGN_IN);
     return {
       success: "Created success",
     };
   } catch (error) {
-    if(isRedirectError(error)) throw error
+    if (isRedirectError(error)) throw error;
     console.log(error);
     return {
-      error:"Something went wrong"
-    }
+      error: "Something went wrong",
+    };
   }
 }

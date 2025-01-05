@@ -3,11 +3,7 @@ import { SignJWT, jwtVerify } from "jose";
 import { cookies } from "next/headers";
 import { redirect } from "next/navigation";
 import RouteConfig from "@/constrants/RouteConfig";
-
-export type SessionPayload = {
-  userId: string | number;
-  expiresAt: Date;
-};
+import { SessionPayload } from "./validation";
 
 const secretKey = process.env.JWT_SECRET;
 const key = new TextEncoder().encode(secretKey);
@@ -32,9 +28,11 @@ export async function decrypt(session: string | undefined = "") {
   }
 }
 
-export async function createSession(userId: string) {
+export async function createSession(
+  sessionPayload: Omit<SessionPayload, "expiresAt">
+) {
   const expiresAt = new Date(Date.now() + 60 * 60 * 1000);
-  const session = await encrypt({ userId, expiresAt });
+  const session = await encrypt({ ...sessionPayload, expiresAt });
 
   const cookiesStore = await cookies();
   cookiesStore.set("session", session, {
