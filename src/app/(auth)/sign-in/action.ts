@@ -35,7 +35,10 @@ export async function signin(
         error: "Incorrect username or password",
       };
     }
-    await createSession(existingUser.id);
+    await createSession({
+      userId: existingUser.id,
+      avatarUrl: existingUser.avatarUrl,
+    });
 
     return {
       success: "Login Success",
