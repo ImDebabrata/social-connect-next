@@ -1,6 +1,6 @@
 'use client'
 import Image from "next/image";
-import { handleLogOut } from "./action";
+import { handleLogOut } from "../action";
 import ThemeToggle from "@/components/ThemeToggle";
 
 export default function Home() {
