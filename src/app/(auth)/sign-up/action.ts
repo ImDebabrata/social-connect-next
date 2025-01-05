@@ -48,7 +48,7 @@ export async function signup(
   const passwordHash = await bcrypt.hash(password, 10);
 
   // 3. Insert the user into the database or call an Auth Provider's API
-  await prisma.$transaction(async (tx: any) => {
+  await prisma.$transaction(async (tx) => {
     await tx.user.create({
       data: {
         id: userId,
