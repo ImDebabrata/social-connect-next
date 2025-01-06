@@ -17,13 +17,13 @@ export default async function middleware(req: NextRequest) {
   const cookiesStore = await cookies();
   const cookie = cookiesStore.get("session")?.value;
   const session = cookie ? await decrypt(cookie) : null;
-  console.log({
-    cookie,
-    isProtectedRoute,
-    isPublicRoute,
-    userId: session?.userId,
-    path,
-  });
+  // console.log({
+  //   cookie,
+  //   isProtectedRoute,
+  //   isPublicRoute,
+  //   userId: session?.userId,
+  //   path,
+  // });
 
   // // 4. Redirect
   if (isProtectedRoute && !session?.userId) {
