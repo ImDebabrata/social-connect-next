@@ -28,8 +28,8 @@ function UserButton(props: UserButtonProps) {
   const { avatarUrl = "" } = data || {};
   return (
     <DropdownMenu>
-      <DropdownMenuTrigger>
-        <UserAvatar size={40} avatarUrl={avatarUrl} className={className} />
+      <DropdownMenuTrigger className={className}>
+        <UserAvatar size={40} avatarUrl={avatarUrl} />
       </DropdownMenuTrigger>
       <DropdownMenuContent>
         <DropdownMenuLabel>My Account</DropdownMenuLabel>

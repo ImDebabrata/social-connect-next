@@ -4,7 +4,7 @@ import signupImage from "@/assets/signup-image.jpg";
 import avatarPlaceholder from "@/assets/avatar-placeholder.png";
 
 // icons
-import { MoonIcon, SunIcon } from "lucide-react";
+import { MoonIcon, SunIcon, SearchIcon } from "lucide-react";
 const ImageConfig = {
   signinImage,
   signupImage,
@@ -12,6 +12,7 @@ const ImageConfig = {
   // icons
   MoonIcon,
   SunIcon,
+  SearchIcon,
 };
 
 export default ImageConfig;
