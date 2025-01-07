@@ -16,3 +16,10 @@ export function formatRelativeDate(date: string | Moment | Date): string {
 
   return mDate.fromNow();
 }
+
+export function formatNumber(n: number): string {
+  return Intl.NumberFormat("en-IN", {
+    notation: "compact",
+    maximumFractionDigits: 1,
+  }).format(n);
+}
