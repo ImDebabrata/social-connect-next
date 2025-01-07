@@ -4,6 +4,7 @@ import { cookies } from "next/headers";
 import { redirect } from "next/navigation";
 import RouteConfig from "@/constrants/RouteConfig";
 import { SessionPayload } from "./validation";
+import Misc from "@/constrants/Misc";
 
 const secretKey = process.env.JWT_SECRET;
 const key = new TextEncoder().encode(secretKey);
@@ -35,7 +36,7 @@ export async function createSession(
   const session = await encrypt({ ...sessionPayload, expiresAt });
 
   const cookiesStore = await cookies();
-  cookiesStore.set("session", session, {
+  cookiesStore.set(Misc.SESSION_COOKIE, session, {
     httpOnly: true,
     secure: true,
     expires: expiresAt,
@@ -48,7 +49,7 @@ export async function createSession(
 
 export async function verifySession() {
   const cookiesStore = await cookies();
-  const cookie = cookiesStore.get("session")?.value;
+  const cookie = cookiesStore.get(Misc.SESSION_COOKIE)?.value;
   const session = await decrypt(cookie);
 
   if (!session?.userId) {
@@ -60,7 +61,7 @@ export async function verifySession() {
 
 export async function updateSession() {
   const cookiesStore = await cookies();
-  const session = cookiesStore.get("session")?.value;
+  const session = cookiesStore.get(Misc.SESSION_COOKIE)?.value;
   const payload = await decrypt(session);
 
   if (!session || !payload) {
@@ -68,7 +69,7 @@ export async function updateSession() {
   }
 
   const expires = new Date(Date.now() + 7 * 24 * 60 * 60 * 1000);
-  cookiesStore.set("session", session, {
+  cookiesStore.set(Misc.SESSION_COOKIE, session, {
     httpOnly: true,
     secure: true,
     expires: expires,
@@ -79,6 +80,6 @@ export async function updateSession() {
 
 export async function deleteSession() {
   const cookiesStore = await cookies();
-  cookiesStore.delete("session");
+  cookiesStore.delete(Misc.SESSION_COOKIE);
   redirect(RouteConfig.authScreens.SIGN_IN);
 }

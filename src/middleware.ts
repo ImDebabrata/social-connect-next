@@ -2,6 +2,7 @@ import { NextRequest, NextResponse } from "next/server";
 import { cookies } from "next/headers";
 import { decrypt } from "./lib/stateless-session";
 import RouteConfig from "./constrants/RouteConfig";
+import Misc from "./constrants/Misc";
 
 // 1. Specify protected and public routes
 const protectedRoutes = Object.values(RouteConfig.protectedRoute);
@@ -15,7 +16,7 @@ export default async function middleware(req: NextRequest) {
 
   // // 3. Decrypt the session from the cookie
   const cookiesStore = await cookies();
-  const cookie = cookiesStore.get("session")?.value;
+  const cookie = cookiesStore.get(Misc.SESSION_COOKIE)?.value;
   const session = cookie ? await decrypt(cookie) : null;
   // console.log({
   //   cookie,
