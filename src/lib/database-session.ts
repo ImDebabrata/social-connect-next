@@ -1,6 +1,7 @@
 import { SignJWT, jwtVerify } from "jose"; // jose is Edge-compatible
 import { cookies } from "next/headers";
 import { SessionPayload } from "./validation";
+import Misc from "@/constrants/Misc";
 
 // Secret key for JWT signing and verification
 const secretKey = process.env.JWT_SECRET;
@@ -36,7 +37,7 @@ export async function createSession(
   const expiresAt = new Date(Date.now() + 7 * 24 * 60 * 60 * 1000); // 1 week from now
   const sessionToken = await encrypt({ ...sessionPayload, expiresAt });
 
-  cookiesStore.set("session", sessionToken, {
+  cookiesStore.set(Misc.SESSION_COOKIE, sessionToken, {
     httpOnly: true,
     secure: process.env.NODE_ENV === "production",
     expires: expiresAt,
@@ -50,7 +51,7 @@ export async function createSession(
 // Get session from cookies
 export async function getSession() {
   const cookiesStore = await cookies();
-  const sessionToken = cookiesStore.get("session")?.value;
+  const sessionToken = cookiesStore.get(Misc.SESSION_COOKIE)?.value;
 
   if (!sessionToken) {
     return null;
