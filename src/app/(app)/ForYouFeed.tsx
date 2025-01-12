@@ -1,6 +1,6 @@
 "use client";
+import InfiniteScrollContainer from "@/components/InfiniteScrollContainer";
 import Post from "@/components/posts/Post";
-import { Button } from "@/components/ui/button";
 import APIConfig from "@/constrants/ApiConfig";
 import ApiService from "@/lib/api.service";
 import { PostsPage } from "@/lib/types";
@@ -14,9 +14,9 @@ function ForYouFeed() {
     status,
     data,
     fetchNextPage,
-    // hasNextPage,
-    // isFetching,
-    // isFetchingNextPage,
+    hasNextPage,
+    isFetching,
+    isFetchingNextPage,
   } = useInfiniteQuery<PostsPage>({
     queryKey: ["post-feed", "for-you"],
     queryFn: ({ pageParam }) =>
@@ -41,12 +41,15 @@ function ForYouFeed() {
           An error occurred while loading posts.
         </p>
       ) : status === "success" && posts?.length > 0 ? (
-        <div className="space-y-5">
+        <InfiniteScrollContainer
+          className="space-y-5"
+          onBottomReached={() => hasNextPage && !isFetching && fetchNextPage()}
+        >
           {posts.map((post) => (
             <Post key={post.id} post={post} />
           ))}
-          <Button onClick={() => fetchNextPage()}>Load more</Button>
-        </div>
+          {isFetchingNextPage && <Loader2 className="mx-auto animate-spin my-3" />}
+        </InfiniteScrollContainer>
       ) : (
         status === "success" && (
           <p className="text-center">No posts available.</p>
