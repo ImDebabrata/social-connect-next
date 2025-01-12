@@ -1,6 +1,7 @@
 "use client";
 import InfiniteScrollContainer from "@/components/InfiniteScrollContainer";
 import Post from "@/components/posts/Post";
+import PostLoadingSkeleton from "@/components/posts/PostLoadingSkeleton";
 import APIConfig from "@/constrants/ApiConfig";
 import ApiService from "@/lib/api.service";
 import { PostsPage } from "@/lib/types";
@@ -35,7 +36,7 @@ function ForYouFeed() {
   return (
     <>
       {status === "pending" ? (
-        <Loader2 className="mx-auto animate-spin" />
+        <PostLoadingSkeleton />
       ) : status === "error" ? (
         <p className="text-center text-destructive">
           An error occurred while loading posts.
@@ -48,7 +49,9 @@ function ForYouFeed() {
           {posts.map((post) => (
             <Post key={post.id} post={post} />
           ))}
-          {isFetchingNextPage && <Loader2 className="mx-auto animate-spin my-3" />}
+          {isFetchingNextPage && (
+            <Loader2 className="mx-auto animate-spin my-3" />
+          )}
         </InfiniteScrollContainer>
       ) : (
         status === "success" && (
