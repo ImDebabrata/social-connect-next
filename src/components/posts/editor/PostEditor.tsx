@@ -4,16 +4,20 @@ import { Button } from "@/components/ui/button";
 import UserAvatar from "@/components/UserAvatar";
 import { useCurrentSession } from "@/hooks/useCurrentSession";
 import React, { useState } from "react";
-import { submitPost } from "./action";
+import { useSubmitPostMutation } from "./mutation";
 
 function PostEditor() {
   const { user } = useCurrentSession();
   const [postValue, setPostValue] = useState("");
 
-  async function handleSubmitPost() {
-    const response = await submitPost(postValue);
-    setPostValue("");
-    console.log(response, "this is the response");
+  const onSubmitPost = useSubmitPostMutation();
+
+  function handleSubmitPost() {
+    onSubmitPost.mutate(postValue, {
+      onSuccess: () => {
+        setPostValue("");
+      },
+    });
   }
 
   return (
