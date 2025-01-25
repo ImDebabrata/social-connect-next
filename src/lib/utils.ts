@@ -23,3 +23,16 @@ export function formatNumber(n: number): string {
     maximumFractionDigits: 1,
   }).format(n);
 }
+
+// export const sendServerResponse={
+//   onSuccess:function(data,message){
+//     return {
+//       success: true,
+//       data: data,
+//       [Misc.API_RESPONSE_MESSAGE_KEY]: "Post fetched success",
+//     }
+//   },
+//   onError:function(message){
+
+//   }
+// }

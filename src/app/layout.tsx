@@ -4,6 +4,7 @@ import "./globals.css";
 import Misc from "@/constrants/Misc";
 import { ThemeProvider } from "@/components/theme-provider";
 import ReactQueryWrapper from "./ReactQueryWrapper";
+import { Toaster } from "@/components/ui/toaster";
 
 const geistSans = Geist({
   variable: "--font-geist-sans",
@@ -42,6 +43,7 @@ export default function RootLayout({
         >
           <ReactQueryWrapper>{children}</ReactQueryWrapper>
         </ThemeProvider>
+        <Toaster />
       </body>
     </html>
   );

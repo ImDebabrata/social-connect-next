@@ -2,6 +2,7 @@
 
 import { getCurrentUser } from "@/app/action";
 import prisma from "@/lib/prisma";
+import { postDataInclude } from "@/lib/types";
 import { createPostSchema } from "@/lib/validation";
 
 export async function submitPost(input: string) {
@@ -11,10 +12,13 @@ export async function submitPost(input: string) {
 
   if (!user) throw Error("Unauthorized");
 
-  await prisma.post.create({
+  const newPost = await prisma.post.create({
     data: {
       content,
       userId: user?.userId,
     },
+    include: postDataInclude,
   });
+
+  return newPost;
 }
