@@ -20,7 +20,7 @@ export function useSubmitPostMutation() {
       };
       await queryClient.cancelQueries(queryFilter);
       queryClient.setQueriesData<InfiniteData<PostsPage, string | null>>(
-        queryFilter as any, //Todo: fix the typescript
+        { queryKey: queryFilter.queryKey },
         (oldData) => {
           const firstPage = oldData?.pages[0];
 
