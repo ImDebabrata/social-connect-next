@@ -20,6 +20,10 @@ const APIConfig: IAPIConfig = {
     URL: baseUrl + "/api/posts/for-you",
     METHOD: HttpMethod.GET,
   },
+  GET_FOLLOWING_POSTS: {
+    URL: baseUrl + "/api/posts/following",
+    METHOD: HttpMethod.GET,
+  },
   GET_FOLLOWER_INFO: {
     URL: (userId: string) => baseUrl + `/api/users/${userId}/followers`,
     METHOD: HttpMethod.GET,
