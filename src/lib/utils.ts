@@ -1,6 +1,7 @@
 import { clsx, type ClassValue } from "clsx";
 import { twMerge } from "tailwind-merge";
 import moment, { Moment } from "moment";
+import ApiService from "./api.service";
 
 export function cn(...inputs: ClassValue[]) {
   return twMerge(clsx(inputs));
@@ -36,3 +37,32 @@ export function formatNumber(n: number): string {
 
 //   }
 // }
+
+export const fetchData = async<T> ({
+  method,
+  url,
+  payload,
+  headers,
+}: {
+  method: string;
+  url: string;
+  payload?: object;
+  headers?: object;
+}) => {
+  const apiCall = {
+    get: ApiService.get,
+    post: ApiService.post,
+    put: ApiService.put,
+    delete: ApiService.delete,
+  }[method];
+
+  if (!apiCall) {
+    throw new Error(`Invalid HTTP method: ${method}`);
+  }
+  try {
+    const response = await apiCall(url, payload, headers);
+    return (response?.data || response) as T;
+  } catch (error) {
+    throw new Error(`Error fetching data: ${error}`);
+  }
+};
