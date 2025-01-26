@@ -15,7 +15,7 @@ import {
 import UserAvatar from "./UserAvatar";
 import { Check, LogOutIcon, Monitor, Moon, Sun, UserIcon } from "lucide-react";
 import { getCurrentUser, handleLogOut } from "@/app/action";
-import { useQuery } from "@tanstack/react-query";
+import { useQuery, useQueryClient } from "@tanstack/react-query";
 import { useTheme } from "next-themes";
 
 interface UserButtonProps {
@@ -24,6 +24,7 @@ interface UserButtonProps {
 
 function UserButton(props: UserButtonProps) {
   const { theme, setTheme } = useTheme();
+  const queryClient = useQueryClient();
 
   const { className } = props;
 
@@ -70,7 +71,12 @@ function UserButton(props: UserButtonProps) {
             </DropdownMenuSubContent>
           </DropdownMenuPortal>
         </DropdownMenuSub>
-        <DropdownMenuItem onClick={() => handleLogOut()}>
+        <DropdownMenuItem
+          onClick={() => {
+            queryClient.clear();
+            handleLogOut();
+          }}
+        >
           <LogOutIcon className="mr-2 size-4" />
           Logout
         </DropdownMenuItem>
