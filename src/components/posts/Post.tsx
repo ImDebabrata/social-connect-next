@@ -21,12 +21,15 @@ function Post(props: PostProps) {
         {/* {post.content} */}
         <div className="flex flex-wrap gap-3">
           {/* Todo:redirect to user page */}
-          <Link href={""}>
+          <Link href={`/users/${post.user.username}`}>
             <UserAvatar avatarUrl={post.user.avatarUrl} />
           </Link>
           <div>
             {/* Todo: redirect to user page */}
-            <Link href={""} className="block font-medium hover:underline">
+            <Link
+              href={`/users/${post.user.username}`}
+              className="block font-medium hover:underline"
+            >
               {post.user.displayName}
             </Link>
             {/* Todo: redirect to post page */}
