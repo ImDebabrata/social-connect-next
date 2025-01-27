@@ -10,6 +10,7 @@ import {
   SearchIcon,
   Trash2 as DeleteIcon,
   MoreHorizontalIcon as OptionsIcon,
+  Loader2 as LoadingIcon,
 } from "lucide-react";
 const ImageConfig = {
   signinImage,
@@ -21,6 +22,7 @@ const ImageConfig = {
   SearchIcon,
   DeleteIcon,
   OptionsIcon,
+  LoadingIcon,
 };
 
 export default ImageConfig;
