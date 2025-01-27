@@ -11,6 +11,7 @@ import moment from "moment";
 import { Metadata } from "next";
 import { notFound } from "next/navigation";
 import React, { cache } from "react";
+import UserPosts from "./UserPosts";
 
 interface PageProps {
   params: { username: string };
@@ -60,6 +61,12 @@ async function page({ params: { username } }: PageProps) {
     <main className="flex w-full min-w-0 gap-5">
       <div className="w-full min-w-0 space-y-5">
         <UserProfile user={user} loggedInUserId={loggedInUser.userId} />
+        <div className="rounded-2xl bg-card p-5 shadow-sm">
+          <h2 className="text-center text-2xl font-bold">
+            {user?.displayName}&apos;s posts
+          </h2>
+        </div>
+        <UserPosts userId={user.id} />
       </div>
       <TrendsSidebar />
     </main>
