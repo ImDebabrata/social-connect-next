@@ -7,7 +7,7 @@ const authScreens = {
 // App Screens
 const protectedRoute = {
   MAIN_SCREEN: "/",
-  PROFILE: "/users/[username]",
+  PROFILE: "/users/:username",
 };
 
 const RouteConfig = {
