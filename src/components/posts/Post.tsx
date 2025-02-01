@@ -7,6 +7,7 @@ import UserAvatar from "../UserAvatar";
 import { formatRelativeDate } from "@/lib/utils";
 import { useCurrentSession } from "@/hooks/useCurrentSession";
 import PostMoreButton from "./PostMoreButton";
+import Linkify from "../Linkify";
 
 interface PostProps {
   post: PostData;
@@ -41,11 +42,16 @@ function Post(props: PostProps) {
             </Link>
           </div>
         </div>
-        {post.userId ===user?.userId && (
-          <PostMoreButton post={post} className="opacity-0 transition-opacity group-hover/post:opacity-100" />
+        {post.userId === user?.userId && (
+          <PostMoreButton
+            post={post}
+            className="opacity-0 transition-opacity group-hover/post:opacity-100"
+          />
         )}
       </div>
-      <div className="whitespace-pre-line break-words">{post.content}</div>
+      <Linkify>
+        <div className="whitespace-pre-line break-words">{post.content}</div>
+      </Linkify>
     </article>
   );
 }
