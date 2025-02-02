@@ -32,14 +32,18 @@ const APIConfig: IAPIConfig = {
     URL: (userId: string) => baseUrl + `/api/users/${userId}/followers`,
     METHOD: HttpMethod.GET,
   },
-  FOLLOW:{
+  FOLLOW: {
     URL: (userId: string) => baseUrl + `/api/users/${userId}/followers`,
     METHOD: HttpMethod.POST,
   },
-  UNFOLLOW:{
+  UNFOLLOW: {
     URL: (userId: string) => baseUrl + `/api/users/${userId}/followers`,
     METHOD: HttpMethod.DELETE,
-  }
+  },
+  GET_USER_PROFILE: {
+    URL: (username: string) => baseUrl + `/api/users/username/${username}`,
+    METHOD: HttpMethod.GET,
+  },
 };
 
 export default APIConfig;
