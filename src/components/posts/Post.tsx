@@ -8,6 +8,7 @@ import { formatRelativeDate } from "@/lib/utils";
 import { useCurrentSession } from "@/hooks/useCurrentSession";
 import PostMoreButton from "./PostMoreButton";
 import Linkify from "../Linkify";
+import UserTooltip from "../UserTooltip";
 
 interface PostProps {
   post: PostData;
@@ -21,18 +22,22 @@ function Post(props: PostProps) {
       <div className="flex justify-between gap-3">
         {/* {post.content} */}
         <div className="flex flex-wrap gap-3">
-          {/* Todo:redirect to user page */}
-          <Link href={`/users/${post.user.username}`}>
-            <UserAvatar avatarUrl={post.user.avatarUrl} />
-          </Link>
-          <div>
-            {/* Todo: redirect to user page */}
-            <Link
-              href={`/users/${post.user.username}`}
-              className="block font-medium hover:underline"
-            >
-              {post.user.displayName}
+          <UserTooltip user={post.user}>
+            {/* Todo:redirect to user page */}
+            <Link href={`/users/${post.user.username}`}>
+              <UserAvatar avatarUrl={post.user.avatarUrl} />
             </Link>
+          </UserTooltip>
+          <div>
+            <UserTooltip user={post.user}>
+              {/* Todo: redirect to user page */}
+              <Link
+                href={`/users/${post.user.username}`}
+                className="block font-medium hover:underline"
+              >
+                {post.user.displayName}
+              </Link>
+            </UserTooltip>
             {/* Todo: redirect to post page */}
             <Link
               href={""}
