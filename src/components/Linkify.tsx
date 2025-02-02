@@ -6,7 +6,7 @@ import React, {
   ReactElement,
 } from "react";
 import Link from "next/link";
-import RouteConfig from "@/constrants/RouteConfig";
+import UserLinkWithTooltip from "./UserLinkWithTooltip";
 
 interface LinkifyProps {
   children: ReactNode;
@@ -30,7 +30,7 @@ const Linkify: React.FC<LinkifyProps> = ({ children }) => {
     // Group 2: @mentions
     // Group 3: #hashtags
     const regex = /(https?:\/\/\S+|www\.\S+|\S+\.\S+)|@(\w+)|#(\w+)/g;
-    
+
     const parts: ReactNode[] = [];
     let lastIndex = 0;
     let match;
@@ -67,16 +67,9 @@ const Linkify: React.FC<LinkifyProps> = ({ children }) => {
       // Handle @mentions
       else if (mention) {
         parts.push(
-          <Link
-            key={`link-${keyCount++}`}
-            href={RouteConfig.protectedRoute.PROFILE.replace(
-              ":username",
-              mention
-            )}
-            className="text-blue-600 hover:underline"
-          >
+          <UserLinkWithTooltip key={`link-${keyCount++}`} username={mention}>
             @{mention}
-          </Link>
+          </UserLinkWithTooltip>
         );
       }
       // Handle #hashtags

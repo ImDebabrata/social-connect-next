@@ -38,7 +38,7 @@ export function formatNumber(n: number): string {
 //   }
 // }
 
-export const fetchData = async<T> ({
+export const fetchData = async <T>({
   method,
   url,
   payload,
@@ -63,6 +63,6 @@ export const fetchData = async<T> ({
     const response = await apiCall(url, payload, headers);
     return (response?.data || response) as T;
   } catch (error) {
-    throw new Error(`Error fetching data: ${error}`);
+    throw error;
   }
 };

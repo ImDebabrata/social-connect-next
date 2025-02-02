@@ -181,7 +181,7 @@ const getRequestPromise = (request: Promise<AxiosResponse>) => {
         if (ENV.ENABLE_HTTP_LOGS) {
           // console.error('=====>', err, 'API Error');
         }
-        console.log("=====>", err.response, "Api Function Catch");
+        // console.log("=====>", err.response, "Api Function Catch");
         try {
           const response: any = err.response ? err.response : { data: null };
           const error: any = response.data
@@ -189,16 +189,16 @@ const getRequestPromise = (request: Promise<AxiosResponse>) => {
             : { status: 500 };
           error.status = response.status ? parseInt(response.status) : 500;
 
-          console.log("=====>Error", error, "RESPONSE", response);
+          // console.log("=====>Error", error, "RESPONSE", response);
           if (response.status === 401) {
             //user should logout
-            console.log("=====>", error, "Api Function Catch 401");
+            // console.log("=====>", error, "Api Function Catch 401");
           }
           if (response.status === 403) {
             // Communications.ReloadStateSubject.next();
           }
           if (response.status === 404) {
-            console.log("=====>", error, "Api Function Catch 404 ");
+            // console.log("=====>", error, "Api Function Catch 404 ");
           }
           if (axios.isCancel(err)) {
             error.status = 499;
