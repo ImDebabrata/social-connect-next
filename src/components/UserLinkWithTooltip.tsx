@@ -1,3 +1,4 @@
+'use client'
 import APIConfig from "@/constrants/ApiConfig";
 import RouteConfig from "@/constrants/RouteConfig";
 import { UserData } from "@/lib/types";
