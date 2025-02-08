@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useRef, useState } from "react";
 import { UserData } from "@/lib/types";
 import {
   Dialog,
@@ -26,6 +26,10 @@ import {
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
 import LoadingButton from "@/components/LoadingButton";
+import Image, { StaticImageData } from "next/image";
+import { Label } from "@/components/ui/label";
+import ImageConfig from "@/constrants/ImageConfig";
+import ImageCropper from "@/components/ImageCropper";
 
 interface EditProfileDialogProps {
   user: UserData;
@@ -46,6 +50,8 @@ function EditProfileDialog(props: EditProfileDialogProps) {
 
   const mutation = useUpdateProfileMutation();
 
+  const [croppedAvatar, setCroppedAvatar] = useState<Blob | null>(null);
+
   async function onSubmit(values: UpdateUserProfileValues) {
     mutation.mutate(
       {
@@ -64,8 +70,21 @@ function EditProfileDialog(props: EditProfileDialogProps) {
       <DialogContent>
         <DialogHeader>
           <DialogTitle>Edit Profile</DialogTitle>
-          <DialogDescription></DialogDescription>
+          <DialogDescription>
+            You can change your profile here
+          </DialogDescription>
         </DialogHeader>
+        <div className="space-y-1.5 ">
+          <Label>Avatar</Label>
+          <AvatarInput
+            src={
+              croppedAvatar
+                ? URL.createObjectURL(croppedAvatar)
+                : user.avatarUrl || ImageConfig.avatarPlaceholder
+            }
+            onImageCropped={setCroppedAvatar}
+          />
+        </div>
         <Form {...form}>
           <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-3">
             <FormField
@@ -111,3 +130,62 @@ function EditProfileDialog(props: EditProfileDialogProps) {
 }
 
 export default EditProfileDialog;
+
+interface AvatarInputProps {
+  src: string | StaticImageData;
+  onImageCropped: (image: Blob | null) => void;
+}
+
+function AvatarInput(props: AvatarInputProps) {
+  const { src, onImageCropped } = props;
+  const [imageToCrop, setImageToCrop] = useState<File>();
+  const fileInputRef = useRef<HTMLInputElement>(null);
+
+  function onImageSelected(image: File | undefined) {
+    if (!image) return;
+    setImageToCrop(image);
+  }
+
+  return (
+    <>
+      <input
+        type="file"
+        accept="image/*"
+        onChange={(e) => onImageSelected(e.target.files?.[0])}
+        ref={fileInputRef}
+        className="hidden sr-only"
+      />
+      <button
+        type="button"
+        onClick={() => {
+          fileInputRef.current?.click();
+        }}
+        className="group relative block"
+      >
+        <Image
+          src={src}
+          alt="avatar preview"
+          width={150}
+          height={150}
+          className="size-32 flex-none rounded-full object-cover"
+        />
+        <span className="absolute inset-0 m-auto flex size-12 items-center justify-center rounded-full bg-black bg-opacity-30 text-white transition-colors duration-200 group-hover:bg-opacity-25">
+          <ImageConfig.CameraIcon size={24} />
+        </span>
+      </button>
+      {imageToCrop && (
+        <ImageCropper
+          src={URL.createObjectURL(imageToCrop)}
+          cropAspectRatio={1}
+          onCropped={onImageCropped}
+          onClose={() => {
+            setImageToCrop(undefined);
+            if (fileInputRef.current) {
+              fileInputRef.current.value = "";
+            }
+          }}
+        />
+      )}
+    </>
+  );
+}
