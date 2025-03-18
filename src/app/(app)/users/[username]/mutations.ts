@@ -9,6 +9,8 @@ import {
 import { useRouter } from "next/navigation";
 import { updateUserProfile } from "./action";
 import { PostsPage } from "@/lib/types";
+import { fetchData } from "@/lib/utils";
+import APIConfig from "@/constrants/ApiConfig";
 
 export function useUpdateProfileMutation() {
   const { toast } = useToast();
@@ -16,23 +18,24 @@ export function useUpdateProfileMutation() {
 
   const queryClient = useQueryClient();
 
-//   const uploadAvatar = new Promise((resolve, reject) => {
-//     const fileReader = new FileReader();
-//     fileReader.onload = () => resolve(fileReader.result);
-//     fileReader.onerror = () => reject(fileReader.error);
-//   });
-
   const mutation = useMutation({
     mutationFn: async ({
       values,
-    //   avatar,
+      avatar,
     }: {
       values: UpdateUserProfileValues;
       avatar?: File;
     }) => {
+      const formData = new FormData();
+      if (avatar) formData.append("avatar", avatar);
       return Promise.all([
         updateUserProfile(values),
-        // avatar && updateAvatar(avatar) // TODO: implement avatar update
+        avatar &&
+          fetchData({
+            url: APIConfig.UPLOAD_AVATAR.URL as string,
+            method: APIConfig.UPLOAD_AVATAR.METHOD,
+            payload: formData,
+          }),
       ]);
     },
     onSuccess: async ([updatedUser]) => {

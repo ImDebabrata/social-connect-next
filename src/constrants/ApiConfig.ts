@@ -44,6 +44,10 @@ const APIConfig: IAPIConfig = {
     URL: (username: string) => baseUrl + `/api/users/username/${username}`,
     METHOD: HttpMethod.GET,
   },
+  UPLOAD_AVATAR:{
+    URL: baseUrl + `/api/file-upload`,
+    METHOD: HttpMethod.POST,
+  }
 };
 
 export default APIConfig;

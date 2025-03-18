@@ -56,6 +56,9 @@ function EditProfileDialog(props: EditProfileDialogProps) {
     mutation.mutate(
       {
         values,
+        avatar: croppedAvatar
+          ? new File([croppedAvatar], "avatar.jpg", { type: "image/jpeg" })
+          : undefined,
       },
       {
         onSuccess: () => {
