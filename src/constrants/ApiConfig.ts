@@ -47,6 +47,10 @@ const APIConfig: IAPIConfig = {
   UPLOAD_AVATAR:{
     URL: baseUrl + `/api/file-upload`,
     METHOD: HttpMethod.POST,
+  },
+  UPLOAD_MEDIA:{
+    URL: baseUrl + `/api/media`,
+    METHOD: HttpMethod.POST,
   }
 };
 

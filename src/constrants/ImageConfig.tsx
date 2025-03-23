@@ -12,6 +12,8 @@ import {
   MoreHorizontalIcon as OptionsIcon,
   Loader2 as LoadingIcon,
   Camera as CameraIcon,
+  ImageIcon,
+  X as CloseIcon,
 } from "lucide-react";
 const ImageConfig = {
   signinImage,
@@ -25,6 +27,8 @@ const ImageConfig = {
   OptionsIcon,
   LoadingIcon,
   CameraIcon,
+  ImageIcon,
+  CloseIcon,
 };
 
 export default ImageConfig;
