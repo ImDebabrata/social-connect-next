@@ -16,6 +16,13 @@ build:
 start:
 	$(PACKAGE_MANAGER) start
 
+# Start both Next.js development server and PostgreSQL in Docker
+start-all:
+	@echo "Starting PostgreSQL in Docker..."
+	docker compose up -d
+	@echo "Starting Next.js development server..."
+	$(PACKAGE_MANAGER) dev
+
 # Lint the code with Next.js ESLint setup
 lint:
 	$(PACKAGE_MANAGER) lint
