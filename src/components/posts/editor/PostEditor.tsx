@@ -9,6 +9,7 @@ import ImageConfig from "@/constrants/ImageConfig";
 import useMediaUpload, { Attachment } from "./useMediaUpload";
 import { cn } from "@/lib/utils";
 import Image from "next/image";
+import { useToast } from "@/hooks/use-toast";
 
 // Define allowed media types and constraints
 enum MediaType {
@@ -27,6 +28,7 @@ const FILE_CONSTRAINTS = {
  * Includes drag and drop file upload capabilities and media attachment previews
  */
 function PostEditor() {
+    const { toast } = useToast();
     const { user } = useCurrentSession();
     const [postValue, setPostValue] = useState("");
     // Track if files are being dragged over the component
@@ -136,8 +138,27 @@ function PostEditor() {
         
         // Extract files from the drop event and pass them to the upload handler
         if (e.dataTransfer.files && e.dataTransfer.files.length > 0) {
-            const files = Array.from(e.dataTransfer.files);
-            handleFileSelected(files);
+            // Convert FileList to Array and filter by allowed types
+            const files = Array.from(e.dataTransfer.files).filter(file => {
+                const fileType = file.type.split('/')[0] as MediaType;
+                const isValidType = FILE_CONSTRAINTS.allowedTypes.includes(fileType);
+                
+                if (!isValidType) {
+                    console.error(`File ${file.name} has an unsupported type: ${fileType}`);
+                    // Could show toast error here
+                    toast({
+                        title: `File ${file.name} has an unsupported type: ${fileType}`,
+                        description: "Please select a valid file type",
+                        variant: "destructive"
+                    });
+                }
+                
+                return isValidType;
+            });
+            
+            if (files.length > 0) {
+                handleFileSelected(files);
+            }
         }
     }
 
