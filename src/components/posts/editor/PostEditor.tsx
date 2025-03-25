@@ -3,7 +3,7 @@ import { TextareaComponent } from "@/components/Textarea";
 import { Button } from "@/components/ui/button";
 import UserAvatar from "@/components/UserAvatar";
 import { useCurrentSession } from "@/hooks/useCurrentSession";
-import React, { useRef, useState } from "react";
+import React, { useRef, useState, useEffect, useCallback } from "react";
 import { useSubmitPostMutation } from "./mutation";
 import ImageConfig from "@/constrants/ImageConfig";
 import useMediaUpload, { Attachment } from "./useMediaUpload";
@@ -37,10 +37,115 @@ function PostEditor() {
     // When dragging over nested elements, dragEnter and dragLeave fire multiple times
     // This counter ensures we only reset the active state when truly leaving the drop zone
     const dragCounter = useRef(0);
+    const editorRef = useRef<HTMLDivElement>(null);
 
     const { attachments, isUploading, startUpload, removeAttachment, clearAttachments, getMediaIds } = useMediaUpload();
 
     const onSubmitPost = useSubmitPostMutation();
+
+    /**
+     * Processes and validates selected files before uploading
+     * Wrapped in useCallback to prevent recreation on each render
+     * This stabilizes the function reference for useEffect dependencies
+     * 
+     * @param {File[]} files - Array of files selected by the user
+     */
+    const handleFileSelected = useCallback((files: File[]) => {
+        // Validate file count
+        if (attachments.length + files.length > FILE_CONSTRAINTS.maxFiles) {
+            toast({
+                title: `File limit exceeded`,
+                description: `Cannot upload more than ${FILE_CONSTRAINTS.maxFiles} files`,
+                variant: "destructive"
+            });
+            return;
+        }
+
+        // Validate each file
+        const validFiles = files.filter(file => {
+            // Check file size
+            if (file.size > FILE_CONSTRAINTS.maxSizeInBytes) {
+                toast({
+                    title: `File size exceeded`,
+                    description: `File ${file.name} exceeds the maximum size of ${FILE_CONSTRAINTS.maxSizeInBytes / (1024 * 1024)}MB`,
+                    variant: "destructive"
+                });
+                return false;
+            }
+
+            // Check file type
+            const fileType = file.type.split('/')[0] as MediaType;
+            if (!FILE_CONSTRAINTS.allowedTypes.includes(fileType)) {
+                toast({
+                    title: `Unsupported file type`,
+                    description: `File ${file.name} has an unsupported type: ${fileType}`,
+                    variant: "destructive"
+                });
+                return false;
+            }
+
+            return true;
+        });
+
+        if (validFiles.length > 0) {
+            startUpload(validFiles);
+        }
+    }, [attachments.length, toast, startUpload]); // Dependencies that would cause this function to be recreated
+
+    /**
+     * Sets up clipboard paste event handling for the editor
+     * Allows users to paste images/files directly into the post editor
+     * 
+     * Two paste scenarios are handled:
+     * 1. Files directly available in clipboardData.files (common in some browsers)
+     * 2. Image data available in clipboardData.items (for screenshots, etc.)
+     */
+    useEffect(() => {
+        const handlePaste = async (e: ClipboardEvent) => {
+            // Scenario 1: Handle files already available as File objects in clipboard
+            if (e.clipboardData && e.clipboardData.files.length > 0) {
+                e.preventDefault(); // Prevent default paste behavior
+                const files = Array.from(e.clipboardData.files);
+                handleFileSelected(files);
+                return;
+            }
+            
+            // Scenario 2: Handle image data in clipboard items (e.g., screenshots)
+            if (e.clipboardData && e.clipboardData.items) {
+                for (const item of Array.from(e.clipboardData.items)) {
+                    // Only process image type items
+                    if (item.type.startsWith('image/')) {
+                        e.preventDefault(); // Prevent default paste behavior
+                        const blob = item.getAsFile();
+                        if (blob) {
+                            // Convert blob to File with proper name and MIME type
+                            // Timestamps ensure unique filenames for pasted images
+                            const file = new File(
+                                [blob], 
+                                `pasted-image-${new Date().getTime()}.${item.type.split('/')[1] || 'png'}`,
+                                { type: item.type }
+                            );
+                            handleFileSelected([file]);
+                        }
+                        break;
+                    }
+                }
+            }
+        };
+
+        // Register paste event handler on the editor element
+        const editorElement = editorRef.current;
+        if (editorElement) {
+            editorElement.addEventListener('paste', handlePaste);
+        }
+
+        // Clean up event listener when component unmounts or dependencies change
+        return () => {
+            if (editorElement) {
+                editorElement.removeEventListener('paste', handlePaste);
+            }
+        };
+    }, [handleFileSelected]); // Only re-run if handleFileSelected changes (stable due to useCallback)
 
     /**
      * Handles post submission
@@ -61,41 +166,6 @@ function PostEditor() {
                 }
             }
         );
-    }
-
-    /**
-     * Processes and validates selected files before uploading
-     * @param {File[]} files - Array of files selected by the user
-     */
-    function handleFileSelected(files: File[]) {
-        // Validate file count
-        if (attachments.length + files.length > FILE_CONSTRAINTS.maxFiles) {
-            console.error(`Cannot upload more than ${FILE_CONSTRAINTS.maxFiles} files`);
-            // Could show a toast error notification here
-            return;
-        }
-
-        // Validate each file
-        const validFiles = files.filter(file => {
-            // Check file size
-            if (file.size > FILE_CONSTRAINTS.maxSizeInBytes) {
-                console.error(`File ${file.name} exceeds the maximum size of ${FILE_CONSTRAINTS.maxSizeInBytes / (1024 * 1024)}MB`);
-                return false;
-            }
-
-            // Check file type
-            const fileType = file.type.split('/')[0] as MediaType;
-            if (!FILE_CONSTRAINTS.allowedTypes.includes(fileType)) {
-                console.error(`File ${file.name} has an unsupported type: ${fileType}`);
-                return false;
-            }
-
-            return true;
-        });
-
-        if (validFiles.length > 0) {
-            startUpload(validFiles);
-        }
     }
 
     // ---- Drag and Drop Event Handlers ----
@@ -164,6 +234,7 @@ function PostEditor() {
 
     return (
         <div 
+            ref={editorRef}
             className={cn(
                 "flex flex-col gap-5 rounded-2xl bg-card p-5 shadow-sm transition-colors relative",
                 // Apply visual feedback styles when drag is active
@@ -307,6 +378,14 @@ interface AttachmentPreviewProps {
 /**
  * Renders a preview for a single file attachment
  * Handles both image and video files with upload progress
+ * 
+ * Features:
+ * - Manages object URLs for file previews with proper cleanup
+ * - Handles loading states and errors gracefully
+ * - Shows upload progress for files being uploaded
+ * - Allows removal of attachments when not uploading
+ * 
+ * @param {AttachmentPreviewProps} props - Component props
  */
 function AttachmentPreview(props: AttachmentPreviewProps) {
     const {
@@ -314,24 +393,60 @@ function AttachmentPreview(props: AttachmentPreviewProps) {
         onRemoveClick,
     } = props;
 
-    const src = URL.createObjectURL(file);
-    
-    // Clean up object URL when component unmounts
-    React.useEffect(() => {
+    const [imageSrc, setImageSrc] = useState<string | null>(null);
+    const [loadError, setLoadError] = useState(false);
+
+    // Create and manage object URL
+    useEffect(() => {
+        // Create object URL from file
+        const objectUrl = URL.createObjectURL(file);
+        setImageSrc(objectUrl);
+        setLoadError(false);
+
+        // Clean up object URL when component unmounts or file changes
         return () => {
-            URL.revokeObjectURL(src);
+            URL.revokeObjectURL(objectUrl);
         };
-    }, [src]);
+    }, [file]);
+
+    // Handler for image loading errors
+    const handleImageError = () => {
+        setLoadError(true);
+    };
     
     return (
         <div className={cn("relative mx-auto size-fit", isUploading && "opacity-50")}>
             {file.type.startsWith("image") ? (
-                <Image src={src} alt={`Preview of ${file.name}`} width={500} height={500} className="size-fit max-h-[30rem] rounded-2xl" />
+                loadError || !imageSrc ? (
+                    <div className="flex items-center justify-center size-[300px] bg-muted rounded-2xl">
+                        <p className="text-sm text-muted-foreground">
+                            {loadError ? "Image preview unavailable" : "Loading preview..."}
+                        </p>
+                    </div>
+                ) : (
+                    <div className="max-w-[500px] max-h-[30rem] rounded-2xl overflow-hidden bg-muted">
+                        <Image 
+                            src={imageSrc} 
+                            alt={`Preview of ${file.name}`} 
+                            width={500} 
+                            height={500} 
+                            className="size-fit max-h-[30rem] rounded-2xl object-contain" 
+                            onError={handleImageError}
+                            unoptimized
+                        />
+                    </div>
+                )
             ) : (
-                <video controls className="size-fit max-h-[30rem] rounded-2xl" aria-label={`Video preview of ${file.name}`}>
-                    <source src={src} type={file.type} />
-                    Your browser does not support the video tag.
-                </video>
+                imageSrc ? (
+                    <video controls className="size-fit max-h-[30rem] rounded-2xl" aria-label={`Video preview of ${file.name}`}>
+                        <source src={imageSrc} type={file.type} />
+                        Your browser does not support the video tag.
+                    </video>
+                ) : (
+                    <div className="flex items-center justify-center size-[300px] bg-muted rounded-2xl">
+                        <p className="text-sm text-muted-foreground">Loading video preview...</p>
+                    </div>
+                )
             )}
             {!isUploading && (
                 <button 
