@@ -50,7 +50,7 @@ export async function POST(req: NextRequest) {
           error:
             "Unsupported file format. Please upload JPG, PNG, WEBP, GIF, MP4, WEBM, or MOV.",
           status: 400,
-        });
+        }, { status: 400 });
       }
 
       // Check file size based on type
