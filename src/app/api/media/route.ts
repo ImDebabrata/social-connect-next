@@ -49,7 +49,6 @@ export async function POST(req: NextRequest) {
         return Response.json({
           error:
             "Unsupported file format. Please upload JPG, PNG, WEBP, GIF, MP4, WEBM, or MOV.",
-          status: 400,
         }, { status: 400 });
       }
 
@@ -59,8 +58,7 @@ export async function POST(req: NextRequest) {
         const sizeLimit = isImage ? "1MB" : "20MB";
         return Response.json({
           error: `File is too large (max ${sizeLimit})`,
-          status: 400,
-        });
+        }, { status: 400 });
       }
 
       // Prepare file for upload
