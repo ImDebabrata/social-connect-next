@@ -45,11 +45,11 @@ const APIConfig: IAPIConfig = {
     METHOD: HttpMethod.GET,
   },
   UPLOAD_AVATAR:{
-    URL: baseUrl + `/api/file-upload`,
+    URL: baseUrl + `/api/profile/avatar`,
     METHOD: HttpMethod.POST,
   },
   UPLOAD_MEDIA:{
-    URL: baseUrl + `/api/media`,
+    URL: baseUrl + `/api/posts/media`,
     METHOD: HttpMethod.POST,
   }
 };
