@@ -9,26 +9,13 @@ import ImageConfig from "@/constrants/ImageConfig";
 import useMediaUpload, { Attachment } from "./useMediaUpload";
 import { cn } from "@/lib/utils";
 import Image from "next/image";
-import { useToast } from "@/hooks/use-toast";
-
-// Define allowed media types and constraints
-enum MediaType {
-    IMAGE = 'image',
-    VIDEO = 'video'
-}
-
-const FILE_CONSTRAINTS = {
-    maxSizeInBytes: 10 * 1024 * 1024, // 10MB
-    allowedTypes: [MediaType.IMAGE, MediaType.VIDEO],
-    maxFiles: 5
-};
+import { MAX_FILES } from "@/lib/mediaValidation";
 
 /**
  * PostEditor component that handles creating and submitting new posts
  * Includes drag and drop file upload capabilities and media attachment previews
  */
 function PostEditor() {
-    const { toast } = useToast();
     const { user } = useCurrentSession();
     const [postValue, setPostValue] = useState("");
     // Track if files are being dragged over the component
@@ -44,53 +31,15 @@ function PostEditor() {
     const onSubmitPost = useSubmitPostMutation();
 
     /**
-     * Processes and validates selected files before uploading
+     * Processes selected files before uploading
      * Wrapped in useCallback to prevent recreation on each render
      * This stabilizes the function reference for useEffect dependencies
      * 
      * @param {File[]} files - Array of files selected by the user
      */
     const handleFileSelected = useCallback((files: File[]) => {
-        // Validate file count
-        if (attachments.length + files.length > FILE_CONSTRAINTS.maxFiles) {
-            toast({
-                title: `File limit exceeded`,
-                description: `Cannot upload more than ${FILE_CONSTRAINTS.maxFiles} files`,
-                variant: "destructive"
-            });
-            return;
-        }
-
-        // Validate each file
-        const validFiles = files.filter(file => {
-            // Check file size
-            if (file.size > FILE_CONSTRAINTS.maxSizeInBytes) {
-                toast({
-                    title: `File size exceeded`,
-                    description: `File ${file.name} exceeds the maximum size of ${FILE_CONSTRAINTS.maxSizeInBytes / (1024 * 1024)}MB`,
-                    variant: "destructive"
-                });
-                return false;
-            }
-
-            // Check file type
-            const fileType = file.type.split('/')[0] as MediaType;
-            if (!FILE_CONSTRAINTS.allowedTypes.includes(fileType)) {
-                toast({
-                    title: `Unsupported file type`,
-                    description: `File ${file.name} has an unsupported type: ${fileType}`,
-                    variant: "destructive"
-                });
-                return false;
-            }
-
-            return true;
-        });
-
-        if (validFiles.length > 0) {
-            startUpload(validFiles);
-        }
-    }, [attachments.length, toast, startUpload]); // Dependencies that would cause this function to be recreated
+        startUpload(files);
+    }, [startUpload]); // Only depends on the startUpload function which has its own validation
 
     /**
      * Sets up clipboard paste event handling for the editor
@@ -208,27 +157,9 @@ function PostEditor() {
         
         // Extract files from the drop event and pass them to the upload handler
         if (e.dataTransfer.files && e.dataTransfer.files.length > 0) {
-            // Convert FileList to Array and filter by allowed types
-            const files = Array.from(e.dataTransfer.files).filter(file => {
-                const fileType = file.type.split('/')[0] as MediaType;
-                const isValidType = FILE_CONSTRAINTS.allowedTypes.includes(fileType);
-                
-                if (!isValidType) {
-                    console.error(`File ${file.name} has an unsupported type: ${fileType}`);
-                    // Could show toast error here
-                    toast({
-                        title: `File ${file.name} has an unsupported type: ${fileType}`,
-                        description: "Please select a valid file type",
-                        variant: "destructive"
-                    });
-                }
-                
-                return isValidType;
-            });
-            
-            if (files.length > 0) {
-                handleFileSelected(files);
-            }
+            // Convert FileList to Array and process with our handler
+            const files = Array.from(e.dataTransfer.files);
+            handleFileSelected(files);
         }
     }
 
@@ -270,7 +201,7 @@ function PostEditor() {
                         <ImageConfig.LoadingIcon className="size-5 animate-spin text-primary" />
                     </>
                 )}
-                <AddAttachmentsButton onFilesSelected={handleFileSelected} disabled={onSubmitPost.isPending || attachments.length >= 5} />
+                <AddAttachmentsButton onFilesSelected={handleFileSelected} disabled={onSubmitPost.isPending || attachments.length >= MAX_FILES} />
                 <Button className="min-w-20" onClick={handleSubmitPost} disabled={!postValue.trim() || isUploading}>
                     Post
                 </Button>
