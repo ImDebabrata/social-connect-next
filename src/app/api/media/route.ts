@@ -2,6 +2,7 @@ import { NextRequest } from "next/server";
 import { v2 as cloudinary, type UploadApiResponse } from "cloudinary";
 import prisma from "@/lib/prisma";
 import { getCurrentUser } from "@/app/action";
+import { validateFile } from "@/lib/mediaValidation";
 
 // Setting up our connection to Cloudinary
 cloudinary.config({
@@ -9,17 +10,6 @@ cloudinary.config({
   api_key: process.env.CLOUDINARY_API_KEY,
   api_secret: process.env.CLOUDINARY_API_SECRET,
 });
-
-// Media file constraints
-const MAX_IMAGE_SIZE = 1 * 1024 * 1024; // 1MB for images
-const MAX_VIDEO_SIZE = 20 * 1024 * 1024; // 20MB for videos
-const ALLOWED_IMAGE_TYPES = [
-  "image/jpeg",
-  "image/png",
-  "image/webp",
-  "image/gif",
-];
-const ALLOWED_VIDEO_TYPES = ["video/mp4", "video/quicktime", "video/webm"];
 
 export async function POST(req: NextRequest) {
   try {
@@ -40,24 +30,11 @@ export async function POST(req: NextRequest) {
 
     // Process each file
     for (const file of files) {
-      // Determine file type
-      const isImage = ALLOWED_IMAGE_TYPES.includes(file.type);
-      const isVideo = ALLOWED_VIDEO_TYPES.includes(file.type);
-
-      // Check if file type is allowed
-      if (!isImage && !isVideo) {
+      const validation = validateFile(file);
+      
+      if (!validation.isValid) {
         return Response.json({
-          error:
-            "Unsupported file format. Please upload JPG, PNG, WEBP, GIF, MP4, WEBM, or MOV.",
-        }, { status: 400 });
-      }
-
-      // Check file size based on type
-      const maxSize = isImage ? MAX_IMAGE_SIZE : MAX_VIDEO_SIZE;
-      if (file.size > maxSize) {
-        const sizeLimit = isImage ? "1MB" : "20MB";
-        return Response.json({
-          error: `File is too large (max ${sizeLimit})`,
+          error: validation.error,
         }, { status: 400 });
       }
 
@@ -67,9 +44,9 @@ export async function POST(req: NextRequest) {
       // Upload to Cloudinary
       const result = await new Promise<UploadApiResponse>((resolve, reject) => {
         const uploadOptions = {
-          folder: isImage ? "post_images" : "post_videos",
-          resource_type: isImage ? "image" : ("video" as "image" | "video"),
-          transformation: isImage ? [{ quality: "auto" }] : undefined,
+          folder: validation.isImage ? "post_images" : "post_videos",
+          resource_type: validation.isImage ? "image" : ("video" as "image" | "video"),
+          transformation: validation.isImage ? [{ quality: "auto" }] : undefined,
         };
 
         const uploadStream = cloudinary.uploader.upload_stream(
@@ -95,7 +72,7 @@ export async function POST(req: NextRequest) {
       // Create media record in database
       const media = await prisma.media.create({
         data: {
-          type: isImage ? "IMAGE" : "VIDEO",
+          type: validation.isImage ? "IMAGE" : "VIDEO",
           url: result.secure_url,
         },
       });

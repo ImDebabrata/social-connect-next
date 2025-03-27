@@ -3,6 +3,7 @@ import { useCallback, useState } from "react";
 import APIConfig from "@/constrants/ApiConfig";
 import { useMutation } from "@tanstack/react-query";
 import { Media } from "@prisma/client";
+import { validateFiles } from "@/lib/mediaValidation";
 
 export interface Attachment {
   file: File;
@@ -136,18 +137,27 @@ export default function useMediaUpload() {
         });
         return;
       }
-
-      if (attachments.length + files.length > 5) {
+      
+      // Validate files using our shared utility
+      const { validFiles, errors } = validateFiles(files, attachments.length);
+      
+      // Show errors for invalid files if any
+      if (errors.length > 0) {
         toast({
           variant: "destructive",
-          description: "You can only upload up to 5 attachments per post.",
+          title: "Some files couldn't be uploaded",
+          description: errors.join('\n').substring(0, 255), // Truncate long error messages
         });
-        return;
+        
+        // If no valid files remain, exit early
+        if (validFiles.length === 0) {
+          return;
+        }
       }
 
       try {
-        // Add files to attachment list
-        addAttachments(files);
+        // Add only valid files to attachment list
+        addAttachments(validFiles);
 
         // Mark all new attachments as uploading
         const startIndex = attachments.length;
@@ -159,8 +169,8 @@ export default function useMediaUpload() {
           )
         );
 
-        // Start upload with all files
-        uploadMutation.mutate(files);
+        // Start upload with all valid files
+        uploadMutation.mutate(validFiles);
       } catch (error) {
         console.error("Upload batch error:", error);
         toast({
