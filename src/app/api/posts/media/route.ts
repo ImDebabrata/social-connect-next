@@ -1,16 +1,29 @@
 import { NextRequest } from "next/server";
-import { v2 as cloudinary, type UploadApiResponse } from "cloudinary";
+import { uploadToCloudinary } from "@/lib/cloudinaryUpload";
 import prisma from "@/lib/prisma";
 import { getCurrentUser } from "@/app/action";
 import { validateFile } from "@/lib/mediaValidation";
 
-// Setting up our connection to Cloudinary
-cloudinary.config({
-  cloud_name: process.env.CLOUDINARY_CLOUD_NAME,
-  api_key: process.env.CLOUDINARY_API_KEY,
-  api_secret: process.env.CLOUDINARY_API_SECRET,
-});
-
+/**
+ * API route handler for post media uploads (images and videos)
+ * 
+ * Processes media files for social posts, uploading to Cloudinary and creating database records
+ * 
+ * @route POST /api/posts/media
+ * @param req - Next.js request object containing form data with "media" files
+ * @returns JSON response with array of created media objects or error message
+ * 
+ * @example
+ * // Client-side usage:
+ * const formData = new FormData();
+ * // Can add multiple files
+ * formData.append("media", imageFile1);
+ * formData.append("media", videoFile);
+ * const response = await fetch("/api/posts/media", {
+ *   method: "POST",
+ *   body: formData
+ * });
+ */
 export async function POST(req: NextRequest) {
   try {
     // Check if user is logged in
@@ -41,27 +54,11 @@ export async function POST(req: NextRequest) {
       // Prepare file for upload
       const buffer = Buffer.from(await file.arrayBuffer());
 
-      // Upload to Cloudinary
-      const result = await new Promise<UploadApiResponse>((resolve, reject) => {
-        const uploadOptions = {
-          folder: validation.isImage ? "post_images" : "post_videos",
-          resource_type: validation.isImage ? "image" : ("video" as "image" | "video"),
-          transformation: validation.isImage ? [{ quality: "auto" }] : undefined,
-        };
-
-        const uploadStream = cloudinary.uploader.upload_stream(
-          uploadOptions,
-          (error, result) => {
-            if (error) {
-              reject(error);
-            } else if (result) {
-              resolve(result);
-            } else {
-              reject(new Error("Cloudinary upload returned no result"));
-            }
-          }
-        );
-        uploadStream.end(buffer);
+      // Upload to Cloudinary using shared utility
+      const result = await uploadToCloudinary(buffer, {
+        folder: validation.isImage ? "post_images" : "post_videos",
+        resourceType: validation.isImage ? "image" : "video",
+        transformation: validation.isImage ? [{ quality: "auto" } as Record<string, unknown>] : undefined
       });
 
       // Check if upload was successful
@@ -91,4 +88,4 @@ export async function POST(req: NextRequest) {
       { status: 500 }
     );
   }
-}
+} 
