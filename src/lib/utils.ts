@@ -15,6 +15,13 @@ export function formatRelativeDate(date: string | Moment | Date): string {
     return "Invalid date";
   }
 
+  const now = moment();
+  const diffInSeconds = now.diff(mDate, 'seconds');
+
+  if (diffInSeconds < 60) {
+    return `${diffInSeconds} seconds ago`;
+  }
+
   return mDate.fromNow();
 }
 
