@@ -44,14 +44,26 @@ const APIConfig: IAPIConfig = {
     URL: (username: string) => baseUrl + `/api/users/username/${username}`,
     METHOD: HttpMethod.GET,
   },
-  UPLOAD_AVATAR:{
+  UPLOAD_AVATAR: {
     URL: baseUrl + `/api/profile/avatar`,
     METHOD: HttpMethod.POST,
   },
-  UPLOAD_MEDIA:{
+  UPLOAD_MEDIA: {
     URL: baseUrl + `/api/posts/media`,
     METHOD: HttpMethod.POST,
-  }
+  },
+  LIKE_INFO: {
+    URL: (postId: string) => baseUrl + `/api/posts/${postId}/likes`,
+    METHOD: HttpMethod.GET,
+  },
+  LIKE_POST: {
+    URL: (postId: string) => baseUrl + `/api/posts/${postId}/likes`,
+    METHOD: HttpMethod.POST,
+  },
+  UNLIKE_POST: {
+    URL: (postId: string) => baseUrl + `/api/posts/${postId}/likes`,
+    METHOD: HttpMethod.DELETE,
+  },
 };
 
 export default APIConfig;
