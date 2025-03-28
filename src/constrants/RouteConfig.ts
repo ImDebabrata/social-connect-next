@@ -8,6 +8,7 @@ const authScreens = {
 const protectedRoute = {
   MAIN_SCREEN: "/",
   PROFILE: "/users/:username",
+  POST: "/posts/:postId",
 };
 
 const RouteConfig = {
