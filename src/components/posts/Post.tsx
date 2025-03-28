@@ -12,6 +12,7 @@ import UserTooltip from "../UserTooltip";
 import { Media } from "@prisma/client";
 import Image from "next/image";
 import RouteConfig from "@/constrants/RouteConfig";
+import LikeButton from "./LikeButton";
 interface PostProps {
   post: PostData;
 }
@@ -42,7 +43,10 @@ function Post(props: PostProps) {
             </UserTooltip>
             {/* Todo: redirect to post page */}
             <Link
-              href={`${RouteConfig.protectedRoute.POST.replace(":postId", post.id)}`}
+              href={`${RouteConfig.protectedRoute.POST.replace(
+                ":postId",
+                post.id
+              )}`}
               className="block text-sm text-muted-foreground hover:underline"
             >
               {formatRelativeDate(post.createdAt)}
@@ -59,7 +63,19 @@ function Post(props: PostProps) {
       <Linkify>
         <div className="whitespace-pre-line break-words">{post.content}</div>
       </Linkify>
-      {post.attachments.length>0 && <MediaPreviews attachments={post.attachments}/>}
+      {post.attachments.length > 0 && (
+        <MediaPreviews attachments={post.attachments} />
+      )}
+      <hr className="text-muted-foreground" />
+      <LikeButton
+        postId={post.id}
+        initialState={{
+          likes: post._count.likes,
+          isLikedByUser: post.likes.some(
+            (like) => like.userId === user?.userId
+          ),
+        }}
+      />
     </article>
   );
 }
@@ -105,10 +121,14 @@ function MediaPreview(props: MediaPreviewProps) {
       </div>
     );
   }
-  if(media.type==="VIDEO"){
+  if (media.type === "VIDEO") {
     return (
       <div className="aspect-video overflow-hidden rounded-2xl">
-        <video src={media.url} controls className="mx-auto size-fit max-h-[30rem] rounded-2xl" />
+        <video
+          src={media.url}
+          controls
+          className="mx-auto size-fit max-h-[30rem] rounded-2xl"
+        />
       </div>
     );
   }
