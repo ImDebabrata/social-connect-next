@@ -11,6 +11,7 @@ import Linkify from "../Linkify";
 import UserTooltip from "../UserTooltip";
 import { Media } from "@prisma/client";
 import Image from "next/image";
+import RouteConfig from "@/constrants/RouteConfig";
 interface PostProps {
   post: PostData;
 }
@@ -41,7 +42,7 @@ function Post(props: PostProps) {
             </UserTooltip>
             {/* Todo: redirect to post page */}
             <Link
-              href={""}
+              href={`${RouteConfig.protectedRoute.POST.replace(":postId", post.id)}`}
               className="block text-sm text-muted-foreground hover:underline"
             >
               {formatRelativeDate(post.createdAt)}
