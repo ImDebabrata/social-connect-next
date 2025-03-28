@@ -3,6 +3,7 @@ import {  PostsPage } from "@/lib/types";
 import { InfiniteData, QueryFilters, useMutation, useQueryClient } from "@tanstack/react-query";
 import { usePathname, useRouter } from "next/navigation";
 import { deletePost } from "./actions";
+import RouteConfig from "@/constrants/RouteConfig";
 
 export function useDeletePostMutation(){
     const {toast}=useToast();
@@ -34,9 +35,10 @@ export function useDeletePostMutation(){
             )
             toast({
                 description:"Post deleted"
-            })
-            if(pathname===`/post/${deletedPost.id}`){
-                router.push(`/users/${deletedPost.userId}`);//Todo: Make route dynamic
+            })  
+            // /posts/${deletedPost.id}
+            if(pathname===`${RouteConfig.protectedRoute.POST.replace(':postId',deletedPost.id)}`){
+                router.push(`${RouteConfig.protectedRoute.PROFILE.replace(':username',deletedPost.user.username)}`);
             }
         },
         onError(error){
