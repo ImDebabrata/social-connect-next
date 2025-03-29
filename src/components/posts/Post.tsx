@@ -2,7 +2,7 @@
 
 import { PostData } from "@/lib/types";
 import Link from "next/link";
-import React from "react";
+import React, { useState } from "react";
 import UserAvatar from "../UserAvatar";
 import { cn, formatRelativeDate } from "@/lib/utils";
 import { useCurrentSession } from "@/hooks/useCurrentSession";
@@ -14,6 +14,8 @@ import Image from "next/image";
 import RouteConfig from "@/constrants/RouteConfig";
 import LikeButton from "./LikeButton";
 import BookmarkButton from "./BookmarkButton";
+import { MessageSquareIcon } from "lucide-react";
+import Comments from "../comments/Comments";
 interface PostProps {
   post: PostData;
 }
@@ -21,6 +23,8 @@ interface PostProps {
 function Post(props: PostProps) {
   const { post } = props;
   const { user } = useCurrentSession();
+  const [showComments, setShowComments] = useState(false);
+
   return (
     <article className="group/post space-y-3 rounded-2xl bg-card p-5 shadow-sm">
       <div className="flex justify-between gap-3">
@@ -69,15 +73,21 @@ function Post(props: PostProps) {
       )}
       <hr className="text-muted-foreground" />
       <div className="flex justify-between gap-5">
-        <LikeButton
-          postId={post.id}
-          initialState={{
-            likes: post._count.likes,
-            isLikedByUser: post.likes.some(
-              (like) => like.userId === user?.userId
-            ),
-          }}
-        />
+        <div className="flex items-center gap-5">
+          <LikeButton
+            postId={post.id}
+            initialState={{
+              likes: post._count.likes,
+              isLikedByUser: post.likes.some(
+                (like) => like.userId === user?.userId
+              ),
+            }}
+          />
+          <CommentButton
+            post={post}
+            onClick={() => setShowComments((prev) => !prev)}
+          />
+        </div>
         <BookmarkButton
           postId={post.id}
           initialState={{
@@ -87,6 +97,7 @@ function Post(props: PostProps) {
           }}
         />
       </div>
+      {showComments && <Comments post={post} />}
     </article>
   );
 }
@@ -144,4 +155,22 @@ function MediaPreview(props: MediaPreviewProps) {
     );
   }
   return <p className="text-destructive">Unsupported media type</p>;
+}
+
+interface CommentButtonProps {
+  post: PostData;
+  onClick: () => void;
+}
+
+function CommentButton(props: CommentButtonProps) {
+  const { post, onClick } = props;
+  return (
+    <button onClick={onClick} className={"flex items-center gap-2"}>
+      <MessageSquareIcon className="size-5" />
+      <span className="text-sm font-medium tabular-nums">
+        {post._count.comments}{" "}
+        <span className="hidden sm:inline">comments</span>
+      </span>
+    </button>
+  );
 }

@@ -80,6 +80,10 @@ const APIConfig: IAPIConfig = {
     URL: (postId: string) => baseUrl + `/api/posts/${postId}/bookmark`,
     METHOD: HttpMethod.DELETE,
   },
+  GET_COMMENTS: {
+    URL: (postId: string) => baseUrl + `/api/posts/${postId}/comments`,
+    METHOD: HttpMethod.GET,
+  },
 };
 
 export default APIConfig;
