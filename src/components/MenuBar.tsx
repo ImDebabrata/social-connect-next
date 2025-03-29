@@ -27,7 +27,7 @@ const buttonItems = [
   {
     title: "Bookmarks",
     icon: <Bookmark />,
-    route: "",
+    route: RouteConfig.protectedRoute.BOOKMARKS,
   },
 ];
 

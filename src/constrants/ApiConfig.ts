@@ -64,6 +64,22 @@ const APIConfig: IAPIConfig = {
     URL: (postId: string) => baseUrl + `/api/posts/${postId}/likes`,
     METHOD: HttpMethod.DELETE,
   },
+  GET_BOOKMARKED_POSTS: {
+    URL: baseUrl + "/api/posts/bookmarked",
+    METHOD: HttpMethod.GET,
+  },
+  BOOKMARK_INFO: {
+    URL: (postId: string) => baseUrl + `/api/posts/${postId}/bookmark`,
+    METHOD: HttpMethod.GET,
+  },
+  BOOKMARK_POST: {
+    URL: (postId: string) => baseUrl + `/api/posts/${postId}/bookmark`,
+    METHOD: HttpMethod.POST,
+  },
+  UNBOOKMARK_POST: {
+    URL: (postId: string) => baseUrl + `/api/posts/${postId}/bookmark`,
+    METHOD: HttpMethod.DELETE,
+  },
 };
 
 export default APIConfig;
