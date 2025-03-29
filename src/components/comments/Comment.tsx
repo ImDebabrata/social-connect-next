@@ -4,14 +4,18 @@ import Link from "next/link";
 import RouteConfig from "@/constrants/RouteConfig";
 import UserAvatar from "../UserAvatar";
 import { formatRelativeDate } from "@/lib/utils";
+import CommentMoreButton from "./CommentMoreButton";
+import { useCurrentSession } from "@/hooks/useCurrentSession";
 
 interface CommentProps {
   comment: CommentData;
 }
 
 export default function Comment({ comment }: CommentProps) {
+  const { user } = useCurrentSession();
+
   return (
-    <div className="flex gap-3 py-3">
+    <div className="flex gap-3 py-3 group/comment">
       <span className="hidden sm:inline ">
         <UserTooltip user={comment.user}>
           <Link
@@ -43,6 +47,9 @@ export default function Comment({ comment }: CommentProps) {
         </div>
         <div>{comment.content}</div>
       </div>
+      {user?.userId === comment.userId && (
+        <CommentMoreButton comment={comment} className="ms-auto opacity-0 transition-opacity group-hover/comment:opacity-100" />
+      )}
     </div>
   );
 }
