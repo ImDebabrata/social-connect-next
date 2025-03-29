@@ -9,6 +9,7 @@ const protectedRoute = {
   MAIN_SCREEN: "/",
   PROFILE: "/users/:username",
   POST: "/posts/:postId",
+  BOOKMARKS: "/bookmarks",
 };
 
 const RouteConfig = {
