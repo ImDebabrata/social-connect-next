@@ -61,6 +61,7 @@ export const fetchData = async <T>({
     post: ApiService.post,
     put: ApiService.put,
     delete: ApiService.delete,
+    patch:ApiService.patch
   }[method];
 
   if (!apiCall) {
