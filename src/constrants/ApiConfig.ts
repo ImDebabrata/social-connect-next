@@ -88,6 +88,14 @@ const APIConfig: IAPIConfig = {
     URL: baseUrl + "/api/notifications",
     METHOD: HttpMethod.GET,
   },
+  GET_UNREAD_NOTIFICATION_COUNT: {
+    URL: baseUrl + "/api/notifications/unread-count",
+    METHOD: HttpMethod.GET,
+  },
+  MARK_NOTIFICATIONS_AS_READ: {
+    URL: baseUrl + "/api/notifications/mark-as-read",
+    METHOD: HttpMethod.PATCH,
+  },
 };
 
 export default APIConfig;
