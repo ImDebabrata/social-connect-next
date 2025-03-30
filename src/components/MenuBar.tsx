@@ -17,7 +17,7 @@ const buttonItems = [
   {
     title: "Notificatios",
     icon: <Bell />,
-    route: "",
+    route: RouteConfig.protectedRoute.NOTIFICATIONS,
   },
   {
     title: "Messages",

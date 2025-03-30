@@ -1,13 +1,14 @@
 import { getCurrentUser } from "@/app/action";
 import prisma from "@/lib/prisma";
 import { FollowerInfo } from "@/lib/types";
+import { NotificationType } from "@prisma/client";
 
 export async function GET(
   request: Request,
   { params: { userId } }: { params: { userId: string } }
 ) {
   try {
-    const  loggedInUser  = await getCurrentUser();
+    const loggedInUser = await getCurrentUser();
     if (!loggedInUser)
       return Response.json({ error: "Unauthorized" }, { status: 401 });
 
@@ -51,54 +52,69 @@ export async function POST(
   { params: { userId } }: { params: { userId: string } }
 ) {
   try {
-    const loggedInUser  = await getCurrentUser();
+    const loggedInUser = await getCurrentUser();
     if (!loggedInUser)
       return Response.json({ error: "Unauthorized" }, { status: 401 });
 
-    await prisma.follow.upsert({
-        where:{
-            followerId_followingId:{
-                followerId:loggedInUser.userId,
-                followingId:userId,
-            }
+    await prisma.$transaction([
+      prisma.follow.upsert({
+        where: {
+          followerId_followingId: {
+            followerId: loggedInUser.userId,
+            followingId: userId,
+          },
         },
-        create:{
-            followerId:loggedInUser.userId,
-            followingId:userId,
+        create: {
+          followerId: loggedInUser.userId,
+          followingId: userId,
         },
-        update:{}
-    })
+        update: {},
+      }),
+      prisma.notification.create({
+        data: {
+          issuerId: loggedInUser.userId,
+          recipientId: userId,
+          type: NotificationType.FOLLOW,
+        },
+      }),
+    ]);
 
     return new Response();
-
   } catch (error) {
     console.log(error);
     return Response.json({ error }, { status: 500 });
   }
 }
 
-
 export async function DELETE(
-    request: Request,
-    { params: { userId } }: { params: { userId: string } }
-){
-    try{
-        const loggedInUser  = await getCurrentUser();
+  request: Request,
+  { params: { userId } }: { params: { userId: string } }
+) {
+  try {
+    const loggedInUser = await getCurrentUser();
 
-        if (!loggedInUser)
-            return Response.json({ error: "Unauthorized" }, { status: 401 });
+    if (!loggedInUser)
+      return Response.json({ error: "Unauthorized" }, { status: 401 });
 
-        await prisma.follow.deleteMany({
-            where:{
-                followerId:loggedInUser.userId,
-                followingId:userId,
-            }
-        })
+    await prisma.$transaction([
+      prisma.follow.deleteMany({
+        where: {
+          followerId: loggedInUser.userId,
+          followingId: userId,
+        },
+      }),
+      prisma.notification.deleteMany({
+        where: {
+          issuerId: loggedInUser.userId,
+          recipientId: userId,
+          type: NotificationType.FOLLOW,
+        },
+      }),
+    ]);
 
-        return new Response();
-
-    }catch(error){
-        console.log(error);
-        return Response.json({ error }, { status: 500 });
-    }
+    return new Response();
+  } catch (error) {
+    console.log(error);
+    return Response.json({ error }, { status: 500 });
+  }
 }
