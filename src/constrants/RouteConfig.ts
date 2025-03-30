@@ -10,6 +10,7 @@ const protectedRoute = {
   PROFILE: "/users/:username",
   POST: "/posts/:postId",
   BOOKMARKS: "/bookmarks",
+  NOTIFICATIONS: "/notifications",
 };
 
 const RouteConfig = {

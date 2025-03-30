@@ -84,6 +84,10 @@ const APIConfig: IAPIConfig = {
     URL: (postId: string) => baseUrl + `/api/posts/${postId}/comments`,
     METHOD: HttpMethod.GET,
   },
+  GET_NOTIFICATIONS: {
+    URL: baseUrl + "/api/notifications",
+    METHOD: HttpMethod.GET,
+  },
 };
 
 export default APIConfig;
