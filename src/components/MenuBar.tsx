@@ -3,7 +3,9 @@ import { Button } from "./ui/button";
 import Link from "next/link";
 import RouteConfig from "@/constrants/RouteConfig";
 import { Bell, Bookmark, Home, Mail } from "lucide-react";
-
+import NotificationButton from "./NotificationButton";
+import { getCurrentUser } from "@/app/action";
+import prisma from "@/lib/prisma";
 interface MenuBarProps {
   className?: string;
 }
@@ -31,11 +33,34 @@ const buttonItems = [
   },
 ];
 
-function MenuBar(props: MenuBarProps) {
+async function MenuBar(props: MenuBarProps) {
   const { className } = props;
+
+  const loggedInUser = await getCurrentUser();
+
+  if (!loggedInUser) return null;
+
+  const unreadNotificationCount = await prisma.notification.count({
+    where: {
+      recipientId: loggedInUser.userId,
+      read: false,
+    },
+  });
+
   return (
     <div className={className}>
       {buttonItems.map((buttonConfig, index) => {
+        if (buttonConfig.title === "Notificatios") {
+          return (
+            <NotificationButton
+              key={index}
+              initialState={{ unreadCount: unreadNotificationCount }}
+              title={buttonConfig.title}
+              icon={buttonConfig.icon}
+              route={buttonConfig.route}
+            />
+          );
+        }
         return (
           <Button
             key={index}

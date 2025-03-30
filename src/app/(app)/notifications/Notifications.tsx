@@ -4,11 +4,16 @@ import PostLoadingSkeleton from "@/components/posts/PostLoadingSkeleton";
 import APIConfig from "@/constrants/ApiConfig";
 import ApiService from "@/lib/api.service";
 import { NotificationsPage } from "@/lib/types";
-import { useInfiniteQuery } from "@tanstack/react-query";
+import {
+  useInfiniteQuery,
+  useMutation,
+  useQueryClient,
+} from "@tanstack/react-query";
 import { Loader2 } from "lucide-react";
 
-import React from "react";
+import React, { useEffect } from "react";
 import Notification from "./Notification";
+import { fetchData } from "@/lib/utils";
 
 function Notifications() {
   const {
@@ -31,7 +36,30 @@ function Notifications() {
     getNextPageParam: (lastPage) => lastPage.nextCursor,
   });
 
-  const notifications = data?.pages?.flatMap((page) => page.notifications) || [];
+  const queryClient = useQueryClient();
+
+  const { mutate } = useMutation({
+    mutationFn: () =>
+      fetchData({
+        url: APIConfig.MARK_NOTIFICATIONS_AS_READ.URL as string,
+        method: APIConfig.MARK_NOTIFICATIONS_AS_READ.METHOD,
+      }),
+    onSuccess: () => {
+      queryClient.setQueryData(["un-read-notification-count"], {
+        unreadCount: 0,
+      });
+    },
+    onError: (error) => {
+      console.error("failed to mark notification as read", error);
+    },
+  });
+
+  useEffect(() => {
+    mutate();
+  }, [mutate]);
+
+  const notifications =
+    data?.pages?.flatMap((page) => page.notifications) || [];
 
   return (
     <>
