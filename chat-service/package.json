@@ -1,0 +1,23 @@
+{
+  "name": "chat-service",
+  "version": "1.0.0",
+  "main": "./src/index.ts",
+  "license": "MIT",
+  "scripts": {
+    "start": "npx nodemon"
+  },
+  "devDependencies": {
+    "@types/express": "^5.0.1",
+    "@types/node": "^22.13.14",
+    "@types/socket.io": "^3.0.2",
+    "ts-node": "^10.9.2",
+    "typescript": "^5.8.2"
+  },
+  "dependencies": {
+    "@types/cors": "^2.8.17",
+    "cors": "^2.8.5",
+    "dotenv": "^16.4.7",
+    "express": "^4.21.2",
+    "socket.io": "^4.8.1"
+  }
+}
