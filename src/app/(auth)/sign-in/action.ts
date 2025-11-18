@@ -45,7 +45,7 @@ export async function signin(
     };
   } catch (error) {
     if (isRedirectError(error)) throw error;
-    console.log(error);
+    // console.log(error);
     return {
       error: "Something went wrong!",
     };

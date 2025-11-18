@@ -24,7 +24,7 @@ const buttonItems = [
   {
     title: "Messages",
     icon: <Mail />,
-    route: "",
+    route: RouteConfig.protectedRoute.MESSAGES,
   },
   {
     title: "Bookmarks",
