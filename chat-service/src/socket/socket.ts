@@ -37,11 +37,11 @@ export function initializeSocket(
             NOT: {
               id: userId,
             },
-            followers: {
-              none: {
-                followerId: userId,
-              },
-            },
+            // followers: {
+            //   none: {
+            //     followerId: userId,
+            //   },
+            // },
           },
           select: getUserDataSelect(userId),
         });

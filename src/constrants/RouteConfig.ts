@@ -11,6 +11,7 @@ const protectedRoute = {
   POST: "/posts/:postId",
   BOOKMARKS: "/bookmarks",
   NOTIFICATIONS: "/notifications",
+  MESSAGES: "/messages",
 };
 
 const RouteConfig = {
