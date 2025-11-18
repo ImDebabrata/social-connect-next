@@ -4,6 +4,7 @@
   "main": "./src/index.ts",
   "license": "MIT",
   "scripts": {
+    "build": "tsc",
     "start": "npx nodemon"
   },
   "devDependencies": {
