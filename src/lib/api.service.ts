@@ -41,7 +41,7 @@ export interface IAxiosOptions {
   decompress?: boolean;
 }
 
-const ENV = process.env;
+// const ENV = process.env;
 
 export const defaultHeaders = {
   Accept: "application/json",
@@ -170,17 +170,17 @@ const getRequestPromise = (request: Promise<AxiosResponse>) => {
   return new Promise<any>((resolve, reject) => {
     request
       .then((resp) => {
-        if (ENV.ENABLE_HTTP_LOGS) {
-          // console.log('====>>>>>>', resp.data);
-        }
+        // if (ENV.ENABLE_HTTP_LOGS) {
+        //   // console.log('====>>>>>>', resp.data);
+        // }
         setTimeout(() => {
           resolve({ ...resp.data, status: resp.status });
         }, 300);
       })
       .catch((err: any) => {
-        if (ENV.ENABLE_HTTP_LOGS) {
-          // console.error('=====>', err, 'API Error');
-        }
+        // if (ENV.ENABLE_HTTP_LOGS) {
+        //   // console.error('=====>', err, 'API Error');
+        // }
         // console.log("=====>", err.response, "Api Function Catch");
         try {
           const response: any = err.response ? err.response : { data: null };
