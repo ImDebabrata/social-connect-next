@@ -1,6 +1,6 @@
 //images
-import signinImage from "@/assets/login-image.jpg";
-import signupImage from "@/assets/signup-image.jpg";
+import signinImage from "@/assets/login-image.png";
+import signupImage from "@/assets/signup-image.png";
 import avatarPlaceholder from "@/assets/avatar-placeholder.png";
 
 // icons
