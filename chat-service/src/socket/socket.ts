@@ -73,7 +73,7 @@ export function initializeSocket(
         
         // For each conversation, get the latest message and unread count
         const results = await Promise.all(
-          conversations.map(async (conv) => {
+          conversations.map(async (conv: any) => {
             // Determine the other user in the conversation
             const otherUserId = conv.senderId === userId ? conv.receiverId : conv.senderId;
             
