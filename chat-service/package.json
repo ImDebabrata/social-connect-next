@@ -6,17 +6,18 @@
   "scripts": {
     "build": "tsc",
     "start": "npx nodemon",
-    "postinstall": "npx prisma generate"
+    "postinstall": "prisma generate"
   },
   "devDependencies": {
     "@types/express": "^5.0.1",
     "@types/node": "^22.13.14",
     "@types/socket.io": "^3.0.2",
     "ts-node": "^10.9.2",
-    "typescript": "^5.8.2"
+    "typescript": "^5.8.2",
+    "prisma": "6.19.0"
   },
   "dependencies": {
-    "@prisma/client": "^6.19.0",
+    "@prisma/client": "6.19.0",
     "@types/cors": "^2.8.17",
     "cors": "^2.8.5",
     "dotenv": "^16.4.7",
@@ -24,6 +25,6 @@
     "socket.io": "^4.8.1"
   },
   "prisma": {
-  "schema": "../prisma/schema.prisma"
-}
+    "schema": "../prisma/schema.prisma"
+  }
 }
