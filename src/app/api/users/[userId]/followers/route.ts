@@ -5,9 +5,10 @@ import { NotificationType } from "@prisma/client";
 
 export async function GET(
   request: Request,
-  { params: { userId } }: { params: { userId: string } }
+  { params }: { params: Promise<{ userId: string }> }
 ) {
   try {
+    const { userId } = await params;
     const loggedInUser = await getCurrentUser();
     if (!loggedInUser)
       return Response.json({ error: "Unauthorized" }, { status: 401 });
@@ -49,9 +50,10 @@ export async function GET(
 
 export async function POST(
   request: Request,
-  { params: { userId } }: { params: { userId: string } }
+  { params }: { params: Promise<{ userId: string }> }
 ) {
   try {
+    const { userId } = await params;
     const loggedInUser = await getCurrentUser();
     if (!loggedInUser)
       return Response.json({ error: "Unauthorized" }, { status: 401 });
@@ -88,9 +90,10 @@ export async function POST(
 
 export async function DELETE(
   request: Request,
-  { params: { userId } }: { params: { userId: string } }
+  { params }: { params: Promise<{ userId: string }> }
 ) {
   try {
+    const { userId } = await params;
     const loggedInUser = await getCurrentUser();
 
     if (!loggedInUser)
