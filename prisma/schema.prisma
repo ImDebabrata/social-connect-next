@@ -34,6 +34,9 @@ model User {
   receivedNotifications Notification[] @relation("Recipient")
   issuedNotifications   Notification[] @relation("Issuer")
 
+  sentMessages   Message[] @relation("sentMessages")
+  receivedMessages Message[] @relation("receivedMessages")
+
   createdAt DateTime @default(now())
 
   @@map("users")
@@ -147,4 +150,14 @@ enum NotificationType {
   LIKE
   FOLLOW
   COMMENT
+}
+
+model Message {
+  id        String   @id @default(uuid())
+  content   String
+  senderId  String
+  receiverId String
+  createdAt DateTime @default(now())
+  sender     User     @relation(fields: [senderId], references: [id], name: "sentMessages")
+  receiver   User     @relation(fields: [receiverId], references: [id], name: "receivedMessages")
 }
