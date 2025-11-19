@@ -10,6 +10,7 @@ import useMediaUpload, { Attachment } from "./useMediaUpload";
 import { cn } from "@/lib/utils";
 import Image from "next/image";
 import { MAX_FILES } from "@/lib/mediaValidation";
+import LoadingButton from "@/components/LoadingButton";
 
 /**
  * PostEditor component that handles creating and submitting new posts
@@ -202,9 +203,9 @@ function PostEditor() {
                     </>
                 )}
                 <AddAttachmentsButton onFilesSelected={handleFileSelected} disabled={onSubmitPost.isPending || attachments.length >= MAX_FILES} />
-                <Button className="min-w-20" onClick={handleSubmitPost} disabled={!postValue.trim() || isUploading}>
+                <LoadingButton loading={isUploading} className="min-w-20" onClick={handleSubmitPost} disabled={!postValue.trim() || isUploading}>
                     Post
-                </Button>
+                </LoadingButton>
             </div>
             {/* Overlay message shown when dragging files - pointer-events-none ensures it doesn't interfere with drag events */}
             {isDragActive && (
