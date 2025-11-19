@@ -203,7 +203,7 @@ function PostEditor() {
                     </>
                 )}
                 <AddAttachmentsButton onFilesSelected={handleFileSelected} disabled={onSubmitPost.isPending || attachments.length >= MAX_FILES} />
-                <LoadingButton loading={isUploading} className="min-w-20" onClick={handleSubmitPost} disabled={!postValue.trim() || isUploading}>
+                <LoadingButton loading={onSubmitPost.isPending} className="min-w-20" onClick={handleSubmitPost} disabled={!postValue.trim() || isUploading}>
                     Post
                 </LoadingButton>
             </div>
