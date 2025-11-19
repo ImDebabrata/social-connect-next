@@ -2,9 +2,11 @@ import React from "react";
 import { Skeleton } from "../ui/skeleton";
 
 function PostLoadingSkeleton() {
-  return Array.from({ length: 5 }).map((_, index) => (
+  return <div className="space-y-5">
+    {Array.from({ length: 5 }).map((_, index) => (
     <PostSkeleton key={index} />
-  ));
+  ))}
+  </div>
 }
 
 export default PostLoadingSkeleton;
