@@ -16,10 +16,12 @@ build:
 start:
 	$(PACKAGE_MANAGER) start
 
-# Start both Next.js development server and PostgreSQL in Docker
+# Start Next.js development server, PostgreSQL in Docker, and chat-service
 start-all:
 	@echo "Starting PostgreSQL in Docker..."
 	docker compose up -d
+	@echo "Starting chat-service..."
+	cd chat-service && $(PACKAGE_MANAGER) start &
 	@echo "Starting Next.js development server..."
 	$(PACKAGE_MANAGER) dev
 
