@@ -104,6 +104,11 @@ The application follows a microservices architecture:
 
    # JWT Secret for authentication
    JWT_SECRET="your-jwt-secret"
+
+   # Cloudinary (for media uploads)
+   CLOUDINARY_CLOUD_NAME="your-cloudinary-cloud-name"
+   CLOUDINARY_API_KEY="your-cloudinary-api-key"
+   CLOUDINARY_API_SECRET="your-cloudinary-api-secret"
    ```
 
    See `.env.example` for a template with all required environment variables.
