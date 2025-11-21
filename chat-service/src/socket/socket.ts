@@ -1,15 +1,18 @@
 import { Server, Socket } from "socket.io";
 import http from "http";
-import { PrismaClient } from "@prisma/client";
-import { getUserDataSelect, UserData } from "../lib/types";
-const prisma = new PrismaClient();
+import { PrismaClient, Message } from "@prisma/client";
+import { 
+  getUserDataSelect, 
+  UserData,
+  SuccessResponse,
+  ErrorResponse,
+  SocketResponse,
+  LastMessageResult,
+  ChatMessageResponse,
+  UnreadMessageCount
+} from "../lib/types";
 
-// Track unread messages between users
-interface UnreadMessageCount {
-  [key: string]: { // receiverId
-    [key: string]: number; // senderId: count
-  }
-}
+const prisma = new PrismaClient();
 
 // Keep track of unread messages in memory
 // In a production app, this would be stored in a database
@@ -53,7 +56,7 @@ export function initializeSocket(
     })
 
     // Get last messages for each conversation
-    socket.on("getLastMessages", async (data: { userId: string }, callback) => {
+    socket.on("getLastMessages", async (data: { userId: string }, callback: (response: SocketResponse<LastMessageResult[]>) => void) => {
       try {
         const { userId } = data;
         
@@ -73,7 +76,7 @@ export function initializeSocket(
         
         // For each conversation, get the latest message and unread count
         const results = await Promise.all(
-          conversations.map(async (conv: any) => {
+          conversations.map(async (conv: Message): Promise<LastMessageResult> => {
             // Determine the other user in the conversation
             const otherUserId = conv.senderId === userId ? conv.receiverId : conv.senderId;
             
@@ -138,7 +141,7 @@ export function initializeSocket(
     });
 
     // Get conversation history
-    socket.on("getConversation", async (data: { senderId: string; receiverId: string }, callback) => {
+    socket.on("getConversation", async (data: { senderId: string; receiverId: string }, callback: (response: SocketResponse<Message[]>) => void) => {
       try {
         const messages = await prisma.message.findMany({
           where: {
@@ -172,7 +175,7 @@ export function initializeSocket(
     });
 
     // Listen for chat messages
-    socket.on("chatMessage", async (data: { senderId: string; receiverId: string; content: string }, callback) => {
+    socket.on("chatMessage", async (data: { senderId: string; receiverId: string; content: string }, callback?: (response: SocketResponse<ChatMessageResponse>) => void) => {
       try {
         // Store message in database
         const message = await prisma.message.create({
@@ -196,7 +199,7 @@ export function initializeSocket(
         io.emit("chatMessage", message);
         
         // Return success with the created message for acknowledgment
-        if (callback) callback({ success: true, ...message });
+        if (callback) callback({ success: true, data: { ...message, success: true } });
       } catch (error) {
         console.error("Error saving message:", error);
         if (callback) callback({ success: false, error: "Failed to save message" });
