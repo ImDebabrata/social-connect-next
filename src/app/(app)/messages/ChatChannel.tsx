@@ -8,6 +8,7 @@ import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { Send } from "lucide-react";
 import { useMemo } from "react";
+import { UserData } from "@/lib/types";
 
 interface Message {
   id: string;
@@ -24,12 +25,12 @@ export default function ChatChannel() {
   const { user } = useCurrentSession();
   const [messages, setMessages] = useState<Message[]>([]);
   const [messageInput, setMessageInput] = useState("");
-  const [selectedUser, setSelectedUser] = useState<any>(null);
+  const [selectedUser, setSelectedUser] = useState<UserData | null>(null);
   const [isTyping, setIsTyping] = useState(false);
   const messagesEndRef = useRef<HTMLDivElement>(null);
 
   // Get available users from socket context
-  const [availableUsers, setAvailableUsers] = useState<any[]>([]);
+  const [availableUsers, setAvailableUsers] = useState<UserData[]>([]);
 
   // Get selected user details
   useEffect(() => {
@@ -37,7 +38,7 @@ export default function ChatChannel() {
     
     // Get users list if we don't have it yet
     if (availableUsers.length === 0) {
-      socket.emit('getUsers', user?.userId, (users: any[]) => {
+      socket.emit('getUsers', user?.userId, (users: UserData[]) => {
         setAvailableUsers(users);
         const selectedUserData = users.find(u => u.id === userId);
         if (selectedUserData) {
