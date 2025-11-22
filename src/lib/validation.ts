@@ -39,5 +39,6 @@ export const createCommentSchema = z.object({
 export type SessionPayload = {
   userId: string;
   expiresAt: Date;
+  username:string;
   avatarUrl: string | null | undefined;
 };

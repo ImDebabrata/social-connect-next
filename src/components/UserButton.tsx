@@ -17,6 +17,8 @@ import { Check, LogOutIcon, Monitor, Moon, Sun, UserIcon } from "lucide-react";
 import { getCurrentUser, handleLogOut } from "@/app/action";
 import { useQuery, useQueryClient } from "@tanstack/react-query";
 import { useTheme } from "next-themes";
+import Link from "next/link";
+import RouteConfig from "@/constrants/RouteConfig";
 
 interface UserButtonProps {
   className?: string;
@@ -33,7 +35,7 @@ function UserButton(props: UserButtonProps) {
     staleTime: Infinity,
     queryFn: getCurrentUser,
   });
-  const { avatarUrl = "" } = data || {};
+  const { avatarUrl = "", username= "" } = data || {};
   return (
     <DropdownMenu>
       <DropdownMenuTrigger className={className}>
@@ -42,9 +44,11 @@ function UserButton(props: UserButtonProps) {
       <DropdownMenuContent>
         <DropdownMenuLabel>My Account</DropdownMenuLabel>
         <DropdownMenuSeparator />
-        <DropdownMenuItem>
-          <UserIcon className="mr-2 size-4" />
-          Profile
+        <DropdownMenuItem asChild>
+          <Link href={RouteConfig.protectedRoute.PROFILE.replace(":username", username)}>
+            <UserIcon className="mr-2 size-4" />
+            Profile
+          </Link>
         </DropdownMenuItem>
         <DropdownMenuSub>
           <DropdownMenuSubTrigger>

@@ -37,6 +37,7 @@ export async function signin(
     }
     await createSession({
       userId: existingUser.id,
+      username: existingUser.username,
       avatarUrl: existingUser.avatarUrl,
     });
 
