@@ -45,6 +45,10 @@ export function useUpdateProfileMutation() {
       };
 
       await queryClient.cancelQueries(queryFilter);
+      
+      await queryClient.invalidateQueries({
+        queryKey: ["current user info"],
+      });
 
       queryClient.setQueriesData<InfiniteData<PostsPage, string | null>>(
         { queryKey: queryFilter.queryKey },
