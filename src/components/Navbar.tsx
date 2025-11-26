@@ -3,7 +3,7 @@ import RouteConfig from "@/constrants/RouteConfig";
 import Link from "next/link";
 import React from "react";
 import UserButton from "./UserButton";
-import SearchField from "./SearchField";
+// import SearchField from "./SearchField";
 
 const Navbar = () => {
   return (
@@ -15,7 +15,7 @@ const Navbar = () => {
         >
           {Misc.APP_NAME}
         </Link>
-        <SearchField />
+        {/* <SearchField /> */}
         <UserButton className="sm:ms-auto" />
       </div>
     </header>
