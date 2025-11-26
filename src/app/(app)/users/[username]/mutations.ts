@@ -31,20 +31,24 @@ export function useUpdateProfileMutation() {
       return Promise.all([
         updateUserProfile(values),
         avatar &&
-          fetchData({
+          fetchData<{avatarUrl:string|null}>({
             url: APIConfig.UPLOAD_AVATAR.URL as string,
             method: APIConfig.UPLOAD_AVATAR.METHOD,
             payload: formData,
           }),
       ]);
     },
-    onSuccess: async ([updatedUser]) => {
-      const newAvatarUrl = "";
+    onSuccess: async ([updatedUser,uploadResult]) => {
+      const newAvatarUrl = uploadResult?.avatarUrl;
       const queryFilter: QueryFilters = {
         queryKey: ["post-feed"],
       };
 
       await queryClient.cancelQueries(queryFilter);
+      
+      await queryClient.invalidateQueries({
+        queryKey: ["current user info"],
+      });
 
       queryClient.setQueriesData<InfiniteData<PostsPage, string | null>>(
         { queryKey: queryFilter.queryKey },

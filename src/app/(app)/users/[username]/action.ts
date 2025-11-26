@@ -1,6 +1,7 @@
 'use server';
 
 import { getCurrentUser } from "@/app/action";
+import { updateSessionPayload } from "@/lib/stateless-session";
 import prisma from "@/lib/prisma";
 import { getUserDataSelect } from "@/lib/types";
 import { updateUserProfileSchema,UpdateUserProfileValues } from "@/lib/validation";
@@ -18,5 +19,6 @@ export async function updateUserProfile(values:UpdateUserProfileValues){
       data:validatedValues,
       select:getUserDataSelect(loggedInUser.userId)
     })
+    await updateSessionPayload(updatedUser);
     return updatedUser;
 }

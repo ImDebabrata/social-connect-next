@@ -83,3 +83,31 @@ export async function deleteSession() {
   cookiesStore.delete(Misc.SESSION_COOKIE);
   redirect(RouteConfig.authScreens.SIGN_IN);
 }
+
+export async function updateSessionPayload(payload: Partial<SessionPayload>) {
+  const cookiesStore = await cookies();
+  const session = cookiesStore.get(Misc.SESSION_COOKIE)?.value;
+  const currentPayload = await decrypt(session);
+
+  if (!session || !currentPayload) {
+    return null;
+  }
+
+  const newPayload = { ...currentPayload, ...payload };
+  
+  if (!newPayload.expiresAt) {
+    return null;
+  }
+
+  const expiresAt = new Date(newPayload.expiresAt);
+  
+  const newSession = await encrypt(newPayload as SessionPayload);
+
+  cookiesStore.set(Misc.SESSION_COOKIE, newSession, {
+    httpOnly: true,
+    secure: true,
+    expires: expiresAt,
+    sameSite: "lax",
+    path: "/",
+  });
+}

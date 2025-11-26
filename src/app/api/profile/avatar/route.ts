@@ -2,6 +2,7 @@ import { NextRequest } from "next/server";
 import { uploadToCloudinary } from "@/lib/cloudinaryUpload";
 import prisma from "@/lib/prisma";
 import { getCurrentUser } from "@/app/action";
+import { updateSessionPayload } from "@/lib/stateless-session";
 
 /**
  * Constants for avatar upload restrictions
@@ -79,7 +80,10 @@ export async function POST(req: NextRequest) {
             data: { avatarUrl: result.secure_url },
         });
 
-        // Step 10: Return success response
+        // Step 10: Update session payload
+        await updateSessionPayload({ avatarUrl: result.secure_url });
+
+        // Step 11: Return success response
         return Response.json({ data: updatedUser }, { status: 200 });
     } catch (error) {
         console.error("Avatar upload failed:", error);
