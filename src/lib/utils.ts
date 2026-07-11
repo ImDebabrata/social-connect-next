@@ -1,28 +1,52 @@
 import { clsx, type ClassValue } from "clsx";
 import { twMerge } from "tailwind-merge";
-import moment, { Moment } from "moment";
+import dayjs, { type ConfigType } from "dayjs";
+import relativeTime from "dayjs/plugin/relativeTime";
 import ApiService from "./api.service";
+
+dayjs.extend(relativeTime);
 
 export function cn(...inputs: ClassValue[]) {
   return twMerge(clsx(inputs));
 }
 
-export function formatRelativeDate(date: string | Moment | Date): string {
-  // Check if the input is a valid moment date (whether it's a string or a moment object)
-  const mDate = moment(date);
+/** "3 minutes ago" style relative label (posts, comments). */
+export function formatRelativeDate(date: ConfigType): string {
+  const d = dayjs(date);
+  if (!d.isValid()) return "Invalid date";
 
-  if (!mDate.isValid()) {
-    return "Invalid date";
-  }
+  const diffInSeconds = dayjs().diff(d, "second");
+  if (diffInSeconds < 60) return `${diffInSeconds} seconds ago`;
 
-  const now = moment();
-  const diffInSeconds = now.diff(mDate, 'seconds');
+  return d.fromNow();
+}
 
-  if (diffInSeconds < 60) {
-    return `${diffInSeconds} seconds ago`;
-  }
+/** Absolute date, e.g. "04 Jul 2026" (profile "member since"). */
+export function formatDate(date: ConfigType): string {
+  return dayjs(date).format("DD MMM YYYY");
+}
 
-  return mDate.fromNow();
+/** Clock time for a message bubble, e.g. "2:32 PM". */
+export function formatMessageTime(date: ConfigType): string {
+  return dayjs(date).format("h:mm A");
+}
+
+/** Day separator inside a chat thread: "Today" / "Yesterday" / "Jul 4" / "Jul 4, 2025". */
+export function formatDayLabel(date: ConfigType): string {
+  const d = dayjs(date);
+  const now = dayjs();
+  if (d.isSame(now, "day")) return "Today";
+  if (d.isSame(now.subtract(1, "day"), "day")) return "Yesterday";
+  return d.isSame(now, "year") ? d.format("MMM D") : d.format("MMM D, YYYY");
+}
+
+/** Compact timestamp for the conversation list: time today, else "Yesterday" / "Jul 4". */
+export function formatChatListTime(date: ConfigType): string {
+  const d = dayjs(date);
+  const now = dayjs();
+  if (d.isSame(now, "day")) return d.format("h:mm A");
+  if (d.isSame(now.subtract(1, "day"), "day")) return "Yesterday";
+  return d.format("MMM D");
 }
 
 export function formatNumber(n: number): string {
