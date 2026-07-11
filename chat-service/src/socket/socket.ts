@@ -1,255 +1,279 @@
 import { Server, Socket } from "socket.io";
 import http from "http";
-import { PrismaClient, Message } from "@prisma/client";
-import { 
-  getUserDataSelect, 
+import { PrismaClient, Message, Prisma } from "@prisma/client";
+import {
+  getUserDataSelect,
   UserData,
-  SuccessResponse,
-  ErrorResponse,
   SocketResponse,
   LastMessageResult,
   ChatMessageResponse,
-  UnreadMessageCount
 } from "../lib/types";
+import { authenticateSocket } from "./auth";
 
-const prisma = new PrismaClient();
+export const prisma = new PrismaClient();
 
-// Keep track of unread messages in memory
-// In a production app, this would be stored in a database
-const unreadMessages: UnreadMessageCount = {};
+const MAX_MESSAGE_LENGTH = 4000;
+const CONVERSATION_PAGE_SIZE = 50;
 
-export function initializeSocket(
-  server: http.Server
-) {
+/**
+ * In-memory presence map: userId -> set of that user's live socket ids.
+ * A user is "online" while they have at least one socket connected.
+ *
+ * NOTE: this is per-process. To scale to multiple chat-service instances you
+ * must add the Redis adapter (@socket.io/redis-adapter) so rooms/emits fan out
+ * across processes, and back presence with Redis instead of this Map.
+ */
+const onlineUsers = new Map<string, Set<string>>();
+
+function addOnline(userId: string, socketId: string): boolean {
+  let sockets = onlineUsers.get(userId);
+  const wasOffline = !sockets || sockets.size === 0;
+  if (!sockets) {
+    sockets = new Set();
+    onlineUsers.set(userId, sockets);
+  }
+  sockets.add(socketId);
+  return wasOffline; // true when this is the user's first live socket
+}
+
+function removeOnline(userId: string, socketId: string): boolean {
+  const sockets = onlineUsers.get(userId);
+  if (!sockets) return false;
+  sockets.delete(socketId);
+  if (sockets.size === 0) {
+    onlineUsers.delete(userId);
+    return true; // true when the user's last socket just left
+  }
+  return false;
+}
+
+export function initializeSocket(server: http.Server): Server {
   const io = new Server(server, {
     cors: {
-      origin: process.env.APP_URL || "*",
+      origin: process.env.APP_URL || "http://localhost:3000",
       methods: ["GET", "POST"],
-      allowedHeaders: ["Content-Type", "Authorization"],
+      credentials: true,
     },
   });
 
-  io.on("connection", (socket: Socket) => {
-    // console.log(`User connected: ${socket.id}`);
+  // Reject any connection without a valid session cookie/token.
+  io.use(authenticateSocket);
 
-    // Get all users
-    socket.on('getUsers',async(userId:string,callback:(users:UserData[])=>void)=>{
-      try{
+  io.on("connection", (socket: Socket) => {
+    const userId: string = socket.data.userId;
+
+    // Join a room named after the user so we can target them across all their
+    // devices/tabs with io.to(userId).
+    socket.join(userId);
+
+    // Presence: tell everyone else this user came online (only on first socket),
+    // and hand the newcomer the current online roster.
+    const cameOnline = addOnline(userId, socket.id);
+    if (cameOnline) {
+      socket.broadcast.emit("presence:update", { userId, online: true });
+    }
+    socket.emit("presence:init", Array.from(onlineUsers.keys()));
+
+    // Allow a (re)mounted client to re-sync the online roster on demand, since
+    // presence:init only fires once per physical connection.
+    socket.on("presence:get", (callback: (ids: string[]) => void) => {
+      if (typeof callback === "function") callback(Array.from(onlineUsers.keys()));
+    });
+
+    // Mark all unread messages from `otherUserId` to this user as read, and let
+    // the sender know (read receipts). Shared by markMessagesAsRead + getConversation.
+    const markConversationRead = async (otherUserId: string) => {
+      const { count } = await prisma.message.updateMany({
+        where: { senderId: otherUserId, receiverId: userId, read: false },
+        data: { read: true, readAt: new Date() },
+      });
+      if (count > 0) {
+        io.to(otherUserId).emit("messagesRead", { readerId: userId });
+      }
+    };
+
+    // ---- Get all other users --------------------------------------------
+    socket.on("getUsers", async (_arg, callback: (users: UserData[]) => void) => {
+      try {
         const users = await prisma.user.findMany({
-          where: {
-            NOT: {
-              id: userId,
-            },
-            // followers: {
-            //   none: {
-            //     followerId: userId,
-            //   },
-            // },
-          },
+          where: { NOT: { id: userId } },
           select: getUserDataSelect(userId),
         });
-        console.log(users,'the users is here');
-        callback(users);
-      }catch(error){
-        console.error("Error fetching users:",error);
+        if (typeof callback === "function") callback(users as UserData[]);
+      } catch (error) {
+        console.error("Error fetching users:", error);
+        if (typeof callback === "function") callback([]);
       }
-    })
+    });
 
-    // Get last messages for each conversation
-    socket.on("getLastMessages", async (data: { userId: string }, callback: (response: SocketResponse<LastMessageResult[]>) => void) => {
-      try {
-        const { userId } = data;
-        
-        // Get users that the current user has had conversations with
-        const conversations = await prisma.message.findMany({
-          where: {
-            OR: [
-              { senderId: userId },
-              { receiverId: userId }
-            ]
-          },
-          orderBy: {
-            createdAt: 'desc'
-          },
-          distinct: ['senderId', 'receiverId']
-        });
-        
-        // For each conversation, get the latest message and unread count
-        const results = await Promise.all(
-          conversations.map(async (conv: Message): Promise<LastMessageResult> => {
-            // Determine the other user in the conversation
-            const otherUserId = conv.senderId === userId ? conv.receiverId : conv.senderId;
-            
-            // Get latest message
-            const latestMessage = await prisma.message.findFirst({
-              where: {
-                OR: [
-                  { 
-                    senderId: userId,
-                    receiverId: otherUserId 
-                  },
-                  { 
-                    senderId: otherUserId,
-                    receiverId: userId 
-                  }
-                ]
-              },
-              orderBy: {
-                createdAt: 'desc'
-              }
-            });
-            
-            // Get unread count
-            let unreadCount = 0;
-            if (unreadMessages[userId] && unreadMessages[userId][otherUserId]) {
-              unreadCount = unreadMessages[userId][otherUserId];
-            }
-            
+    // ---- Last message + unread count per conversation --------------------
+    socket.on(
+      "getLastMessages",
+      async (
+        _data: unknown,
+        callback: (response: SocketResponse<LastMessageResult[]>) => void
+      ) => {
+        try {
+          // Latest message per partner (DISTINCT ON) and unread counts grouped
+          // by sender are independent — run them in parallel.
+          const [latest, unreadGroups] = await Promise.all([
+            prisma.$queryRaw<(Message & { partner: string })[]>(Prisma.sql`
+              SELECT DISTINCT ON (partner) *
+              FROM (
+                SELECT *,
+                  CASE WHEN "senderId" = ${userId}
+                       THEN "receiverId" ELSE "senderId" END AS partner
+                FROM "Message"
+                WHERE "senderId" = ${userId} OR "receiverId" = ${userId}
+              ) sub
+              ORDER BY partner, "createdAt" DESC
+            `),
+            prisma.message.groupBy({
+              by: ["senderId"],
+              where: { receiverId: userId, read: false },
+              _count: { _all: true },
+            }),
+          ]);
+
+          const unreadBySender = new Map(
+            unreadGroups.map((g) => [g.senderId, g._count._all])
+          );
+
+          const results: LastMessageResult[] = latest.map((row) => {
+            const { partner, ...message } = row;
             return {
-              userId: otherUserId,
-              message: latestMessage,
-              unreadCount
+              userId: partner,
+              message,
+              unreadCount: unreadBySender.get(partner) ?? 0,
             };
-          })
-        );
-        
-        callback({ success: true, data: results });
-      } catch (error) {
-        console.error("Error fetching last messages:", error);
-        callback({ success: false, error: "Failed to fetch last messages" });
-      }
-    });
+          });
 
-    // Mark messages as read
-    socket.on("markMessagesAsRead", async (data: { senderId: string, receiverId: string }) => {
-      try {
-        const { senderId, receiverId } = data;
-        
-        // Clear unread message count
-        if (!unreadMessages[receiverId]) {
-          unreadMessages[receiverId] = {};
+          callback({ success: true, data: results });
+        } catch (error) {
+          console.error("Error fetching last messages:", error);
+          callback({ success: false, error: "Failed to fetch last messages" });
         }
-        unreadMessages[receiverId][senderId] = 0;
-        
-        // In a real app, you would also update the database
-        // For now, we're just using in-memory storage
-        
-        console.log(`Marked messages from ${senderId} to ${receiverId} as read`);
-      } catch (error) {
-        console.error("Error marking messages as read:", error);
       }
-    });
+    );
 
-    // Get conversation history
-    socket.on("getConversation", async (data: { senderId: string; receiverId: string }, callback: (response: SocketResponse<Message[]>) => void) => {
-      try {
-        const messages = await prisma.message.findMany({
-          where: {
-            OR: [
-              { 
-                senderId: data.senderId,
-                receiverId: data.receiverId 
-              },
-              { 
-                senderId: data.receiverId,
-                receiverId: data.senderId 
-              }
-            ]
-          },
-          orderBy: {
-            createdAt: 'asc'
+    // ---- Mark a conversation's incoming messages as read -----------------
+    socket.on(
+      "markMessagesAsRead",
+      async (data: { otherUserId: string }) => {
+        try {
+          const { otherUserId } = data;
+          if (!otherUserId) return;
+          await markConversationRead(otherUserId);
+        } catch (error) {
+          console.error("Error marking messages as read:", error);
+        }
+      }
+    );
+
+    // ---- Conversation history (and mark incoming as read) ----------------
+    socket.on(
+      "getConversation",
+      async (
+        data: { otherUserId: string },
+        callback: (response: SocketResponse<Message[]>) => void
+      ) => {
+        try {
+          const otherUserId = data.otherUserId;
+          if (!otherUserId) {
+            return callback({ success: false, error: "otherUserId is required" });
           }
-        });
-        
-        // Mark messages as read when conversation is opened
-        if (!unreadMessages[data.senderId]) {
-          unreadMessages[data.senderId] = {};
-        }
-        unreadMessages[data.senderId][data.receiverId] = 0;
-        
-        callback({ success: true, data: messages });
-      } catch (error) {
-        console.error("Error fetching conversation:", error);
-        callback({ success: false, error: "Failed to fetch conversation" });
-      }
-    });
 
-    // Listen for chat messages
-    socket.on("chatMessage", async (data: { senderId: string; receiverId: string; content: string }, callback?: (response: SocketResponse<ChatMessageResponse>) => void) => {
-      try {
-        // Store message in database
-        const message = await prisma.message.create({
-          data: {
-            content: data.content,
-            senderId: data.senderId,
-            receiverId: data.receiverId
+          // Mark incoming messages read first, then fetch, so the returned rows
+          // are correct by construction (no read-after-write race, no patching).
+          await markConversationRead(otherUserId);
+          const messages = await prisma.message.findMany({
+            where: {
+              OR: [
+                { senderId: userId, receiverId: otherUserId },
+                { senderId: otherUserId, receiverId: userId },
+              ],
+            },
+            orderBy: { createdAt: "desc" },
+            take: CONVERSATION_PAGE_SIZE,
+          });
+          messages.reverse(); // oldest -> newest for display
+
+          callback({ success: true, data: messages });
+        } catch (error) {
+          console.error("Error fetching conversation:", error);
+          callback({ success: false, error: "Failed to fetch conversation" });
+        }
+      }
+    );
+
+    // ---- Send a chat message --------------------------------------------
+    socket.on(
+      "chatMessage",
+      async (
+        data: { receiverId: string; content: string },
+        callback?: (response: SocketResponse<ChatMessageResponse>) => void
+      ) => {
+        try {
+          const receiverId = data?.receiverId;
+          const content = (data?.content ?? "").trim();
+
+          // Validate: senderId comes from the authenticated socket, never the
+          // client, so a user can only ever send *as themselves*.
+          if (!receiverId || receiverId === userId) {
+            return callback?.({ success: false, error: "Invalid recipient" });
           }
-        });
-        
-        // Increment unread message count for the recipient
-        if (!unreadMessages[data.receiverId]) {
-          unreadMessages[data.receiverId] = {};
+          if (!content) {
+            return callback?.({ success: false, error: "Message is empty" });
+          }
+          if (content.length > MAX_MESSAGE_LENGTH) {
+            return callback?.({ success: false, error: "Message too long" });
+          }
+
+          const message = await prisma.message.create({
+            data: { content, senderId: userId, receiverId, read: false },
+          });
+
+          // Deliver only to the two participants (their rooms), not everyone.
+          io.to(userId).to(receiverId).emit("chatMessage", message);
+
+          callback?.({ success: true, data: { ...message, success: true } });
+        } catch (error) {
+          console.error("Error saving message:", error);
+          callback?.({ success: false, error: "Failed to save message" });
         }
-        if (!unreadMessages[data.receiverId][data.senderId]) {
-          unreadMessages[data.receiverId][data.senderId] = 0;
-        }
-        unreadMessages[data.receiverId][data.senderId]++;
-        
-        // Broadcast the message to all clients
-        io.emit("chatMessage", message);
-        
-        // Return success with the created message for acknowledgment
-        if (callback) callback({ success: true, data: { ...message, success: true } });
-      } catch (error) {
-        console.error("Error saving message:", error);
-        if (callback) callback({ success: false, error: "Failed to save message" });
+      }
+    );
+
+    // ---- Typing indicators (targeted to the recipient only) --------------
+    // Track who we're typing to so we can send a stop if the socket drops.
+    let typingTo: string | null = null;
+
+    socket.on("typingStarted", (data: { receiverId: string }) => {
+      if (data?.receiverId) {
+        typingTo = data.receiverId;
+        io.to(data.receiverId).emit("userTyping", { senderId: userId });
       }
     });
 
-    // Listen for typing indicator events
-    socket.on("typingStarted", (data: { senderId: string; receiverId: string }) => {
-      // Broadcast to everyone except the sender
-      socket.broadcast.emit("userTyping", data);
+    socket.on("typingStopped", (data: { receiverId: string }) => {
+      if (data?.receiverId) {
+        if (typingTo === data.receiverId) typingTo = null;
+        io.to(data.receiverId).emit("userStoppedTyping", { senderId: userId });
+      }
     });
 
-    socket.on("typingStopped", (data: { senderId: string; receiverId: string }) => {
-      // Broadcast to everyone except the sender
-      socket.broadcast.emit("userStoppedTyping", data);
+    // ---- Disconnect / presence ------------------------------------------
+    socket.on("disconnect", () => {
+      // Clear a dangling typing indicator on the peer if we dropped mid-type.
+      if (typingTo) {
+        io.to(typingTo).emit("userStoppedTyping", { senderId: userId });
+      }
+      const wentOffline = removeOnline(userId, socket.id);
+      if (wentOffline) {
+        socket.broadcast.emit("presence:update", { userId, online: false });
+      }
     });
-
-    // Listen for status update (online/offline)
-    // socket.on("updateStatus", async (data: { userId: string; status: string }) => {
-    //   try {
-    //     // Update user status in database
-    //     await prisma.user.update({
-    //       where: { id: data.userId },
-    //       data: { status: data.status }
-    //     });
-        
-    //     // Broadcast status update
-    //     io.emit("updateStatus", data);
-    //   } catch (error) {
-    //     console.error("Error updating status:", error);
-    //   }
-    // });
-
-    // socket.on("disconnect", async () => {
-    //   console.log(`User disconnected: ${socket.id}`);
-      
-    //   // If you have the user ID stored in socket, you can update their status to offline
-    //   const userId = socket.data?.userId;
-    //   if (userId) {
-    //     try {
-    //       await prisma.user.update({
-    //         where: { id: userId },
-    //         data: { status: "offline" }
-    //       });
-          
-    //       io.emit("updateStatus", { userId, status: "offline" });
-    //     } catch (error) {
-    //       console.error("Error updating status on disconnect:", error);
-    //     }
-    //   }
-    // });
   });
+
+  return io;
 }

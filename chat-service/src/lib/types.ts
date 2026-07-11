@@ -44,6 +44,8 @@ export interface MessageData {
   content: string;
   senderId: string;
   receiverId: string;
+  read: boolean;
+  readAt: Date | null;
   createdAt: Date;
 }
 
@@ -90,13 +92,4 @@ export interface LastMessageResult {
  */
 export interface ChatMessageResponse extends MessageData {
   success: boolean;
-}
-
-/**
- * Track unread messages between users
- */
-export interface UnreadMessageCount {
-  [receiverId: string]: {
-    [senderId: string]: number;
-  };
 }
