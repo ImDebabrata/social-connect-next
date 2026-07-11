@@ -5,8 +5,7 @@ import TrendsSidebar from "@/components/TrendsSidebar";
 import UserAvatar from "@/components/UserAvatar";
 import prisma from "@/lib/prisma";
 import { FollowerInfo, getUserDataSelect, UserData } from "@/lib/types";
-import { formatNumber } from "@/lib/utils";
-import moment from "moment";
+import { formatDate, formatNumber } from "@/lib/utils";
 import { Metadata } from "next";
 import { notFound } from "next/navigation";
 import React, { cache } from "react";
@@ -101,7 +100,7 @@ async function UserProfile(props: UserProfileProps) {
             <h1 className="text-3xl font-bold">{user.displayName}</h1>
             <div className="text-muted-foreground">@{user.username}</div>
           </div>
-          <div>Member since {moment(user.createdAt).format("DD MMM YYYY")}</div>
+          <div>Member since {formatDate(user.createdAt)}</div>
           <div className="flex items-center gap-3">
             <span>
               Posts:{" "}
