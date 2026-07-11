@@ -1,24 +1,19 @@
-// import { getCurrentUser } from "@/app/action";
 "use client";
 import UserAvatar from "@/components/UserAvatar";
 import RouteConfig from "@/constrants/RouteConfig";
-import { UserData } from "@/lib/types";
 import { useRouter, useSearchParams } from "next/navigation";
-import { useCallback, useEffect } from "react";
+import { useCallback, useEffect, useMemo, useState } from "react";
 import { Input } from "@/components/ui/input";
 import { Search } from "lucide-react";
-import { useState } from "react";
-
-interface UserWithMessageInfo extends UserData {
-  lastMessage?: string;
-  lastMessageTime?: Date;
-  unreadCount: number;
-}
+import type { UserWithMessageInfo } from "./SocketChatWrapper";
+import { formatChatListTime } from "@/lib/utils";
 
 export default function ChatSidebar({
   userList,
+  onlineUserIds,
 }: {
   userList: UserWithMessageInfo[];
+  onlineUserIds: Set<string>;
 }) {
   const router = useRouter();
   const searchParams = useSearchParams();
@@ -26,113 +21,122 @@ export default function ChatSidebar({
   const [searchQuery, setSearchQuery] = useState("");
 
   const handleSelectUser = (userId: string) => {
-    console.log(userId);
-    // Set user id to search params
     router.push(`${RouteConfig.protectedRoute.MESSAGES}?userId=${userId}`);
   };
 
-  // On click on esc key should delete the search params
   const handleEscapeKey = useCallback(
     (e: KeyboardEvent) => {
-      if (e.key === "Escape") {
-        router.push(RouteConfig.protectedRoute.MESSAGES);
-      }
+      if (e.key === "Escape") router.push(RouteConfig.protectedRoute.MESSAGES);
     },
     [router]
   );
 
   useEffect(() => {
     window.addEventListener("keydown", handleEscapeKey);
-    return () => {
-      window.removeEventListener("keydown", handleEscapeKey);
-    };
+    return () => window.removeEventListener("keydown", handleEscapeKey);
   }, [handleEscapeKey]);
 
-  // Filter users based on search query
-  const filteredUsers = userList.filter(
-    (user) =>
-      user.displayName.toLowerCase().includes(searchQuery.toLowerCase()) ||
-      (user.bio && user.bio.toLowerCase().includes(searchQuery.toLowerCase()))
-  );
-
-  // Sort users: first by unread messages, then by last message time
-  const sortedUsers = [...filteredUsers].sort((a, b) => {
-    // First sort by unread count (descending)
-    if (a.unreadCount !== b.unreadCount) {
-      return b.unreadCount - a.unreadCount;
-    }
-
-    // Then sort by message time (newest first)
-    if (a.lastMessageTime && b.lastMessageTime) {
-      return b.lastMessageTime.getTime() - a.lastMessageTime.getTime();
-    }
-
-    // Put users with messages above those without
-    if (a.lastMessageTime && !b.lastMessageTime) return -1;
-    if (!a.lastMessageTime && b.lastMessageTime) return 1;
-
-    // Default sorting by name
-    return a.displayName.localeCompare(b.displayName);
-  });
+  const sortedUsers = useMemo(() => {
+    const q = searchQuery.toLowerCase();
+    return userList
+      .filter(
+        (u) =>
+          u.displayName.toLowerCase().includes(q) ||
+          (u.bio && u.bio.toLowerCase().includes(q))
+      )
+      .sort((a, b) => {
+        if (a.unreadCount !== b.unreadCount) return b.unreadCount - a.unreadCount;
+        if (a.lastMessageTime && b.lastMessageTime)
+          return b.lastMessageTime.getTime() - a.lastMessageTime.getTime();
+        if (a.lastMessageTime) return -1;
+        if (b.lastMessageTime) return 1;
+        return a.displayName.localeCompare(b.displayName);
+      });
+  }, [userList, searchQuery]);
 
   return (
-    <div className="size-full flex flex-col border-e md:w-72">
-      {/* Search bar */}
-      <div className="p-3 border-b">
+    <div className="flex size-full flex-col bg-card">
+      {/* Header */}
+      <div className="border-b p-3">
+        <h2 className="mb-3 px-1 text-lg font-semibold">Messages</h2>
         <div className="relative">
-          <Search className="absolute left-2 top-1/2 h-4 w-4 -translate-y-1/2 text-muted-foreground" />
+          <Search className="pointer-events-none absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-muted-foreground" />
           <Input
-            placeholder="Search users..."
+            placeholder="Search people…"
             value={searchQuery}
             onChange={(e) => setSearchQuery(e.target.value)}
-            className="pl-8"
+            className="rounded-full pl-9"
+            aria-label="Search people"
           />
         </div>
       </div>
 
-      {/* User list */}
-      <div className="overflow-y-auto flex-1">
+      {/* List */}
+      <div className="flex-1 overflow-y-auto p-1.5">
         {sortedUsers.length === 0 ? (
-          <p className="text-center p-4 text-muted-foreground">
-            No users found
+          <p className="p-6 text-center text-sm text-muted-foreground">
+            No people found
           </p>
         ) : (
-          sortedUsers.map((user, index) => (
-            <div
-              onClick={() => handleSelectUser(user.id)}
-              key={index}
-              className={`flex items-center gap-2 p-3 hover:bg-accent cursor-pointer ${
-                selectedUserId === user.id ? "bg-accent" : ""
-              }`}
-            >
-              <UserAvatar avatarUrl={user.avatarUrl} size={40} />
-              <div className="flex-1 min-w-0">
-                <div className="flex justify-between items-start">
-                  <p className="text-sm font-medium truncate">
-                    {user.displayName}
-                  </p>
-                  {user.lastMessageTime && (
-                    <span className="text-xs text-muted-foreground whitespace-nowrap ml-2">
-                      {new Date(user.lastMessageTime).toLocaleTimeString([], {
-                        hour: "2-digit",
-                        minute: "2-digit",
-                      })}
-                    </span>
+          sortedUsers.map((user) => {
+            const active = selectedUserId === user.id;
+            const online = onlineUserIds.has(user.id);
+            const hasUnread = user.unreadCount > 0;
+            return (
+              <button
+                key={user.id}
+                onClick={() => handleSelectUser(user.id)}
+                className={`flex w-full items-center gap-3 rounded-xl p-2.5 text-left transition-colors ${
+                  active ? "bg-accent" : "hover:bg-accent/60"
+                }`}
+              >
+                <div className="relative shrink-0">
+                  <UserAvatar avatarUrl={user.avatarUrl} size={44} />
+                  {online && (
+                    <span className="absolute bottom-0 right-0 h-3 w-3 rounded-full border-2 border-card bg-green-500" />
                   )}
                 </div>
-                <div className="flex justify-between items-center">
-                  <p className="text-xs text-muted-foreground truncate max-w-[140px]">
-                    {user.lastMessage || "Start a conversation"}
-                  </p>
-                  {user.unreadCount > 0 && (
-                    <span className="bg-primary text-primary-foreground text-xs rounded-full h-5 min-w-5 flex items-center justify-center px-1">
-                      {user.unreadCount}
-                    </span>
-                  )}
+                <div className="min-w-0 flex-1">
+                  <div className="flex items-baseline justify-between gap-2">
+                    <p
+                      className={`truncate text-sm ${
+                        hasUnread ? "font-semibold" : "font-medium"
+                      }`}
+                    >
+                      {user.displayName}
+                    </p>
+                    {user.lastMessageTime && (
+                      <span
+                        className={`shrink-0 text-[11px] ${
+                          hasUnread
+                            ? "font-medium text-primary"
+                            : "text-muted-foreground"
+                        }`}
+                      >
+                        {formatChatListTime(user.lastMessageTime)}
+                      </span>
+                    )}
+                  </div>
+                  <div className="mt-0.5 flex items-center justify-between gap-2">
+                    <p
+                      className={`truncate text-xs ${
+                        hasUnread
+                          ? "font-medium text-foreground"
+                          : "text-muted-foreground"
+                      }`}
+                    >
+                      {user.lastMessage || "Start a conversation"}
+                    </p>
+                    {hasUnread && (
+                      <span className="flex h-5 min-w-5 shrink-0 items-center justify-center rounded-full bg-primary px-1.5 text-[11px] font-semibold text-primary-foreground">
+                        {user.unreadCount}
+                      </span>
+                    )}
+                  </div>
                 </div>
-              </div>
-            </div>
-          ))
+              </button>
+            );
+          })
         )}
       </div>
     </div>

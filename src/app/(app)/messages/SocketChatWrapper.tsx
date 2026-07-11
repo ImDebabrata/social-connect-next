@@ -1,22 +1,13 @@
 "use client";
-// import { useSocket } from "@/hooks/useSocket";
 import ChatChannel from "./ChatChannel";
 import ChatSidebar from "./ChatSidebar";
-import { useEffect, useState } from "react";
-import { UserData } from "@/lib/types";
+import { useCallback, useEffect, useMemo, useRef, useState } from "react";
+import { UserData, ChatMessage as Message } from "@/lib/types";
 import { useCurrentSession } from "@/hooks/useCurrentSession";
 import { useSocket } from "@/hooks/useSocket";
 import { useSearchParams } from "next/navigation";
 
-interface Message {
-  id: string;
-  content: string;
-  senderId: string;
-  receiverId: string;
-  createdAt: Date;
-}
-
-interface UserWithMessageInfo extends UserData {
+export interface UserWithMessageInfo extends UserData {
   lastMessage?: string;
   lastMessageTime?: Date;
   unreadCount: number;
@@ -26,137 +17,168 @@ export default function SocketChatWrapper() {
   const socket = useSocket();
   const { user } = useCurrentSession();
   const [usersWithMessages, setUsersWithMessages] = useState<UserWithMessageInfo[]>([]);
+  const [onlineUserIds, setOnlineUserIds] = useState<Set<string>>(new Set());
   const searchParams = useSearchParams();
   const selectedUserId = searchParams.get("userId");
 
-  // Connect to socket and fetch users
+  // At most one unknown-partner roster refetch in flight at a time.
+  const rosterRefetchPending = useRef(false);
+
+  const loadLastMessages = useCallback(() => {
+    if (!socket || !user?.userId) return;
+    socket.emit(
+      "getLastMessages",
+      { userId: user.userId },
+      (response: {
+        success: boolean;
+        data: { userId: string; message: Message | null; unreadCount: number }[];
+      }) => {
+        if (!response.success) return;
+        const byId = new Map(response.data.map((d) => [d.userId, d]));
+        setUsersWithMessages((prev) =>
+          prev.map((item) => {
+            const d = byId.get(item.id);
+            if (d && d.message) {
+              return {
+                ...item,
+                lastMessage: d.message.content,
+                lastMessageTime: new Date(d.message.createdAt),
+                unreadCount: d.unreadCount,
+              };
+            }
+            return item;
+          })
+        );
+      }
+    );
+  }, [socket, user?.userId]);
+
+  const loadUsers = useCallback(() => {
+    if (!socket || !user?.userId) return;
+    // Re-sync presence in case this component mounted after connect.
+    socket.emit("presence:get", (ids: string[]) => setOnlineUserIds(new Set(ids)));
+    socket.emit("getUsers", user.userId, (users: UserData[]) => {
+      rosterRefetchPending.current = false;
+      setUsersWithMessages((prev) => {
+        const byId = new Map(prev.map((u) => [u.id, u]));
+        return users.map((u) => ({
+          ...u,
+          lastMessage: byId.get(u.id)?.lastMessage,
+          lastMessageTime: byId.get(u.id)?.lastMessageTime,
+          unreadCount: byId.get(u.id)?.unreadCount ?? 0,
+        }));
+      });
+      loadLastMessages();
+    });
+  }, [socket, user?.userId, loadLastMessages]);
+
+  // Connect + fetch users, and track presence.
   useEffect(() => {
     if (!socket || !user?.userId) return;
 
-    const onConnect = () => {
-      console.log('Connected to chat service');
-      // Fetch users after connection
-      socket.emit('getUsers', user.userId, (users: UserData[]) => {
-        console.log('Users received:', users.length);
-        // Initialize users with empty message data
-        const initialUsers = users.map(user => ({
-          ...user,
-          unreadCount: 0
-        }));
-        setUsersWithMessages(initialUsers);
+    const onPresenceInit = (ids: string[]) => setOnlineUserIds(new Set(ids));
+    const onPresenceUpdate = ({ userId: id, online }: { userId: string; online: boolean }) =>
+      setOnlineUserIds((prev) => {
+        const next = new Set(prev);
+        if (online) next.add(id);
+        else next.delete(id);
+        return next;
       });
-    };
 
-    const onDisconnect = () => {
-      console.log('Disconnected from chat service');
-    };
-
-    socket.on('connect', onConnect);
-    socket.on('disconnect', onDisconnect);
-
-    // If already connected, fetch users
-    if (socket.connected) {
-      onConnect();
-    }
+    socket.on("connect", loadUsers);
+    socket.on("presence:init", onPresenceInit);
+    socket.on("presence:update", onPresenceUpdate);
+    if (socket.connected) loadUsers();
 
     return () => {
-      socket.off('connect', onConnect);
-      socket.off('disconnect', onDisconnect);
+      socket.off("connect", loadUsers);
+      socket.off("presence:init", onPresenceInit);
+      socket.off("presence:update", onPresenceUpdate);
     };
-  }, [socket, user?.userId]);
+  }, [socket, user?.userId, loadUsers]);
 
-  // Listen for new messages to update the user list
+  // The open conversation, read inside the message listener without making it a
+  // dependency (so the listener binds once, not on every conversation switch).
+  const selectedUserIdRef = useRef(selectedUserId);
+  selectedUserIdRef.current = selectedUserId;
+
+  // Keep the sidebar's last message / unread badge in sync with live messages.
   useEffect(() => {
     if (!socket || !user?.userId) return;
 
     const handleNewMessage = (message: Message) => {
-      const isMessageSentByUser = message.senderId === user.userId;
-      const otherUserId = isMessageSentByUser ? message.receiverId : message.senderId;
-      
-      setUsersWithMessages(prevUsers => {
-        return prevUsers.map(userItem => {
-          // If this user is involved in the message
-          if (userItem.id === otherUserId) {
-            // Only increase unread count if:
-            // 1. The message is not from the current user
-            // 2. The message's sender is not the currently selected user
-            const shouldIncreaseUnreadCount = 
-              !isMessageSentByUser && otherUserId !== selectedUserId;
-            
-            return {
-              ...userItem,
-              lastMessage: message.content,
-              lastMessageTime: new Date(message.createdAt),
-              unreadCount: shouldIncreaseUnreadCount ? 
-                userItem.unreadCount + 1 : userItem.unreadCount
-            };
+      const isMine = message.senderId === user.userId;
+      const otherUserId = isMine ? message.receiverId : message.senderId;
+      const bumpUnread = !isMine && otherUserId !== selectedUserIdRef.current;
+
+      setUsersWithMessages((prev) => {
+        // Unknown conversation partner (e.g. a user created after getUsers ran):
+        // refetch the roster once (coalesced) so a row for them appears.
+        if (!prev.some((item) => item.id === otherUserId)) {
+          if (!rosterRefetchPending.current) {
+            rosterRefetchPending.current = true;
+            loadUsers();
           }
-          return userItem;
-        });
+          return prev;
+        }
+        return prev.map((item) =>
+          item.id === otherUserId
+            ? {
+                ...item,
+                lastMessage: message.content,
+                lastMessageTime: new Date(message.createdAt),
+                unreadCount: bumpUnread ? item.unreadCount + 1 : item.unreadCount,
+              }
+            : item
+        );
       });
     };
 
-    socket.on('chatMessage', handleNewMessage);
-
-    // Initial loading of last messages for each user
-    socket.emit('getLastMessages', { userId: user.userId }, (response: {
-      success: boolean;
-      data: { userId: string; message: Message | null; unreadCount: number }[]
-    }) => {
-      if (response.success) {
-        setUsersWithMessages(prevUsers => {
-          return prevUsers.map(userItem => {
-            const userData = response.data.find(data => data.userId === userItem.id);
-            if (userData && userData.message) {
-              return {
-                ...userItem,
-                lastMessage: userData.message.content,
-                lastMessageTime: new Date(userData.message.createdAt),
-                unreadCount: userData.unreadCount
-              };
-            }
-            return userItem;
-          });
-        });
-      }
-    });
-
+    socket.on("chatMessage", handleNewMessage);
     return () => {
-      socket.off('chatMessage', handleNewMessage);
+      socket.off("chatMessage", handleNewMessage);
     };
-  }, [socket, user?.userId, selectedUserId]);
+  }, [socket, user?.userId, loadUsers]);
 
-  // Reset unread count when a user is selected
+  // Clear unread when a conversation is opened. The server marks the messages
+  // read via getConversation (fired by ChatChannel), so no emit is needed here.
   useEffect(() => {
     if (!selectedUserId || !user?.userId) return;
+    setUsersWithMessages((prev) =>
+      prev.map((item) =>
+        item.id === selectedUserId ? { ...item, unreadCount: 0 } : item
+      )
+    );
+  }, [selectedUserId, user?.userId]);
 
-    setUsersWithMessages(prevUsers => {
-      return prevUsers.map(userItem => {
-        if (userItem.id === selectedUserId) {
-          return {
-            ...userItem,
-            unreadCount: 0
-          };
-        }
-        return userItem;
-      });
-    });
+  const selectedUser = useMemo(
+    () => usersWithMessages.find((u) => u.id === selectedUserId) ?? null,
+    [usersWithMessages, selectedUserId]
+  );
 
-    // Let the server know messages have been read
-    if (socket) {
-      socket.emit('markMessagesAsRead', {
-        senderId: selectedUserId,
-        receiverId: user.userId
-      });
-    }
-  }, [selectedUserId, user?.userId, socket]);
-
-//   if (!socket)
-//     return <ImageConfig.LoadingIcon className="mx-auto my-3 animate-spin" />;
   return (
-    <>
-      <ChatSidebar userList={usersWithMessages} />
-      <ChatChannel />
-    </>
+    <div className="flex h-full w-full">
+      {/* Conversation list: full-width on mobile, fixed rail on desktop.
+          Hidden on mobile once a conversation is open. */}
+      <div
+        className={`${
+          selectedUserId ? "hidden md:flex" : "flex"
+        } w-full shrink-0 flex-col border-e md:w-80`}
+      >
+        <ChatSidebar userList={usersWithMessages} onlineUserIds={onlineUserIds} />
+      </div>
+
+      {/* Thread: hidden on mobile until a conversation is open. */}
+      <div
+        className={`${
+          selectedUserId ? "flex" : "hidden md:flex"
+        } min-w-0 flex-1`}
+      >
+        <ChatChannel
+          selectedUser={selectedUser}
+          isOnline={selectedUserId ? onlineUserIds.has(selectedUserId) : false}
+        />
+      </div>
+    </div>
   );
 }
