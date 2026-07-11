@@ -127,3 +127,12 @@ export interface BookmarkInfo {
 export interface NotificationCountInfo{
   unreadCount:number
 }
+export interface ChatMessage {
+  id: string;
+  content: string;
+  senderId: string;
+  receiverId: string;
+  read: boolean;
+  readAt?: Date | null;
+  createdAt: Date;
+}
