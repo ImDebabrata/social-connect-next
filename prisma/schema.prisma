@@ -156,7 +156,12 @@ model Message {
   content   String
   senderId  String
   receiverId String
+  read       Boolean  @default(false)
+  readAt     DateTime?
   createdAt DateTime @default(now())
   sender     User     @relation(fields: [senderId], references: [id], name: "sentMessages")
   receiver   User     @relation(fields: [receiverId], references: [id], name: "receivedMessages")
+
+  @@index([senderId, receiverId, createdAt])
+  @@index([receiverId, read])
 }
