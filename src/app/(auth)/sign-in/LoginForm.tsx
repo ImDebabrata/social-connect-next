@@ -15,12 +15,13 @@ import { loginSchema, LoginValues } from "@/lib/validation";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useState, useTransition } from "react";
 import { useForm } from "react-hook-form";
-import { signin } from "./action";
+import { guestSignin, signin } from "./action";
 
 export default function LoginForm() {
   const [error, setError] = useState<string>();
 
   const [isPending, startTransition] = useTransition();
+  const [isGuestPending, startGuestTransition] = useTransition();
 
   const form = useForm<LoginValues>({
     resolver: zodResolver(loginSchema),
@@ -33,10 +34,16 @@ export default function LoginForm() {
   async function onSubmit(values: LoginValues) {
     setError(undefined);
     startTransition(async () => {
-      console.log(values);
-      const { error, success } = await signin(values);
+      const { error } = await signin(values);
       if (error) setError(error);
-      console.log(success, "this is success");
+    });
+  }
+
+  function onGuestLogin() {
+    setError(undefined);
+    startGuestTransition(async () => {
+      const { error } = await guestSignin();
+      if (error) setError(error);
     });
   }
 
@@ -70,9 +77,29 @@ export default function LoginForm() {
             </FormItem>
           )}
         />
-        <LoadingButton loading={isPending} type="submit" className="w-full">
+        <LoadingButton
+          loading={isPending}
+          disabled={isGuestPending}
+          type="submit"
+          className="w-full"
+        >
           Log in
         </LoadingButton>
+
+        <LoadingButton
+          loading={isGuestPending}
+          disabled={isPending}
+          type="button"
+          variant="secondary"
+          className="w-full"
+          onClick={onGuestLogin}
+        >
+          {isGuestPending ? "Waking up the server…" : "Continue as guest"}
+        </LoadingButton>
+        <p className="text-center text-xs text-muted-foreground">
+          Just exploring? Skip the sign-up. Hosted on a free tier, so the first
+          load can take up to a minute while the server wakes up.
+        </p>
       </form>
     </Form>
   );

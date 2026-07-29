@@ -6,6 +6,7 @@ import { UserData, ChatMessage as Message } from "@/lib/types";
 import { useCurrentSession } from "@/hooks/useCurrentSession";
 import { useSocket } from "@/hooks/useSocket";
 import { useSearchParams } from "next/navigation";
+import ImageConfig from "@/constrants/ImageConfig";
 
 export interface UserWithMessageInfo extends UserData {
   lastMessage?: string;
@@ -18,6 +19,7 @@ export default function SocketChatWrapper() {
   const { user } = useCurrentSession();
   const [usersWithMessages, setUsersWithMessages] = useState<UserWithMessageInfo[]>([]);
   const [onlineUserIds, setOnlineUserIds] = useState<Set<string>>(new Set());
+  const [connected, setConnected] = useState(false);
   const searchParams = useSearchParams();
   const selectedUserId = searchParams.get("userId");
 
@@ -85,13 +87,21 @@ export default function SocketChatWrapper() {
         return next;
       });
 
-    socket.on("connect", loadUsers);
+    const onConnect = () => {
+      setConnected(true);
+      loadUsers();
+    };
+    const onDisconnect = () => setConnected(false);
+
+    socket.on("connect", onConnect);
+    socket.on("disconnect", onDisconnect);
     socket.on("presence:init", onPresenceInit);
     socket.on("presence:update", onPresenceUpdate);
-    if (socket.connected) loadUsers();
+    if (socket.connected) onConnect();
 
     return () => {
-      socket.off("connect", loadUsers);
+      socket.off("connect", onConnect);
+      socket.off("disconnect", onDisconnect);
       socket.off("presence:init", onPresenceInit);
       socket.off("presence:update", onPresenceUpdate);
     };
@@ -157,27 +167,41 @@ export default function SocketChatWrapper() {
   );
 
   return (
-    <div className="flex h-full w-full">
-      {/* Conversation list: full-width on mobile, fixed rail on desktop.
-          Hidden on mobile once a conversation is open. */}
-      <div
-        className={`${
-          selectedUserId ? "hidden md:flex" : "flex"
-        } w-full shrink-0 flex-col border-e md:w-80`}
-      >
-        <ChatSidebar userList={usersWithMessages} onlineUserIds={onlineUserIds} />
-      </div>
+    <div className="flex h-full w-full flex-col">
+      {/* The chat service is a separate free-tier deployment, so the first
+          connection after it idles can take up to a minute. */}
+      {!connected && (
+        <div className="flex items-center gap-2 border-b bg-muted px-4 py-2 text-xs text-muted-foreground">
+          <ImageConfig.LoadingIcon className="size-3.5 shrink-0 animate-spin" />
+          <span>
+            Connecting to the chat service… it&apos;s hosted on a free tier and
+            can take up to a minute to wake up.
+          </span>
+        </div>
+      )}
 
-      {/* Thread: hidden on mobile until a conversation is open. */}
-      <div
-        className={`${
-          selectedUserId ? "flex" : "hidden md:flex"
-        } min-w-0 flex-1`}
-      >
-        <ChatChannel
-          selectedUser={selectedUser}
-          isOnline={selectedUserId ? onlineUserIds.has(selectedUserId) : false}
-        />
+      <div className="flex min-h-0 w-full flex-1">
+        {/* Conversation list: full-width on mobile, fixed rail on desktop.
+            Hidden on mobile once a conversation is open. */}
+        <div
+          className={`${
+            selectedUserId ? "hidden md:flex" : "flex"
+          } w-full shrink-0 flex-col border-e md:w-80`}
+        >
+          <ChatSidebar userList={usersWithMessages} onlineUserIds={onlineUserIds} />
+        </div>
+
+        {/* Thread: hidden on mobile until a conversation is open. */}
+        <div
+          className={`${
+            selectedUserId ? "flex" : "hidden md:flex"
+          } min-w-0 flex-1`}
+        >
+          <ChatChannel
+            selectedUser={selectedUser}
+            isOnline={selectedUserId ? onlineUserIds.has(selectedUserId) : false}
+          />
+        </div>
       </div>
     </div>
   );
