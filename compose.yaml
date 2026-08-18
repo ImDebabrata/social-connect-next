@@ -42,6 +42,7 @@ services:
     environment:
       - POSTGRES_PRISMA_URL=postgresql://postgres:postgres@db:5432/social-connect
       - PORT=3001
+    command: yarn dev
     depends_on:
       - db
     volumes:

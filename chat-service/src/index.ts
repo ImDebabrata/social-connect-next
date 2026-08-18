@@ -11,7 +11,7 @@ dotenv.config();
 dotenv.config({ path: path.resolve(__dirname, '../../.env') });
 
 const app=express();
-const port=process.env.PORT||3001;
+const port = Number(process.env.PORT) || 3001;
 const server=createServer(app);
 
 // Only allow the web app origin; required for cookie-based auth (credentials).
@@ -30,7 +30,8 @@ app.get('/health',(req,res)=>{
 // Socket.io setup
 const io = initializeSocket(server);
 
-server.listen(port,()=>{
+// Bind 0.0.0.0 so hosts like Render can detect the open port.
+server.listen(port, "0.0.0.0", () => {
     console.log(`Chat service is running on port ${port}`);
 });
 

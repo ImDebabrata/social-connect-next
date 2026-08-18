@@ -16,12 +16,13 @@ WORKDIR /app/chat-service
 # Install dependencies
 RUN yarn install
 
-# Generate prisma client
-RUN npx prisma generate
-
 # Copy source code
 COPY chat-service/ .
 
+# Generate prisma client and compile TypeScript for production
+RUN npx prisma generate
+RUN yarn build
+
 EXPOSE 3001
 
-CMD ["yarn", "start"]
+CMD ["node", "dist/index.js"]
