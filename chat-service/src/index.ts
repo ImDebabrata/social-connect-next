@@ -1,14 +1,8 @@
+import "dotenv/config";
 import express from 'express';
 import cors from 'cors';
-import dotenv from 'dotenv';
-import path from 'path';
 import { createServer } from "http";
 import { initializeSocket, prisma } from './socket/socket';
-
-// Load env from the service's own .env, then fall back to the repo-root .env
-// (which holds JWT_SECRET / POSTGRES_PRISMA_URL shared with the web app).
-dotenv.config();
-dotenv.config({ path: path.resolve(__dirname, '../../.env') });
 
 const app=express();
 const port = Number(process.env.PORT) || 3001;

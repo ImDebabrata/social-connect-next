@@ -1,6 +1,6 @@
 import { Server, Socket } from "socket.io";
 import http from "http";
-import { PrismaClient, Message, Prisma } from "@prisma/client";
+import { prisma, Message, Prisma } from "../lib/prisma";
 import {
   getUserDataSelect,
   UserData,
@@ -10,7 +10,7 @@ import {
 } from "../lib/types";
 import { authenticateSocket } from "./auth";
 
-export const prisma = new PrismaClient();
+export { prisma } from "../lib/prisma";
 
 const MAX_MESSAGE_LENGTH = 4000;
 const CONVERSATION_PAGE_SIZE = 50;
