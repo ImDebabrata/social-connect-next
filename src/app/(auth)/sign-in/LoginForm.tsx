@@ -16,6 +16,7 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import { useState, useTransition } from "react";
 import { useForm } from "react-hook-form";
 import { guestSignin, signin } from "./action";
+import Link from "next/link";
 
 export default function LoginForm() {
   const [error, setError] = useState<string>();
@@ -77,6 +78,7 @@ export default function LoginForm() {
             </FormItem>
           )}
         />
+        <Link href="/forgot-password" className="block text-right hover:underline">Forgot password?</Link>
         <LoadingButton
           loading={isPending}
           disabled={isGuestPending}
