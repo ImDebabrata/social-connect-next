@@ -3,6 +3,9 @@
 import prisma from "@/lib/prisma";
 import { forgotPasswordSchema, ForgotPasswordValues } from "@/lib/validation";
 import { createHash, randomBytes } from "crypto";
+import { sendEmail } from "@/lib/mailer";
+import RouteConfig from "@/constrants/RouteConfig";
+import Misc from "@/constrants/Misc";
 
 
 export async function forgotPassword(
@@ -34,12 +37,12 @@ export async function forgotPassword(
             data: {
                 tokenHash:hashedResetToken,
                 userId:existingUser.id,
-                expiresAt:new Date(Date.now() + 15*60*1000) // 15 Minutes
+                expiresAt:new Date(Date.now() + Misc.PASSWORD_RESET_EXPIRY_MINUTES*60*1000)
             }
         })
 
-        // TODO: send reset email with Nodemailer instead of console.log
-        console.log(`${process.env.NEXT_PUBLIC_API_URL}/reset-password?token=${resetToken}`);
+        const resetUrl = `${process.env.NEXT_PUBLIC_API_URL}${RouteConfig.authScreens.RESET_PASSWORD}?token=${resetToken}`;
+        existingUser.email && await sendEmail(existingUser.email, resetUrl);
     }
 
 
