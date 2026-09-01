@@ -17,6 +17,7 @@ import { useState, useTransition } from "react";
 import { useForm } from "react-hook-form";
 import { guestSignin, signin } from "./action";
 import Link from "next/link";
+import { AlertCircle, UserCheck } from "lucide-react";
 
 export default function LoginForm() {
   const [error, setError] = useState<string>();
@@ -50,8 +51,13 @@ export default function LoginForm() {
 
   return (
     <Form {...form}>
-      <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-3">
-        {error && <p className="text-center text-destructive">{error}</p>}
+      <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-4">
+        {error && (
+          <div className="flex items-center gap-2 rounded-lg border border-destructive/30 bg-destructive/10 p-3 text-sm text-destructive">
+            <AlertCircle className="size-4 shrink-0" />
+            <span>{error}</span>
+          </div>
+        )}
         <FormField
           control={form.control}
           name="username"
@@ -59,7 +65,11 @@ export default function LoginForm() {
             <FormItem>
               <FormLabel>Username</FormLabel>
               <FormControl>
-                <Input placeholder="Username" {...field} />
+                <Input
+                  placeholder="Enter your username"
+                  autoComplete="username"
+                  {...field}
+                />
               </FormControl>
               <FormMessage />
             </FormItem>
@@ -70,37 +80,56 @@ export default function LoginForm() {
           name="password"
           render={({ field }) => (
             <FormItem>
-              <FormLabel>Password</FormLabel>
+              <div className="flex items-center justify-between">
+                <FormLabel>Password</FormLabel>
+                <Link
+                  href="/forgot-password"
+                  className="text-xs font-medium text-primary hover:underline"
+                >
+                  Forgot password?
+                </Link>
+              </div>
               <FormControl>
-                <PasswordInput placeholder="Password" {...field} />
+                <PasswordInput
+                  placeholder="Enter your password"
+                  autoComplete="current-password"
+                  {...field}
+                />
               </FormControl>
               <FormMessage />
             </FormItem>
           )}
         />
-        <Link href="/forgot-password" className="block text-right hover:underline">Forgot password?</Link>
         <LoadingButton
           loading={isPending}
           disabled={isGuestPending}
           type="submit"
-          className="w-full"
+          className="w-full font-medium"
         >
           Log in
         </LoadingButton>
+
+        <div className="relative my-2 flex items-center justify-center">
+          <div className="w-full border-t border-border" />
+          <span className="bg-card px-2 text-xs uppercase tracking-wider text-muted-foreground">
+            or
+          </span>
+          <div className="w-full border-t border-border" />
+        </div>
 
         <LoadingButton
           loading={isGuestPending}
           disabled={isPending}
           type="button"
-          variant="secondary"
-          className="w-full"
+          variant="outline"
+          className="w-full border-border/80 font-medium"
           onClick={onGuestLogin}
         >
-          {isGuestPending ? "Waking up the server…" : "Continue as guest"}
+          <UserCheck className="size-4 shrink-0" />
+          {isGuestPending ? "Waking up demo server…" : "Continue as Guest"}
         </LoadingButton>
         <p className="text-center text-xs text-muted-foreground">
-          Just exploring? Skip the sign-up. Hosted on a free tier, so the first
-          load can take up to a minute while the server wakes up.
+          Exploring? Test full features instantly with our demo account.
         </p>
       </form>
     </Form>

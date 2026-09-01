@@ -36,7 +36,7 @@ export async function resetPassword(
         })
         await tx.passwordResetToken.deleteMany({
             where:{
-                id:resetToken.id
+                userId:resetToken.userId
             }
         })
     });

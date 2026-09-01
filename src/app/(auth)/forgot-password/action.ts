@@ -44,7 +44,8 @@ export async function forgotPassword(
         },
       });
 
-      const resetUrl = `${process.env.NEXT_PUBLIC_API_URL}${RouteConfig.authScreens.RESET_PASSWORD}?token=${resetToken}`;
+      const baseUrl = process.env.NEXT_PUBLIC_API_URL || "http://localhost:3000";
+      const resetUrl = `${baseUrl.replace(/\/$/, "")}${RouteConfig.authScreens.RESET_PASSWORD}?token=${resetToken}`;
       try {
         if (existingUser.email) {
           await sendEmail(existingUser.email, resetUrl);
