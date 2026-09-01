@@ -15,8 +15,9 @@ export default function AuthLayout({
         </div>
         <Image
           src={image}
-          alt=""
+          alt="Authentication illustration"
           className="hidden w-1/2 object-cover md:block"
+          priority
         />
       </div>
     </main>

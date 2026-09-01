@@ -46,7 +46,9 @@ export async function forgotPassword(
 
       const resetUrl = `${process.env.NEXT_PUBLIC_API_URL}${RouteConfig.authScreens.RESET_PASSWORD}?token=${resetToken}`;
       try {
-        existingUser.email && (await sendEmail(existingUser.email, resetUrl));
+        if (existingUser.email) {
+          await sendEmail(existingUser.email, resetUrl);
+        }
       } catch (error) {
         await prisma.passwordResetToken.deleteMany({
           where: { userId: existingUser.id },
