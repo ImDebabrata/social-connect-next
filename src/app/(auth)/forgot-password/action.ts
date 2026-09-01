@@ -7,9 +7,8 @@ import { sendEmail } from "@/lib/mailer";
 import RouteConfig from "@/constrants/RouteConfig";
 import Misc from "@/constrants/Misc";
 
-
 export async function forgotPassword(
-  credentials: ForgotPasswordValues
+  credentials: ForgotPasswordValues,
 ): Promise<{ error?: string; success?: string }> {
   try {
     // 1. Validate fields
@@ -25,26 +24,36 @@ export async function forgotPassword(
       },
     });
 
-    if(existingUser && existingUser.username!=='guest') {
-        const resetToken = randomBytes(32).toString('hex');
-        const hashedResetToken = createHash('sha256').update(resetToken).digest('hex');
+    if (existingUser && existingUser.username !== "guest") {
+      const resetToken = randomBytes(32).toString("hex");
+      const hashedResetToken = createHash("sha256")
+        .update(resetToken)
+        .digest("hex");
 
+      await prisma.passwordResetToken.deleteMany({
+        where: { userId: existingUser.id },
+      });
+
+      await prisma.passwordResetToken.create({
+        data: {
+          tokenHash: hashedResetToken,
+          userId: existingUser.id,
+          expiresAt: new Date(
+            Date.now() + Misc.PASSWORD_RESET_EXPIRY_MINUTES * 60 * 1000,
+          ),
+        },
+      });
+
+      const resetUrl = `${process.env.NEXT_PUBLIC_API_URL}${RouteConfig.authScreens.RESET_PASSWORD}?token=${resetToken}`;
+      try {
+        existingUser.email && (await sendEmail(existingUser.email, resetUrl));
+      } catch (error) {
         await prisma.passwordResetToken.deleteMany({
-            where: {userId:existingUser.id}
-        })
-
-        await prisma.passwordResetToken.create({
-            data: {
-                tokenHash:hashedResetToken,
-                userId:existingUser.id,
-                expiresAt:new Date(Date.now() + Misc.PASSWORD_RESET_EXPIRY_MINUTES*60*1000)
-            }
-        })
-
-        const resetUrl = `${process.env.NEXT_PUBLIC_API_URL}${RouteConfig.authScreens.RESET_PASSWORD}?token=${resetToken}`;
-        existingUser.email && await sendEmail(existingUser.email, resetUrl);
+          where: { userId: existingUser.id },
+        });
+        throw error;
+      }
     }
-
 
     return {
       success: "If the email is valid, you will receive a reset email.",
