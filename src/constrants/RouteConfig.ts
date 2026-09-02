@@ -14,6 +14,8 @@ const protectedRoute = {
   BOOKMARKS: "/bookmarks",
   NOTIFICATIONS: "/notifications",
   MESSAGES: "/messages",
+  FIND_FRIENDS: "/find-friends",
+  SEARCH: "/search",
 } as const;
 
 /**
