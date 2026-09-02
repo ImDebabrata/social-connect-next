@@ -22,6 +22,7 @@ model User {
   avatarUrl             String?
   bio                   String?
   sessions              Session[]
+  passwordResetTokens   PasswordResetToken[]
   posts                 Post[]
   following             Follow[]       @relation("Following")
   followers             Follow[]       @relation("Followers")
@@ -37,6 +38,18 @@ model User {
   createdAt DateTime @default(now())
 
   @@map("users")
+}
+
+model PasswordResetToken {
+  id String @id @default(cuid())
+  tokenHash String @unique
+  userId String
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+  expiresAt DateTime
+  createdAt DateTime @default(now())
+
+  @@index([userId])
+  @@map("password_reset_tokens")
 }
 
 model Session {

@@ -1,6 +1,7 @@
 import { z } from "zod";
 
 const requiredString = z.string().trim().min(1, "Required");
+const passwordSchema = z.string().min(8, "Must be at least 8 characters");
 
 export const signUpSchema = z.object({
   email: requiredString.email("Invalid email address"),
@@ -8,7 +9,7 @@ export const signUpSchema = z.object({
     /^[a-zA-Z0-9_-]+$/,
     "Only letters, numbers, - and _ allowed"
   ),
-  password: requiredString.min(8, "Must be at least 8 characters"),
+  password: passwordSchema,
 });
 
 export type SignUpValues = z.infer<typeof signUpSchema>;
@@ -42,3 +43,28 @@ export type SessionPayload = {
   username:string;
   avatarUrl: string | null | undefined;
 };
+
+export const forgotPasswordSchema = z.object({
+  email: requiredString.email("Invalid email address"),
+});
+
+export type ForgotPasswordValues = z.infer<typeof forgotPasswordSchema>;
+
+export const resetPasswordSchema = z.object({
+  password: passwordSchema,
+  token: requiredString,
+});
+
+export type ResetPasswordValues = z.infer<typeof resetPasswordSchema>;
+
+export const resetPasswordClientSchema = z
+  .object({
+    password: passwordSchema,
+    confirmPassword: requiredString,
+  })
+  .refine((data) => data.password === data.confirmPassword, {
+    message: "Passwords do not match",
+    path: ["confirmPassword"],
+  });
+
+export type ResetPasswordClientValues = z.infer<typeof resetPasswordClientSchema>;

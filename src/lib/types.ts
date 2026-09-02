@@ -16,10 +16,19 @@ export function getUserDataSelect(loggedInUserId: string) {
         followerId: true,
       },
     },
+    following: {
+      where: {
+        followingId: loggedInUserId,
+      },
+      select: {
+        followingId: true,
+      },
+    },
     _count: {
       select: {
         posts: true,
         followers: true,
+        following: true,
       },
     },
   } satisfies Prisma.UserSelect;
@@ -28,6 +37,20 @@ export function getUserDataSelect(loggedInUserId: string) {
 export type UserData = Prisma.UserGetPayload<{
   select: ReturnType<typeof getUserDataSelect>;
 }>;
+
+export interface UsersPage {
+  users: UserData[];
+  nextCursor: string | null;
+  totalCount?: number;
+}
+
+export type FollowFilterType =
+  | "all"
+  | "not_following"
+  | "mutual"
+  | "popular"
+  | "recent";
+
 
 export function getPostDataInclude(loggedInUserId: string) {
   return {

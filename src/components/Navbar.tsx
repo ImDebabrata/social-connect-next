@@ -2,21 +2,23 @@ import Misc from "@/constrants/Misc";
 import RouteConfig from "@/constrants/RouteConfig";
 import Link from "next/link";
 import React from "react";
+import SearchField from "./SearchField";
 import UserButton from "./UserButton";
-// import SearchField from "./SearchField";
 
 const Navbar = () => {
   return (
-    <header className="sticky top-0 z-10 bg-card shadow-sm">
-      <div className="max-w-7xl mx-auto flex items-center justify-center flex-wrap gap-5 px-5 py-3">
+    <header className="sticky top-0 z-20 border-b bg-card shadow-sm">
+      <div className="mx-auto flex max-w-7xl items-center justify-between gap-5 px-5 py-3">
         <Link
           href={RouteConfig.protectedRoute.MAIN_SCREEN}
-          className="text-2xl font-bold text-primary"
+          className="text-2xl font-bold tracking-tight text-primary transition-opacity hover:opacity-90"
         >
           {Misc.APP_NAME}
         </Link>
-        {/* <SearchField /> */}
-        <UserButton className="sm:ms-auto" />
+        <div className="max-w-md flex-1 hidden sm:block">
+          <SearchField />
+        </div>
+        <UserButton />
       </div>
     </header>
   );

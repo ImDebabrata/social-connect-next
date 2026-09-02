@@ -1,10 +1,9 @@
-import signupImage from "@/assets/signup-image.png";
+import ImageConfig from "@/constrants/ImageConfig";
 import { Metadata } from "next";
-import Image from "next/image";
 import Link from "next/link";
 import SignUpForm from "./SignUpForm";
-// import { useRouter } from "next/navigation";
 import Misc from "@/constrants/Misc";
+import AuthLayout from "../AuthLayout";
 
 export const metadata: Metadata = {
   title: "Sign Up",
@@ -12,29 +11,29 @@ export const metadata: Metadata = {
 
 export default function Page() {
   return (
-    <main className="flex h-screen items-center justify-center p-5">
-      <div className="flex h-full max-h-[40rem] w-full max-w-[64rem] overflow-hidden rounded-2xl bg-card shadow-2xl">
-        <div className="w-full space-y-10 overflow-y-auto p-10 md:w-1/2">
-          <div className="space-y-1 text-center">
-            <h1 className="text-3xl font-bold">Sign up to {Misc.APP_NAME}</h1>
-            <p className="text-muted-foreground">
-              A place where even <span className="italic">you</span> can find a
-              friend.
-            </p>
-          </div>
-          <div className="space-y-5">
-            <SignUpForm />
-            <Link href="/sign-in" className="block text-center hover:underline">
-              Already have an account? Log in
-            </Link>
-          </div>
+    <AuthLayout image={ImageConfig.signupImage}>
+      <div className="space-y-6">
+        <div className="space-y-2 text-center">
+          <h1 className="text-2xl font-bold tracking-tight sm:text-3xl">
+            Create an account
+          </h1>
+          <p className="text-sm text-muted-foreground">
+            Join {Misc.APP_NAME} to share posts, chat, and connect
+          </p>
         </div>
-        <Image
-          src={signupImage}
-          alt=""
-          className="hidden w-1/2 object-cover md:block"
-        />
+
+        <SignUpForm />
+
+        <p className="text-center text-sm text-muted-foreground">
+          Already have an account?{" "}
+          <Link
+            href="/sign-in"
+            className="font-medium text-primary hover:underline"
+          >
+            Log in
+          </Link>
+        </p>
       </div>
-    </main>
+    </AuthLayout>
   );
 }

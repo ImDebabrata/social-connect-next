@@ -70,17 +70,12 @@ export async function signup(
       // });
     });
 
-    // 4. Create a session for the user
-    // await createSession(userId);
-    redirect(RouteConfig.authScreens.SIGN_IN);
-    return {
-      success: "Created success",
-    };
+    // 4. Redirect to login with success query parameter
+    redirect(`${RouteConfig.authScreens.SIGN_IN}?registered=true`);
   } catch (error) {
     if (isRedirectError(error)) throw error;
-    // console.log(error);
     return {
-      error: "Something went wrong",
+      error: "Something went wrong. Please try again.",
     };
   }
 }

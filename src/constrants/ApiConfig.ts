@@ -96,6 +96,22 @@ const APIConfig: IAPIConfig = {
     URL: baseUrl + "/api/notifications/mark-as-read",
     METHOD: HttpMethod.PATCH,
   },
+  DISCOVER_USERS: {
+    URL: baseUrl + "/api/users/discover",
+    METHOD: HttpMethod.GET,
+  },
+  GET_USER_FOLLOWING: {
+    URL: (userId: string) => baseUrl + `/api/users/${userId}/following`,
+    METHOD: HttpMethod.GET,
+  },
+  GET_USER_FOLLOWERS_LIST: {
+    URL: (userId: string) => baseUrl + `/api/users/${userId}/followers-list`,
+    METHOD: HttpMethod.GET,
+  },
+  SEARCH_ALL: {
+    URL: baseUrl + "/api/search",
+    METHOD: HttpMethod.GET,
+  },
 };
 
 export default APIConfig;

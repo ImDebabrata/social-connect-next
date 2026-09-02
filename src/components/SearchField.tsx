@@ -1,12 +1,13 @@
 "use client";
 
-import { useRouter } from "next/navigation";
-import { Input } from "./ui/input";
 import ImageConfig from "@/constrants/ImageConfig";
-import { useCallback } from "react";
+import { useRouter } from "next/navigation";
+import React, { useCallback } from "react";
+import { Input } from "./ui/input";
 
 function SearchField() {
   const router = useRouter();
+
   const handleSubmit = useCallback(
     (e: React.FormEvent<HTMLFormElement>) => {
       e.preventDefault();
@@ -17,18 +18,23 @@ function SearchField() {
     },
     [router]
   );
-  // This is the function to trigger form submission
+
   const handleSearchIconClick = (e: React.MouseEvent<SVGElement>) => {
-    const form = e.currentTarget.closest("form"); // Get the parent form
-    if (form) form.submit(); // Trigger form submission
+    const form = e.currentTarget.closest("form");
+    if (form) form.requestSubmit();
   };
+
   return (
     <form onSubmit={handleSubmit} action="/search">
       <div className="relative">
-        <Input name="q" placeholder="Search" className="pe-10" />
+        <Input
+          name="q"
+          placeholder="Search people, hashtags, posts..."
+          className="h-10 w-full rounded-full bg-muted/50 pe-10 pl-4 text-sm transition-colors focus-visible:bg-card"
+        />
         <ImageConfig.SearchIcon
           onClick={handleSearchIconClick}
-          className="absolute right-3 top-1/2 size-5 -translate-y-1/2 transform text-muted-foreground cursor-pointer"
+          className="absolute right-3.5 top-1/2 size-4 -translate-y-1/2 cursor-pointer text-muted-foreground transition-colors hover:text-foreground"
         />
       </div>
     </form>

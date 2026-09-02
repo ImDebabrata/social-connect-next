@@ -56,6 +56,20 @@ export function formatNumber(n: number): string {
   }).format(n);
 }
 
+/**
+ * Safely parses and clamps a numeric pagination pageSize query parameter.
+ */
+export function parsePageSize(
+  value: string | number | null | undefined,
+  defaultSize = 10,
+  min = 1,
+  max = 50
+): number {
+  const parsed = Number(value);
+  if (!parsed || Number.isNaN(parsed)) return defaultSize;
+  return Math.min(Math.max(parsed, min), max);
+}
+
 // export const sendServerResponse={
 //   onSuccess:function(data,message){
 //     return {

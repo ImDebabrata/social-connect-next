@@ -1,6 +1,8 @@
 //images
 import signinImage from "@/assets/login-image.png";
 import signupImage from "@/assets/signup-image.png";
+import ForgotImage from "@/assets/forgot-image.png";
+import ResetImage from "@/assets/reset-image.png";
 import avatarPlaceholder from "@/assets/avatar-placeholder.png";
 
 // icons
@@ -18,6 +20,8 @@ import {
 const ImageConfig = {
   signinImage,
   signupImage,
+  ForgotImage,
+  ResetImage,
   avatarPlaceholder,
   // icons
   MoonIcon,
