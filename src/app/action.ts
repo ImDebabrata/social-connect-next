@@ -17,3 +17,15 @@ export async function getCurrentUser(): Promise<SessionPayload | null> {
   console.log("the file is running",new Date());
   return { ...user, avatarUrl: user?.avatarUrl || "" } as SessionPayload | null;
 }
+
+/**
+ * Returns the raw session JWT so the client can pass it explicitly
+ * to the chat service via Socket.IO's `auth` handshake.
+ *
+ * This works around the cross-domain cookie limitation (Vercel → Render):
+ * the httpOnly cookie is readable here because server actions are same-origin.
+ */
+export async function getSessionToken(): Promise<string | null> {
+  const token = (await cookies()).get(Misc.SESSION_COOKIE)?.value;
+  return token ?? null;
+}
