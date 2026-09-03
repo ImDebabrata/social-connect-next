@@ -40,7 +40,7 @@ export async function createSession(
     httpOnly: true,
     secure: true,
     expires: expiresAt,
-    sameSite: "none",
+    sameSite: "lax",
     path: "/",
   });
 
@@ -73,7 +73,7 @@ export async function updateSession() {
     httpOnly: true,
     secure: true,
     expires: expires,
-    sameSite: "none",
+    sameSite: "lax",
     path: "/",
   });
 }
@@ -107,7 +107,7 @@ export async function updateSessionPayload(payload: Partial<SessionPayload>) {
     httpOnly: true,
     secure: true,
     expires: expiresAt,
-    sameSite: "none",
+    sameSite: "lax",
     path: "/",
   });
 }
