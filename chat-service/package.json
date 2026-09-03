@@ -5,7 +5,10 @@
   "license": "MIT",
   "scripts": {
     "build": "tsc",
-    "dev": "ts-node src/index.ts",
+    "env:dev": "cp .env.dev .env && echo 'Chat service switched to DEVELOPMENT (.env)'",
+    "env:prod": "cp .env.prod .env && echo 'Chat service switched to PRODUCTION (.env)'",
+    "dev": "cp .env.dev .env && ts-node src/index.ts",
+    "dev:prod": "cp .env.prod .env && ts-node src/index.ts",
     "start": "node dist/index.js"
   },
   "devDependencies": {

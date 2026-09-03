@@ -3,8 +3,13 @@
   "version": "0.1.0",
   "private": true,
   "scripts": {
-    "dev": "next dev --turbopack",
+    "env:dev": "cp .env.dev .env && echo 'Switched to DEVELOPMENT (.env)'",
+    "env:prod": "cp .env.prod .env && echo 'Switched to PRODUCTION (.env)'",
+    "dev": "cp .env.dev .env && next dev --turbopack",
+    "dev:prod": "cp .env.prod .env && next dev --turbopack",
     "build": "prisma migrate deploy && next build",
+    "build:dev": "cp .env.dev .env && prisma migrate deploy && next build",
+    "build:prod": "cp .env.prod .env && prisma migrate deploy && next build",
     "start": "next start",
     "lint": "next lint",
     "postinstall": "prisma generate"
