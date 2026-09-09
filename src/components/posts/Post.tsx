@@ -52,7 +52,7 @@ function Post(props: PostProps) {
             <Link
               href={`${RouteConfig.protectedRoute.POST.replace(
                 ":postId",
-                post.id
+                post.id,
               )}`}
               className="block text-sm text-muted-foreground hover:underline"
             >
@@ -84,7 +84,7 @@ function Post(props: PostProps) {
             initialState={{
               likes: post._count.likes,
               isLikedByUser: post.likes.some(
-                (like) => like.userId === user?.userId
+                (like) => like.userId === user?.userId,
               ),
             }}
           />
@@ -97,7 +97,7 @@ function Post(props: PostProps) {
           postId={post.id}
           initialState={{
             isBookmarkedByUser: post.bookmarks.some(
-              (bookmark) => bookmark.userId === user?.userId
+              (bookmark) => bookmark.userId === user?.userId,
             ),
           }}
         />

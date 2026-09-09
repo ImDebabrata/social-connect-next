@@ -34,12 +34,15 @@ export async function guestSignin(): Promise<{ error?: string }> {
     return {};
   } catch (error) {
     if (isRedirectError(error)) throw error;
-    return { error: "Guest login failed, the server may still be waking up. Please try again." };
+    return {
+      error:
+        "Guest login failed, the server may still be waking up. Please try again.",
+    };
   }
 }
 
 export async function signin(
-  credentials: LoginValues
+  credentials: LoginValues,
 ): Promise<{ error?: string; success?: string }> {
   try {
     // 1. Validate fields

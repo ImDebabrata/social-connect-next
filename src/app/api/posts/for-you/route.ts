@@ -7,7 +7,7 @@ import { NextRequest } from "next/server";
 export async function GET(req: NextRequest) {
   try {
     const cursor = req.nextUrl.searchParams.get("cursor") || undefined;
-    console.log({cursor})
+    console.log({ cursor });
     const pageSize = 10;
     const user = await getCurrentUser();
     if (!user) {
@@ -20,13 +20,12 @@ export async function GET(req: NextRequest) {
       cursor: cursor ? { id: cursor } : undefined,
     });
 
-    const nextCursor=posts.length>pageSize?posts[pageSize].id:null;
+    const nextCursor = posts.length > pageSize ? posts[pageSize].id : null;
 
     const data: PostsPage = {
       posts: posts.slice(0, pageSize),
       nextCursor,
     };
-    
 
     return Response.json({
       success: true,

@@ -30,20 +30,18 @@ export async function GET(req: NextRequest) {
       include: getPostDataInclude(user.userId),
     });
 
-    const nextCursor=posts.length>pageSize?posts[pageSize].id:null;
+    const nextCursor = posts.length > pageSize ? posts[pageSize].id : null;
 
     const data: PostsPage = {
       posts: posts.slice(0, pageSize),
       nextCursor,
     };
-    
 
     return Response.json({
       success: true,
       data: data,
       [Misc.API_RESPONSE_MESSAGE_KEY]: "Post fetched success",
     });
-
   } catch (error) {
     console.log(error);
     return Response.json({ error }, { status: 500 });

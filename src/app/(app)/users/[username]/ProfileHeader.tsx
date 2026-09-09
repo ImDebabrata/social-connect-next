@@ -8,7 +8,13 @@ import UserAvatar from "@/components/UserAvatar";
 import RouteConfig from "@/constrants/RouteConfig";
 import { FollowerInfo, UserData } from "@/lib/types";
 import { formatDate, formatNumber } from "@/lib/utils";
-import { Calendar, FileText, MessageCircle, UserCheck, Users } from "lucide-react";
+import {
+  Calendar,
+  FileText,
+  MessageCircle,
+  UserCheck,
+  Users,
+} from "lucide-react";
 import Link from "next/link";
 import React from "react";
 import EditProfileButton from "./EditProfileButton";
@@ -24,7 +30,7 @@ export default function ProfileHeader({
 }: ProfileHeaderProps) {
   const isCurrentUser = user.id === loggedInUserId;
   const isFollowedByUser = user.followers.some(
-    (follower) => follower.followerId === loggedInUserId
+    (follower) => follower.followerId === loggedInUserId,
   );
   const followsYou = (user.following?.length ?? 0) > 0;
 
@@ -80,10 +86,7 @@ export default function ProfileHeader({
                       <MessageCircle className="h-4 w-4" />
                     </Link>
                   </Button>
-                  <FollowButton
-                    userId={user.id}
-                    initialState={followerInfo}
-                  />
+                  <FollowButton userId={user.id} initialState={followerInfo} />
                 </>
               )}
             </div>
@@ -107,10 +110,7 @@ export default function ProfileHeader({
 
             <span className="flex items-center gap-1.5 font-medium">
               <Users className="h-4 w-4 text-primary" />
-              <FollowerCount
-                userId={user.id}
-                initialState={followerInfo}
-              />
+              <FollowerCount userId={user.id} initialState={followerInfo} />
             </span>
 
             <span className="flex items-center gap-1.5 font-medium">

@@ -21,7 +21,7 @@ export default function Comment({ comment }: CommentProps) {
           <Link
             href={RouteConfig.protectedRoute.PROFILE.replace(
               ":id",
-              comment.user.username
+              comment.user.username,
             )}
           >
             <UserAvatar avatarUrl={comment.user.avatarUrl} size={40} />
@@ -34,7 +34,7 @@ export default function Comment({ comment }: CommentProps) {
             <Link
               href={RouteConfig.protectedRoute.PROFILE.replace(
                 ":id",
-                comment.user.username
+                comment.user.username,
               )}
               className="font-medium hover:underline"
             >
@@ -48,7 +48,10 @@ export default function Comment({ comment }: CommentProps) {
         <div>{comment.content}</div>
       </div>
       {user?.userId === comment.userId && (
-        <CommentMoreButton comment={comment} className="ms-auto opacity-0 transition-opacity group-hover/comment:opacity-100" />
+        <CommentMoreButton
+          comment={comment}
+          className="ms-auto opacity-0 transition-opacity group-hover/comment:opacity-100"
+        />
       )}
     </div>
   );

@@ -63,12 +63,15 @@ async function WhoToFollow() {
         {usersToFollow.map((u) => {
           const profileUrl = RouteConfig.protectedRoute.PROFILE.replace(
             ":username",
-            u.username
+            u.username,
           );
           return (
             <div key={u.id} className="flex items-center justify-between gap-3">
               <UserTooltip user={u}>
-                <Link href={profileUrl} className="flex min-w-0 items-center gap-3">
+                <Link
+                  href={profileUrl}
+                  className="flex min-w-0 items-center gap-3"
+                >
                   <UserAvatar
                     avatarUrl={u.avatarUrl}
                     className="flex-none"
@@ -116,7 +119,7 @@ const getTrendingTopics = unstable_cache(
   ["trending_topics"],
   {
     revalidate: 3 * 60 * 60,
-  }
+  },
 );
 
 async function TrendingTopics() {

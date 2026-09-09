@@ -80,7 +80,8 @@ export default function ResetForm({ token }: { token: string }) {
             Password updated!
           </h2>
           <p className="text-sm text-muted-foreground">
-            Your password has been changed successfully. Redirecting you to login…
+            Your password has been changed successfully. Redirecting you to
+            login…
           </p>
         </div>
 

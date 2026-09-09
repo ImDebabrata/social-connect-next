@@ -6,7 +6,13 @@ import { useCurrentSession } from "@/hooks/useCurrentSession";
 import UserAvatar from "@/components/UserAvatar";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
-import { Send, ArrowLeft, Check, CheckCheck, MessagesSquare } from "lucide-react";
+import {
+  Send,
+  ArrowLeft,
+  Check,
+  CheckCheck,
+  MessagesSquare,
+} from "lucide-react";
 import RouteConfig from "@/constrants/RouteConfig";
 import { UserData, ChatMessage as Message } from "@/lib/types";
 import { formatDayLabel, formatMessageTime } from "@/lib/utils";
@@ -16,7 +22,10 @@ interface ChatChannelProps {
   isOnline: boolean;
 }
 
-export default function ChatChannel({ selectedUser, isOnline }: ChatChannelProps) {
+export default function ChatChannel({
+  selectedUser,
+  isOnline,
+}: ChatChannelProps) {
   const searchParams = useSearchParams();
   const router = useRouter();
   const userId = searchParams.get("userId");
@@ -48,7 +57,7 @@ export default function ChatChannel({ selectedUser, isOnline }: ChatChannelProps
       { otherUserId: userId },
       (response: { success: boolean; data: Message[] }) => {
         if (response.success) setMessages(response.data);
-      }
+      },
     );
 
     const handleNewMessage = (message: Message) => {
@@ -59,7 +68,7 @@ export default function ChatChannel({ selectedUser, isOnline }: ChatChannelProps
 
       // Ignore a message we already have (send/load race can echo a duplicate).
       setMessages((prev) =>
-        prev.some((m) => m.id === message.id) ? prev : [...prev, message]
+        prev.some((m) => m.id === message.id) ? prev : [...prev, message],
       );
 
       // If it's an incoming message and we're looking at the thread, read it now.
@@ -73,8 +82,8 @@ export default function ChatChannel({ selectedUser, isOnline }: ChatChannelProps
       if (data.readerId !== userId) return;
       setMessages((prev) =>
         prev.map((m) =>
-          m.senderId === user.userId ? { ...m, read: true } : m
-        )
+          m.senderId === user.userId ? { ...m, read: true } : m,
+        ),
       );
     };
 
@@ -145,14 +154,22 @@ export default function ChatChannel({ selectedUser, isOnline }: ChatChannelProps
 
   // Group consecutive messages from the same sender for tighter bubbles.
   const groups = useMemo(() => {
-    const messageGroups: { senderId: string; isMine: boolean; messages: Message[] }[] = [];
+    const messageGroups: {
+      senderId: string;
+      isMine: boolean;
+      messages: Message[];
+    }[] = [];
     for (const message of messages) {
       const isMine = message.senderId === user?.userId;
       const currentGroup = messageGroups[messageGroups.length - 1];
       if (currentGroup && currentGroup.senderId === message.senderId) {
         currentGroup.messages.push(message);
       } else {
-        messageGroups.push({ senderId: message.senderId, isMine, messages: [message] });
+        messageGroups.push({
+          senderId: message.senderId,
+          isMine,
+          messages: [message],
+        });
       }
     }
     return messageGroups;

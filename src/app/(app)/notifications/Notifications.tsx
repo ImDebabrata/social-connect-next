@@ -30,7 +30,7 @@ function Notifications() {
         APIConfig.GET_NOTIFICATIONS.URL as string,
         {
           cursor: pageParam,
-        }
+        },
       ).then((response) => response.data),
     initialPageParam: null as string | null,
     getNextPageParam: (lastPage) => lastPage.nextCursor,

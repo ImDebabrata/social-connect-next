@@ -9,7 +9,7 @@ cloudinary.config({
 
 /**
  * Uploads a file buffer to Cloudinary
- * 
+ *
  * @param buffer - The buffer containing file data to upload
  * @param options - Configuration options for the upload
  * @param options.folder - Destination folder in Cloudinary
@@ -17,9 +17,9 @@ cloudinary.config({
  * @param options.resourceType - Type of resource ('image' or 'video')
  * @param options.transformation - Array of Cloudinary transformation objects
  * @param options.overwrite - Whether to overwrite existing file with same publicId
- * 
+ *
  * @returns Promise resolving to Cloudinary upload response
- * 
+ *
  * @example
  * // Upload an image to the 'avatars' folder
  * const result = await uploadToCloudinary(buffer, {
@@ -38,9 +38,15 @@ export async function uploadToCloudinary(
     resourceType?: "image" | "video";
     transformation?: Array<Record<string, unknown>>;
     overwrite?: boolean;
-  }
+  },
 ): Promise<UploadApiResponse> {
-  const { folder, publicId, resourceType = "image", transformation, overwrite } = options;
+  const {
+    folder,
+    publicId,
+    resourceType = "image",
+    transformation,
+    overwrite,
+  } = options;
 
   return new Promise<UploadApiResponse>((resolve, reject) => {
     const uploadOptions: Record<string, unknown> = {
@@ -63,9 +69,9 @@ export async function uploadToCloudinary(
         } else {
           reject(new Error("Cloudinary upload returned no result"));
         }
-      }
+      },
     );
-    
+
     uploadStream.end(buffer);
   });
-} 
+}

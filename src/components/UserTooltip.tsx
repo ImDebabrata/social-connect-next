@@ -25,7 +25,7 @@ function UserTooltip(props: UserTooltipProps) {
   const followerState: FollowerInfo = {
     followers: user._count.followers,
     isFollowedByUser: user.followers.some(
-      (follower) => follower.followerId === loggedInUser?.userId
+      (follower) => follower.followerId === loggedInUser?.userId,
     ),
   };
   return (
@@ -38,7 +38,7 @@ function UserTooltip(props: UserTooltipProps) {
               <Link
                 href={RouteConfig.protectedRoute.PROFILE.replace(
                   ":username",
-                  user.username
+                  user.username,
                 )}
               >
                 <UserAvatar avatarUrl={user.avatarUrl} size={70} />
@@ -51,7 +51,7 @@ function UserTooltip(props: UserTooltipProps) {
               <Link
                 href={RouteConfig.protectedRoute.PROFILE.replace(
                   ":username",
-                  user.username
+                  user.username,
                 )}
               >
                 <div className="text-lg font-semibold hover:underline">

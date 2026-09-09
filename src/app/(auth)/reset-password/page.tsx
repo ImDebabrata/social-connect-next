@@ -29,15 +29,14 @@ export default async function Page({
               Invalid or expired link
             </h1>
             <p className="text-sm text-muted-foreground">
-              This password reset link is missing or has expired. Please request a new link to reset your password.
+              This password reset link is missing or has expired. Please request
+              a new link to reset your password.
             </p>
           </div>
 
           <div className="space-y-3 pt-2">
             <Button asChild className="w-full font-medium">
-              <Link href="/forgot-password">
-                Request new reset link
-              </Link>
+              <Link href="/forgot-password">Request new reset link</Link>
             </Button>
             <div>
               <Link

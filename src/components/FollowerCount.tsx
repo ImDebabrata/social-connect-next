@@ -1,4 +1,4 @@
-'use client'
+"use client";
 import useFollowerInfo from "@/hooks/useFollowerInfo";
 import { FollowerInfo } from "@/lib/types";
 import { formatNumber } from "@/lib/utils";

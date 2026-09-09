@@ -15,7 +15,9 @@ interface ProfileTabsProps {
 }
 
 export default function ProfileTabs({ user }: ProfileTabsProps) {
-  const [activeTab, setActiveTab] = useState<"posts" | "following" | "followers">("posts");
+  const [activeTab, setActiveTab] = useState<
+    "posts" | "following" | "followers"
+  >("posts");
 
   // Query for Following list
   const followingQuery = useInfiniteQuery<UsersPage>({
@@ -24,7 +26,7 @@ export default function ProfileTabs({ user }: ProfileTabsProps) {
       ApiService[APIConfig.GET_USER_FOLLOWING.METHOD](
         // @ts-expect-error: URL function with param
         APIConfig.GET_USER_FOLLOWING.URL(user.id),
-        { cursor: pageParam, pageSize: 12 }
+        { cursor: pageParam, pageSize: 12 },
       ).then((res) => res.data),
     initialPageParam: null as string | null,
     getNextPageParam: (lastPage) => lastPage.nextCursor,
@@ -38,7 +40,7 @@ export default function ProfileTabs({ user }: ProfileTabsProps) {
       ApiService[APIConfig.GET_USER_FOLLOWERS_LIST.METHOD](
         // @ts-expect-error: URL function with param
         APIConfig.GET_USER_FOLLOWERS_LIST.URL(user.id),
-        { cursor: pageParam, pageSize: 12 }
+        { cursor: pageParam, pageSize: 12 },
       ).then((res) => res.data),
     initialPageParam: null as string | null,
     getNextPageParam: (lastPage) => lastPage.nextCursor,

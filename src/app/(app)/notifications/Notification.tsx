@@ -21,7 +21,7 @@ export default function Notification({ notification }: NotificationProps) {
       icon: <User2 className="size-7 text-primary" />,
       href: RouteConfig.protectedRoute.PROFILE.replace(
         ":username",
-        notification.issuer.username
+        notification.issuer.username,
       ),
     },
     [NotificationType.LIKE]: {
@@ -29,7 +29,7 @@ export default function Notification({ notification }: NotificationProps) {
       icon: <Heart className="size-7 text-red-500 fill-red-500" />,
       href: RouteConfig.protectedRoute.POST.replace(
         ":postId",
-        notification.postId || ""
+        notification.postId || "",
       ),
     },
     [NotificationType.COMMENT]: {
@@ -37,7 +37,7 @@ export default function Notification({ notification }: NotificationProps) {
       icon: <MessageCircle className="size-7 text-primary" />,
       href: RouteConfig.protectedRoute.POST.replace(
         ":postId",
-        notification.postId || ""
+        notification.postId || "",
       ),
     },
   };
@@ -49,7 +49,7 @@ export default function Notification({ notification }: NotificationProps) {
       <article
         className={cn(
           "flex gap-3 rounded-2xl bg-card p-5 shadow-sm transition-colors hover:bg-card/70",
-          !notification.read && "bg-primary/10"
+          !notification.read && "bg-primary/10",
         )}
       >
         <div className="my-1">{icon}</div>

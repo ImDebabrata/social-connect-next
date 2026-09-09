@@ -73,7 +73,7 @@ const ApiService = {
     options: IAxiosOptions = {},
     progressCallback: (progress: number) => void = (progress) => {
       console.log(progress, "uploading");
-    }
+    },
   ): Promise<IAPIResponseType<any>> => {
     if (payload instanceof FormData) {
       headers = { ...headers, "Content-Type": "multipart/form-data" };
@@ -93,7 +93,7 @@ const ApiService = {
     options: IAxiosOptions = {},
     progressCallback: (progress: number) => void = (progress) => {
       console.log(progress, "uploading");
-    }
+    },
   ): Promise<IAPIResponseType<any>> => {
     const axiosOptions: AxiosRequestConfig = {
       headers: getHeaders(headers),
@@ -111,7 +111,7 @@ const ApiService = {
     options: IAxiosOptions = {},
     progressCallback: (progress: number) => void = (progress) => {
       console.log(progress, "uploading");
-    }
+    },
   ): Promise<IAPIResponseType<any>> => {
     if (payload instanceof FormData) {
       headers = { ...headers, "Content-Type": "multipart/form-data" };
@@ -128,7 +128,7 @@ const ApiService = {
     url: string,
     payload = {},
     headers = {},
-    options: IAxiosOptions = {}
+    options: IAxiosOptions = {},
   ): Promise<IAPIResponseType<any>> => {
     const axiosOptions: AxiosRequestConfig = {
       headers: getHeaders(headers),
@@ -142,7 +142,7 @@ const ApiService = {
     url: string,
     payload = {},
     headers = {},
-    options: IAxiosOptions = {}
+    options: IAxiosOptions = {},
   ): Promise<IAPIResponseType<any>> => {
     // options = getParsedOptions(headers, options);
     const axiosOptions: AxiosRequestConfig = {
@@ -157,7 +157,7 @@ const ApiService = {
 
 const uploadProgressHandler = (
   progressCallback: (progress: number) => void,
-  progressEvent: any
+  progressEvent: any,
 ) => {
   if (progressCallback) {
     const percentFraction = progressEvent.loaded / progressEvent.total;

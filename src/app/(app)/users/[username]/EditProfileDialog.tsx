@@ -64,7 +64,7 @@ function EditProfileDialog(props: EditProfileDialogProps) {
         onSuccess: () => {
           onOpenChange(false);
         },
-      }
+      },
     );
   }
 

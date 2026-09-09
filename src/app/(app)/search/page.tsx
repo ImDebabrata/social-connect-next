@@ -13,7 +13,11 @@ export default function SearchPage() {
   return (
     <main className="flex w-full min-w-0 gap-5">
       <div className="w-full min-w-0">
-        <Suspense fallback={<Loader2 className="mx-auto my-10 animate-spin text-primary" />}>
+        <Suspense
+          fallback={
+            <Loader2 className="mx-auto my-10 animate-spin text-primary" />
+          }
+        >
           <SearchResults />
         </Suspense>
       </div>

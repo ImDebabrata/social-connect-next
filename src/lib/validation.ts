@@ -7,7 +7,7 @@ export const signUpSchema = z.object({
   email: requiredString.email("Invalid email address"),
   username: requiredString.regex(
     /^[a-zA-Z0-9_-]+$/,
-    "Only letters, numbers, - and _ allowed"
+    "Only letters, numbers, - and _ allowed",
   ),
   password: passwordSchema,
 });
@@ -40,7 +40,7 @@ export const createCommentSchema = z.object({
 export type SessionPayload = {
   userId: string;
   expiresAt: Date;
-  username:string;
+  username: string;
   avatarUrl: string | null | undefined;
 };
 
@@ -67,4 +67,6 @@ export const resetPasswordClientSchema = z
     path: ["confirmPassword"],
   });
 
-export type ResetPasswordClientValues = z.infer<typeof resetPasswordClientSchema>;
+export type ResetPasswordClientValues = z.infer<
+  typeof resetPasswordClientSchema
+>;

@@ -25,7 +25,7 @@ function Bookmarks() {
         APIConfig.GET_BOOKMARKED_POSTS.URL as string,
         {
           cursor: pageParam,
-        }
+        },
       ).then((response) => response.data),
     initialPageParam: null as string | null,
     getNextPageParam: (lastPage) => lastPage.nextCursor,

@@ -6,7 +6,7 @@ export { Prisma, PrismaClient, type Message };
 const connectionString = process.env.POSTGRES_PRISMA_URL;
 if (!connectionString) {
   throw new Error(
-    "POSTGRES_PRISMA_URL is not set. Add it to chat-service/.env."
+    "POSTGRES_PRISMA_URL is not set. Add it to chat-service/.env.",
   );
 }
 

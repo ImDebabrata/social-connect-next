@@ -61,7 +61,10 @@ export default function MediaLightbox({
   if (!currentMedia) return null;
 
   return (
-    <DialogPrimitive.Root open={open} onOpenChange={(isOpen) => !isOpen && onClose()}>
+    <DialogPrimitive.Root
+      open={open}
+      onOpenChange={(isOpen) => !isOpen && onClose()}
+    >
       <DialogPrimitive.Portal>
         <DialogPrimitive.Overlay className="fixed inset-0 z-50 bg-black/95 backdrop-blur-md data-[state=open]:animate-in data-[state=closed]:animate-out data-[state=closed]:fade-out-0 data-[state=open]:fade-in-0" />
         <DialogPrimitive.Content
@@ -75,7 +78,9 @@ export default function MediaLightbox({
           {/* Top Bar */}
           <div className="flex items-center justify-between text-white/80 z-10 py-1">
             <div className="text-sm font-medium tracking-wide bg-black/40 px-3 py-1 rounded-full border border-white/10">
-              {hasMultiple ? `${currentIndex + 1} / ${mediaList.length}` : "Photo"}
+              {hasMultiple
+                ? `${currentIndex + 1} / ${mediaList.length}`
+                : "Photo"}
             </div>
             <button
               onClick={onClose}

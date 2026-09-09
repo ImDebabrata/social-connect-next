@@ -31,21 +31,21 @@ export function useUpdateProfileMutation() {
       return Promise.all([
         updateUserProfile(values),
         avatar &&
-          fetchData<{avatarUrl:string|null}>({
+          fetchData<{ avatarUrl: string | null }>({
             url: APIConfig.UPLOAD_AVATAR.URL as string,
             method: APIConfig.UPLOAD_AVATAR.METHOD,
             payload: formData,
           }),
       ]);
     },
-    onSuccess: async ([updatedUser,uploadResult]) => {
+    onSuccess: async ([updatedUser, uploadResult]) => {
       const newAvatarUrl = uploadResult?.avatarUrl;
       const queryFilter: QueryFilters = {
         queryKey: ["post-feed"],
       };
 
       await queryClient.cancelQueries(queryFilter);
-      
+
       await queryClient.invalidateQueries({
         queryKey: ["current user info"],
       });
@@ -72,7 +72,7 @@ export function useUpdateProfileMutation() {
               }),
             })),
           };
-        }
+        },
       );
       router.refresh();
       toast({

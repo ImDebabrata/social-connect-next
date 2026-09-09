@@ -40,7 +40,7 @@ export function useSubmitCommentMutation(postId: string) {
           }
 
           return oldData;
-        }
+        },
       );
 
       queryClient.invalidateQueries({
@@ -86,11 +86,11 @@ export function useDeleteCommentMutation() {
             pages: oldData.pages.map((page) => ({
               previousCursor: page.previousCursor,
               comments: page.comments.filter(
-                (comment) => comment.id !== deletedComment.id
+                (comment) => comment.id !== deletedComment.id,
               ),
             })),
           };
-        }
+        },
       );
 
       toast({

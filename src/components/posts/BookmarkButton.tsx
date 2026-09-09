@@ -11,7 +11,10 @@ interface BookmarkButtonProps {
   initialState: BookmarkInfo;
 }
 
-export default function BookmarkButton({ postId, initialState }: BookmarkButtonProps) {
+export default function BookmarkButton({
+  postId,
+  initialState,
+}: BookmarkButtonProps) {
   const { toast } = useToast();
   const queryClient = useQueryClient();
 
@@ -42,9 +45,9 @@ export default function BookmarkButton({ postId, initialState }: BookmarkButtonP
             method: APIConfig.BOOKMARK_POST.METHOD,
           }),
     onMutate: async () => {
-        toast({
-            description:`Post ${data.isBookmarkedByUser?'un':''}bookmarked`
-        })
+      toast({
+        description: `Post ${data.isBookmarkedByUser ? "un" : ""}bookmarked`,
+      });
       await queryClient.cancelQueries({ queryKey });
       const previousState = queryClient.getQueryData<BookmarkInfo>(queryKey);
 
@@ -68,7 +71,7 @@ export default function BookmarkButton({ postId, initialState }: BookmarkButtonP
       <BookmarkIcon
         className={cn(
           "size-5",
-          data.isBookmarkedByUser && "fill-primary text-primary"
+          data.isBookmarkedByUser && "fill-primary text-primary",
         )}
       />
       <span className="text-sm font-medium hidden sm:inline">

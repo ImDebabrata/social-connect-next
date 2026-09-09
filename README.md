@@ -17,6 +17,7 @@ A modern social media application built with Next.js, inspired by platforms like
 ## Tech Stack
 
 ### Frontend
+
 - **Next.js 15** - React framework with Server Components
 - **React Query (TanStack)** - Data fetching and caching
 - **Tailwind CSS** - Utility-first CSS framework
@@ -24,16 +25,19 @@ A modern social media application built with Next.js, inspired by platforms like
 - **Socket.io Client** - Real-time communication
 
 ### Backend
+
 - **Next.js API Routes** - REST API endpoints
 - **Prisma ORM** - Database modeling and queries
 - **PostgreSQL** - Primary database (via Docker)
 - **JWT** - Authentication tokens
 
 ### Microservices
+
 - **Chat Service** - Node.js/Express with Socket.io for real-time messaging
 - **TypeScript** - Type-safe development across all services
 
 ### DevOps & Tools
+
 - **Docker & Docker Compose** - Containerization and local database
 - **Makefile** - Development commands and automation
 - **ESLint** - Code linting
@@ -70,12 +74,14 @@ The application follows a microservices architecture:
 ## Installation
 
 1. **Clone the repository**
+
    ```bash
    git clone https://github.com/ImDebabrata/social-connect-next.git
    cd social-connect-next
    ```
 
 2. **Install dependencies**
+
    ```bash
    make install
    # or manually: yarn install
@@ -84,6 +90,7 @@ The application follows a microservices architecture:
 3. **Set up environment variables**
 
    Copy the environment template:
+
    ```bash
    cp .env.example .env
    # or for production: cp .env.prod .env
@@ -116,31 +123,38 @@ The application follows a microservices architecture:
 ## Running the Application
 
 ### Quick Start (Recommended)
+
 Use the Makefile to start all services:
+
 ```bash
 make start-all
 ```
 
 This will:
+
 - Start PostgreSQL in Docker
 - Run the chat service in the background
 - Start the Next.js development server
 
 ### Manual Start
+
 If you prefer to run services manually:
 
 1. **Start the database**
+
    ```bash
    docker compose up -d
    ```
 
 2. **Set up the database**
+
    ```bash
    make prisma-push
    # or: npx prisma db push
    ```
 
 3. **Start the chat service**
+
    ```bash
    cd chat-service && yarn start
    ```

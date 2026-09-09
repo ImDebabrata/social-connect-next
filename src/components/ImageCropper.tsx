@@ -1,8 +1,8 @@
 /**
  * ImageCropper Component
- * 
+ *
  * A modal-based image cropping tool using Cropper.js with rotation, zoom, and flip capabilities.
- * 
+ *
  * Features:
  * - Drag-to-crop interface
  * - Rotation control (-180° to 180°)
@@ -10,11 +10,11 @@
  * - Horizontal/Vertical flip
  * - Aspect ratio locking
  * - Returns cropped image as Blob
- * 
+ *
  * Dependencies:
  * - Cropper.js for core cropping functionality
  * - Shadcn UI components for interface elements
- * 
+ *
  * Usage:
  * <ImageCropper
  *   src={imageSource}
@@ -30,23 +30,30 @@ import "cropperjs/dist/cropper.css";
 import { Button } from "./ui/button";
 import { Slider } from "./ui/slider";
 import { Label } from "./ui/label";
-import { Dialog, DialogContent, DialogDescription, DialogFooter, DialogHeader, DialogTitle } from "./ui/dialog";
+import {
+  Dialog,
+  DialogContent,
+  DialogDescription,
+  DialogFooter,
+  DialogHeader,
+  DialogTitle,
+} from "./ui/dialog";
 import Image from "next/image";
 
 interface ImageCropperProps {
-  /** 
-   * Source URL of the image to crop 
+  /**
+   * Source URL of the image to crop
    */
   src: string;
-  /** 
+  /**
    * Aspect ratio for cropping (NaN for free ratio)
    */
   cropAspectRatio: number;
-  /** 
+  /**
    * Callback function that receives the cropped image Blob
    */
   onCropped: (blob: Blob | null) => void;
-  /** 
+  /**
    * Callback to close the modal
    */
   onClose: () => void;
@@ -57,7 +64,7 @@ const ImageCropper = (props: ImageCropperProps) => {
   // Refs for Cropper.js instance and image element
   const imageRef = useRef<HTMLImageElement>(null);
   const cropperRef = useRef<Cropper | null>(null);
-  
+
   // Component state
   const [rotate, setRotate] = useState(0);
   const [zoom, setZoom] = useState(1);
@@ -98,7 +105,7 @@ const ImageCropper = (props: ImageCropperProps) => {
         // Initialize state with current Cropper values
         setZoom(cropperRef.current?.getData().scaleX || 1);
         setRotate(cropperRef.current?.getData().rotate || 0);
-      }
+      },
     });
 
     return () => {
@@ -106,7 +113,7 @@ const ImageCropper = (props: ImageCropperProps) => {
     };
   }, [src, cropAspectRatio, isMounted]);
 
-  /** 
+  /**
    * Handles rotation changes
    * @param {number} value - Rotation angle in degrees (-180 to 180)
    */
@@ -115,7 +122,7 @@ const ImageCropper = (props: ImageCropperProps) => {
     cropperRef.current?.rotateTo(value);
   };
 
-  /** 
+  /**
    * Handles zoom level changes
    * @param {number} value - Zoom multiplier (0.1 to 3)
    */
@@ -124,7 +131,7 @@ const ImageCropper = (props: ImageCropperProps) => {
     cropperRef.current?.scale(value);
   };
 
-  /** 
+  /**
    * Flips the image horizontally or vertically
    * @param {"horizontal" | "vertical"} direction - Flip direction
    */
@@ -140,7 +147,7 @@ const ImageCropper = (props: ImageCropperProps) => {
     }
   };
 
-  /** 
+  /**
    * Finalizes the crop and returns the result
    */
   const handleCrop = async () => {
@@ -162,7 +169,7 @@ const ImageCropper = (props: ImageCropperProps) => {
             Adjust the image using the controls below
           </DialogDescription>
         </DialogHeader>
-        
+
         {/* Image Container */}
         <div className="space-y-4">
           {src && (
@@ -229,15 +236,13 @@ const ImageCropper = (props: ImageCropperProps) => {
             </div>
           )}
         </div>
-        
+
         {/* Dialog Footer */}
         <DialogFooter>
           <Button variant="secondary" onClick={onClose}>
             Cancel
           </Button>
-          <Button onClick={handleCrop}>
-            Crop
-          </Button>
+          <Button onClick={handleCrop}>Crop</Button>
         </DialogFooter>
       </DialogContent>
     </Dialog>

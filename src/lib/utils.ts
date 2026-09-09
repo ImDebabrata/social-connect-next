@@ -63,7 +63,7 @@ export function parsePageSize(
   value: string | number | null | undefined,
   defaultSize = 10,
   min = 1,
-  max = 50
+  max = 50,
 ): number {
   const parsed = Number(value);
   if (!parsed || Number.isNaN(parsed)) return defaultSize;
@@ -99,7 +99,7 @@ export const fetchData = async <T>({
     post: ApiService.post,
     put: ApiService.put,
     delete: ApiService.delete,
-    patch:ApiService.patch
+    patch: ApiService.patch,
   }[method];
 
   if (!apiCall) {

@@ -39,7 +39,10 @@ export default async function Page({
         {params.reset === "true" && (
           <div className="flex items-center gap-2 rounded-lg border border-emerald-500/30 bg-emerald-500/10 p-3 text-sm text-emerald-600 dark:text-emerald-400">
             <CheckCircle2 className="size-4 shrink-0" />
-            <span>Password updated successfully! Please log in with your new password.</span>
+            <span>
+              Password updated successfully! Please log in with your new
+              password.
+            </span>
           </div>
         )}
 

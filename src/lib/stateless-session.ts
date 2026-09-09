@@ -30,7 +30,7 @@ export async function decrypt(session: string | undefined = "") {
 }
 
 export async function createSession(
-  sessionPayload: Omit<SessionPayload, "expiresAt">
+  sessionPayload: Omit<SessionPayload, "expiresAt">,
 ) {
   const expiresAt = new Date(Date.now() + 60 * 60 * 1000);
   const session = await encrypt({ ...sessionPayload, expiresAt });
@@ -94,13 +94,13 @@ export async function updateSessionPayload(payload: Partial<SessionPayload>) {
   }
 
   const newPayload = { ...currentPayload, ...payload };
-  
+
   if (!newPayload.expiresAt) {
     return null;
   }
 
   const expiresAt = new Date(newPayload.expiresAt);
-  
+
   const newSession = await encrypt(newPayload as SessionPayload);
 
   cookiesStore.set(Misc.SESSION_COOKIE, newSession, {

@@ -17,7 +17,9 @@ export interface UserWithMessageInfo extends UserData {
 export default function SocketChatWrapper() {
   const socket = useSocket();
   const { user } = useCurrentSession();
-  const [usersWithMessages, setUsersWithMessages] = useState<UserWithMessageInfo[]>([]);
+  const [usersWithMessages, setUsersWithMessages] = useState<
+    UserWithMessageInfo[]
+  >([]);
   const [onlineUserIds, setOnlineUserIds] = useState<Set<string>>(new Set());
   const [connected, setConnected] = useState(false);
   const searchParams = useSearchParams();
@@ -33,7 +35,11 @@ export default function SocketChatWrapper() {
       { userId: user.userId },
       (response: {
         success: boolean;
-        data: { userId: string; message: Message | null; unreadCount: number }[];
+        data: {
+          userId: string;
+          message: Message | null;
+          unreadCount: number;
+        }[];
       }) => {
         if (!response.success) return;
         const byId = new Map(response.data.map((d) => [d.userId, d]));
@@ -49,16 +55,18 @@ export default function SocketChatWrapper() {
               };
             }
             return item;
-          })
+          }),
         );
-      }
+      },
     );
   }, [socket, user?.userId]);
 
   const loadUsers = useCallback(() => {
     if (!socket || !user?.userId) return;
     // Re-sync presence in case this component mounted after connect.
-    socket.emit("presence:get", (ids: string[]) => setOnlineUserIds(new Set(ids)));
+    socket.emit("presence:get", (ids: string[]) =>
+      setOnlineUserIds(new Set(ids)),
+    );
     socket.emit("getUsers", user.userId, (users: UserData[]) => {
       rosterRefetchPending.current = false;
       setUsersWithMessages((prev) => {
@@ -79,7 +87,13 @@ export default function SocketChatWrapper() {
     if (!socket || !user?.userId) return;
 
     const onPresenceInit = (ids: string[]) => setOnlineUserIds(new Set(ids));
-    const onPresenceUpdate = ({ userId: id, online }: { userId: string; online: boolean }) =>
+    const onPresenceUpdate = ({
+      userId: id,
+      online,
+    }: {
+      userId: string;
+      online: boolean;
+    }) =>
       setOnlineUserIds((prev) => {
         const next = new Set(prev);
         if (online) next.add(id);
@@ -137,9 +151,11 @@ export default function SocketChatWrapper() {
                 ...item,
                 lastMessage: message.content,
                 lastMessageTime: new Date(message.createdAt),
-                unreadCount: bumpUnread ? item.unreadCount + 1 : item.unreadCount,
+                unreadCount: bumpUnread
+                  ? item.unreadCount + 1
+                  : item.unreadCount,
               }
-            : item
+            : item,
         );
       });
     };
@@ -156,14 +172,14 @@ export default function SocketChatWrapper() {
     if (!selectedUserId || !user?.userId) return;
     setUsersWithMessages((prev) =>
       prev.map((item) =>
-        item.id === selectedUserId ? { ...item, unreadCount: 0 } : item
-      )
+        item.id === selectedUserId ? { ...item, unreadCount: 0 } : item,
+      ),
     );
   }, [selectedUserId, user?.userId]);
 
   const selectedUser = useMemo(
     () => usersWithMessages.find((u) => u.id === selectedUserId) ?? null,
-    [usersWithMessages, selectedUserId]
+    [usersWithMessages, selectedUserId],
   );
 
   return (
@@ -188,7 +204,10 @@ export default function SocketChatWrapper() {
             selectedUserId ? "hidden md:flex" : "flex"
           } w-full shrink-0 flex-col border-e md:w-80`}
         >
-          <ChatSidebar userList={usersWithMessages} onlineUserIds={onlineUserIds} />
+          <ChatSidebar
+            userList={usersWithMessages}
+            onlineUserIds={onlineUserIds}
+          />
         </div>
 
         {/* Thread: hidden on mobile until a conversation is open. */}
@@ -199,7 +218,9 @@ export default function SocketChatWrapper() {
         >
           <ChatChannel
             selectedUser={selectedUser}
-            isOnline={selectedUserId ? onlineUserIds.has(selectedUserId) : false}
+            isOnline={
+              selectedUserId ? onlineUserIds.has(selectedUserId) : false
+            }
           />
         </div>
       </div>

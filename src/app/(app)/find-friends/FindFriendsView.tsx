@@ -27,57 +27,53 @@ const FILTER_OPTIONS: {
   label: string;
   icon: React.ReactNode;
 }[] = [
-    { key: "all", label: "All Members", icon: <Users className="h-4 w-4" /> },
-    {
-      key: "not_following",
-      label: "Suggested / New",
-      icon: <Sparkles className="h-4 w-4 text-amber-500" />,
-    },
-    {
-      key: "mutual",
-      label: "Mutual Friends",
-      icon: <UserCheck className="h-4 w-4 text-emerald-500" />,
-    },
-    {
-      key: "popular",
-      label: "Top Creators",
-      icon: <Flame className="h-4 w-4 text-rose-500" />,
-    },
-    {
-      key: "recent",
-      label: "Recently Joined",
-      icon: <Compass className="h-4 w-4 text-sky-500" />,
-    },
-  ];
+  { key: "all", label: "All Members", icon: <Users className="h-4 w-4" /> },
+  {
+    key: "not_following",
+    label: "Suggested / New",
+    icon: <Sparkles className="h-4 w-4 text-amber-500" />,
+  },
+  {
+    key: "mutual",
+    label: "Mutual Friends",
+    icon: <UserCheck className="h-4 w-4 text-emerald-500" />,
+  },
+  {
+    key: "popular",
+    label: "Top Creators",
+    icon: <Flame className="h-4 w-4 text-rose-500" />,
+  },
+  {
+    key: "recent",
+    label: "Recently Joined",
+    icon: <Compass className="h-4 w-4 text-sky-500" />,
+  },
+];
 
 export default function FindFriendsView() {
   const [searchQuery, setSearchQuery] = useState("");
-  const [activeFilter, setActiveFilter] = useState<FollowFilterType>("not_following");
+  const [activeFilter, setActiveFilter] =
+    useState<FollowFilterType>("not_following");
   const [layout, setLayout] = useState<"grid" | "list">("list");
 
   const debouncedQuery = useDebounce(searchQuery, 350);
 
-  const {
-    data,
-    status,
-    hasNextPage,
-    isFetchingNextPage,
-    fetchNextPage,
-  } = useInfiniteQuery<UsersPage>({
-    queryKey: ["users", "discover", debouncedQuery, activeFilter],
-    queryFn: ({ pageParam }) =>
-      ApiService[APIConfig.DISCOVER_USERS.METHOD](
-        APIConfig.DISCOVER_USERS.URL as string,
-        {
-          q: debouncedQuery,
-          filter: activeFilter,
-          cursor: pageParam,
-          pageSize: 12,
-        }
-      ).then((res) => res.data),
-    initialPageParam: null as string | null,
-    getNextPageParam: (lastPage) => lastPage.nextCursor,
-  });
+  const { data, status, hasNextPage, isFetchingNextPage, fetchNextPage } =
+    useInfiniteQuery<UsersPage>({
+      queryKey: ["users", "discover", debouncedQuery, activeFilter],
+      queryFn: ({ pageParam }) =>
+        ApiService[APIConfig.DISCOVER_USERS.METHOD](
+          APIConfig.DISCOVER_USERS.URL as string,
+          {
+            q: debouncedQuery,
+            filter: activeFilter,
+            cursor: pageParam,
+            pageSize: 12,
+          },
+        ).then((res) => res.data),
+      initialPageParam: null as string | null,
+      getNextPageParam: (lastPage) => lastPage.nextCursor,
+    });
 
   const users = data?.pages?.flatMap((page) => page.users) || [];
   const totalCount = data?.pages?.[0]?.totalCount;
@@ -153,10 +149,11 @@ export default function FindFriendsView() {
                 key={filter.key}
                 variant={isActive ? "default" : "outline"}
                 size="sm"
-                className={`h-8 rounded-full text-xs font-medium gap-1.5 transition-all ${isActive
-                  ? "shadow-sm"
-                  : "border-muted-foreground/20 hover:border-primary/40 hover:bg-primary/5"
-                  }`}
+                className={`h-8 rounded-full text-xs font-medium gap-1.5 transition-all ${
+                  isActive
+                    ? "shadow-sm"
+                    : "border-muted-foreground/20 hover:border-primary/40 hover:bg-primary/5"
+                }`}
                 onClick={() => setActiveFilter(filter.key)}
               >
                 {filter.icon}

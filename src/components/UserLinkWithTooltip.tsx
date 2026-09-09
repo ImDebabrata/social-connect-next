@@ -1,4 +1,4 @@
-'use client'
+"use client";
 import APIConfig from "@/constrants/ApiConfig";
 import RouteConfig from "@/constrants/RouteConfig";
 import { UserData } from "@/lib/types";
@@ -23,12 +23,11 @@ function UserLinkWithTooltip(props: UserLinkWithTooltipProps) {
         url: APIConfig.GET_USER_PROFILE.URL(username),
         method: APIConfig.GET_USER_PROFILE.METHOD,
       }),
-    retry(failureCount, error:{status:number}) {
+    retry(failureCount, error: { status: number }) {
       if (error?.status === 404) {
         return false;
       }
       return failureCount < 3;
-      
     },
     staleTime: Infinity,
   });
