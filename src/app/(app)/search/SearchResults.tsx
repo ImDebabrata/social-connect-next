@@ -25,8 +25,17 @@ export default function SearchResults() {
   const initialQ = searchParams.get("q") || "";
 
   const [query, setQuery] = useState(initialQ);
-  const [activeTab, setActiveTab] = useState<"people" | "posts">("people");
+  const [activeTab, setActiveTab] = useState<"people" | "posts">(
+    initialQ.startsWith("#") ? "posts" : "people"
+  );
   const debouncedQuery = useDebounce(query, 350);
+
+  useEffect(() => {
+    setQuery(initialQ);
+    if (initialQ.startsWith("#")) {
+      setActiveTab("posts");
+    }
+  }, [initialQ]);
 
   useEffect(() => {
     if (debouncedQuery !== initialQ) {

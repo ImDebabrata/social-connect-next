@@ -77,8 +77,8 @@ const Linkify: React.FC<LinkifyProps> = ({ children }) => {
         parts.push(
           <Link
             key={`link-${keyCount++}`}
-            href={`/hashtag/${hashtag}`}
-            className="text-blue-600 hover:underline"
+            href={`/search?q=${encodeURIComponent(`#${hashtag}`)}`}
+            className="text-primary hover:underline font-medium"
           >
             {`#${hashtag}`}
           </Link>
