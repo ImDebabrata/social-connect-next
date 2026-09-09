@@ -5,6 +5,7 @@
   "license": "MIT",
   "scripts": {
     "build": "tsc",
+    "type-check": "tsc --noEmit",
     "env:dev": "cp .env.dev .env && echo 'Chat service switched to DEVELOPMENT (.env)'",
     "env:prod": "cp .env.prod .env && echo 'Chat service switched to PRODUCTION (.env)'",
     "dev": "cp .env.dev .env && ts-node src/index.ts",

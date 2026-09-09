@@ -12,6 +12,7 @@
     "build:prod": "cp .env.prod .env && prisma migrate deploy && next build",
     "start": "next start",
     "lint": "next lint",
+    "type-check": "tsc --noEmit",
     "format": "prettier --write .",
     "format:check": "prettier --check .",
     "postinstall": "prisma generate",

@@ -1,1 +1,9 @@
 npx lint-staged
+
+# Check types for the main app
+echo "🔍 Checking TypeScript types in main app..."
+yarn type-check
+
+# Check types for the chat-service
+echo "🔍 Checking TypeScript types in chat-service..."
+cd chat-service && yarn type-check
