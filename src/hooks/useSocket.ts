@@ -12,7 +12,6 @@ import { getSessionToken } from "@/app/action";
  * limitation when the chat service is on a different domain (e.g. Render).
  */
 let socket: Socket | null = null;
-let tokenFetched = false;
 
 async function initSocket(): Promise<Socket> {
   if (socket) return socket;
@@ -30,7 +29,6 @@ async function initSocket(): Promise<Socket> {
     reconnectionDelay: 3000,
   });
 
-  tokenFetched = true;
   return socket;
 }
 
