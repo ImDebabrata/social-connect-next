@@ -3,7 +3,11 @@
 import React, { useCallback, useEffect, useState } from "react";
 import * as DialogPrimitive from "@radix-ui/react-dialog";
 import { Media } from "@prisma/client";
-import { ChevronLeft, ChevronRight, X } from "lucide-react";
+import {
+  ChevronLeftIcon,
+  ChevronRightIcon,
+  CloseIcon,
+} from "@/constrants/ImageConfig";
 
 interface MediaLightboxProps {
   mediaList: Media[];
@@ -42,7 +46,7 @@ export default function MediaLightbox({
     if (!open) return;
 
     const handleKeyDown = (e: KeyboardEvent) => {
-      if (e.key === "ArrowLeft") {
+      if (e.key === "ArrowLeftIcon") {
         e.preventDefault();
         handlePrev();
       } else if (e.key === "ArrowRight") {
@@ -87,7 +91,7 @@ export default function MediaLightbox({
               className="rounded-full bg-black/50 p-2 text-white/80 transition-all hover:bg-white/20 hover:text-white focus:outline-none focus-visible:ring-2 focus-visible:ring-white border border-white/10"
               aria-label="Close media preview"
             >
-              <X className="size-5" />
+              <CloseIcon className="size-5" />
             </button>
           </div>
 
@@ -122,7 +126,7 @@ export default function MediaLightbox({
                   className="absolute left-2 sm:left-4 top-1/2 -translate-y-1/2 rounded-full bg-black/60 p-2.5 sm:p-3 text-white/90 backdrop-blur-sm transition-all hover:bg-white/20 hover:scale-110 hover:text-white border border-white/10 focus:outline-none"
                   aria-label="Previous image"
                 >
-                  <ChevronLeft className="size-6 sm:size-7" />
+                  <ChevronLeftIcon className="size-6 sm:size-7" />
                 </button>
                 <button
                   onClick={(e) => {
@@ -132,7 +136,7 @@ export default function MediaLightbox({
                   className="absolute right-2 sm:right-4 top-1/2 -translate-y-1/2 rounded-full bg-black/60 p-2.5 sm:p-3 text-white/90 backdrop-blur-sm transition-all hover:bg-white/20 hover:scale-110 hover:text-white border border-white/10 focus:outline-none"
                   aria-label="Next image"
                 >
-                  <ChevronRight className="size-6 sm:size-7" />
+                  <ChevronRightIcon className="size-6 sm:size-7" />
                 </button>
               </>
             )}

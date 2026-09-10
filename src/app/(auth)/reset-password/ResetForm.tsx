@@ -17,7 +17,7 @@ import { resetPassword } from "./action";
 import { toast } from "@/hooks/use-toast";
 import { useRouter } from "next/navigation";
 import RouteConfig from "@/constrants/RouteConfig";
-import { AlertCircle, CheckCircle2 } from "lucide-react";
+import { AlertCircleIcon, CheckCircle2Icon } from "@/constrants/ImageConfig";
 import { Button } from "@/components/ui/button";
 import Link from "next/link";
 import {
@@ -73,7 +73,7 @@ export default function ResetForm({ token }: { token: string }) {
     return (
       <div className="space-y-5 rounded-xl border border-emerald-500/30 bg-emerald-500/10 p-6 text-center">
         <div className="mx-auto flex size-12 items-center justify-center rounded-full bg-emerald-500/20 text-emerald-600 dark:text-emerald-400">
-          <CheckCircle2 className="size-6" />
+          <CheckCircle2Icon className="size-6" />
         </div>
         <div className="space-y-1">
           <h2 className="text-lg font-semibold text-foreground">
@@ -99,7 +99,7 @@ export default function ResetForm({ token }: { token: string }) {
       <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-4">
         {error && (
           <div className="flex items-center gap-2 rounded-lg border border-destructive/30 bg-destructive/10 p-3 text-sm text-destructive">
-            <AlertCircle className="size-4 shrink-0" />
+            <AlertCircleIcon className="size-4 shrink-0" />
             <span>{error}</span>
           </div>
         )}

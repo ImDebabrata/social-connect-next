@@ -3,7 +3,7 @@ import { Metadata } from "next";
 import Link from "next/link";
 import ForgotForm from "./ForgotForm";
 import AuthLayout from "../AuthLayout";
-import { ArrowLeft, KeyRound } from "lucide-react";
+import { ArrowLeftIcon, KeyRoundIcon } from "@/constrants/ImageConfig";
 
 export const metadata: Metadata = {
   title: "Forgot Password",
@@ -15,7 +15,7 @@ export default function Page() {
       <div className="space-y-6">
         <div className="space-y-2 text-center">
           <div className="mx-auto mb-2 flex size-12 items-center justify-center rounded-full bg-primary/10 text-primary">
-            <KeyRound className="size-6" />
+            <KeyRoundIcon className="size-6" />
           </div>
           <h1 className="text-2xl font-bold tracking-tight sm:text-3xl">
             Reset your password
@@ -32,7 +32,7 @@ export default function Page() {
             href="/sign-in"
             className="inline-flex items-center gap-1.5 text-sm font-medium text-muted-foreground transition-colors hover:text-foreground hover:underline"
           >
-            <ArrowLeft className="size-4" />
+            <ArrowLeftIcon className="size-4" />
             Back to log in
           </Link>
         </div>

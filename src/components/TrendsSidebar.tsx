@@ -3,7 +3,11 @@ import RouteConfig from "@/constrants/RouteConfig";
 import prisma from "@/lib/prisma";
 import { getUserDataSelect } from "@/lib/types";
 import { formatNumber } from "@/lib/utils";
-import { Loader2, Sparkles, TrendingUp } from "lucide-react";
+import {
+  LoadingIcon,
+  SparklesIcon,
+  TrendingUpIcon,
+} from "@/constrants/ImageConfig";
 import { unstable_cache } from "next/cache";
 import Link from "next/link";
 import React, { Suspense } from "react";
@@ -14,7 +18,7 @@ import UserTooltip from "./UserTooltip";
 function TrendsSidebar() {
   return (
     <div className="sticky top-[5.25rem] hidden h-fit w-72 flex-none space-y-5 md:block lg:w-80">
-      <Suspense fallback={<Loader2 className="mx-auto animate-spin" />}>
+      <Suspense fallback={<LoadingIcon className="mx-auto animate-spin" />}>
         <WhoToFollow />
         <TrendingTopics />
       </Suspense>
@@ -48,7 +52,7 @@ async function WhoToFollow() {
     <div className="space-y-4 rounded-2xl bg-card p-5 shadow-sm border">
       <div className="flex items-center justify-between">
         <div className="flex items-center gap-2 text-lg font-bold">
-          <Sparkles className="h-4 w-4 text-primary" />
+          <SparklesIcon className="h-4 w-4 text-primary" />
           <span>Who to follow</span>
         </div>
         <Link
@@ -129,7 +133,7 @@ async function TrendingTopics() {
   return (
     <div className="space-y-4 rounded-2xl bg-card p-5 shadow-sm border">
       <div className="flex items-center gap-2 text-lg font-bold">
-        <TrendingUp className="h-4 w-4 text-primary" />
+        <TrendingUpIcon className="h-4 w-4 text-primary" />
         <span>Trending Topics</span>
       </div>
       <div className="space-y-3">

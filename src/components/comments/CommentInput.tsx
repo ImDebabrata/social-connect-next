@@ -3,7 +3,7 @@ import { useState } from "react";
 import { useSubmitCommentMutation } from "./mutation";
 import { Input } from "../ui/input";
 import { Button } from "../ui/button";
-import { Loader2, SendHorizonal } from "lucide-react";
+import { LoadingIcon, SendHorizonalIcon } from "@/constrants/ImageConfig";
 
 interface CommentInputProps {
   post: PostData;
@@ -43,9 +43,9 @@ export default function CommentInput({ post }: CommentInputProps) {
         disabled={mutation.isPending}
       >
         {mutation.isPending ? (
-          <Loader2 className="aniimate-spin" />
+          <LoadingIcon className="aniimate-spin" />
         ) : (
-          <SendHorizonal />
+          <SendHorizonalIcon />
         )}
       </Button>
     </form>

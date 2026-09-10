@@ -2,11 +2,11 @@ import TrendsSidebar from "@/components/TrendsSidebar";
 import { Metadata } from "next";
 import React, { Suspense } from "react";
 import SearchResults from "./SearchResults";
-import { Loader2 } from "lucide-react";
+import { LoadingIcon } from "@/constrants/ImageConfig";
 
 export const metadata: Metadata = {
-  title: "Search - Social Connect",
-  description: "Search people and posts on Social Connect.",
+  title: "SearchIcon - Social Connect",
+  description: "SearchIcon people and posts on Social Connect.",
 };
 
 export default function SearchPage() {
@@ -15,7 +15,7 @@ export default function SearchPage() {
       <div className="w-full min-w-0">
         <Suspense
           fallback={
-            <Loader2 className="mx-auto my-10 animate-spin text-primary" />
+            <LoadingIcon className="mx-auto my-10 animate-spin text-primary" />
           }
         >
           <SearchResults />

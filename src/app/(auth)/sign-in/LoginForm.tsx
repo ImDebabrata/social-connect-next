@@ -17,7 +17,7 @@ import { useState, useTransition } from "react";
 import { useForm } from "react-hook-form";
 import { guestSignin, signin } from "./action";
 import Link from "next/link";
-import { AlertCircle, UserCheck } from "lucide-react";
+import { AlertCircleIcon, UserCheckIcon } from "@/constrants/ImageConfig";
 
 export default function LoginForm() {
   const [error, setError] = useState<string>();
@@ -54,7 +54,7 @@ export default function LoginForm() {
       <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-4">
         {error && (
           <div className="flex items-center gap-2 rounded-lg border border-destructive/30 bg-destructive/10 p-3 text-sm text-destructive">
-            <AlertCircle className="size-4 shrink-0" />
+            <AlertCircleIcon className="size-4 shrink-0" />
             <span>{error}</span>
           </div>
         )}
@@ -125,7 +125,7 @@ export default function LoginForm() {
           className="w-full border-border/80 font-medium"
           onClick={onGuestLogin}
         >
-          <UserCheck className="size-4 shrink-0" />
+          <UserCheckIcon className="size-4 shrink-0" />
           {isGuestPending ? "Waking up demo server…" : "Continue as Guest"}
         </LoadingButton>
         <p className="text-center text-xs text-muted-foreground">

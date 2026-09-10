@@ -10,12 +10,12 @@ import { useCurrentSession } from "@/hooks/useCurrentSession";
 import { FollowerInfo, UserData } from "@/lib/types";
 import { formatDate, formatNumber } from "@/lib/utils";
 import {
-  Calendar,
-  FileText,
-  MessageCircle,
-  UserCheck,
-  Users,
-} from "lucide-react";
+  CalendarIcon,
+  FileTextIcon,
+  MessageCircleIcon,
+  UserCheckIcon,
+  UsersIcon,
+} from "@/constrants/ImageConfig";
 import Link from "next/link";
 import React from "react";
 
@@ -98,7 +98,7 @@ export default function UserCard({ user, showBio = true }: UserCardProps) {
                   <Link
                     href={`${RouteConfig.protectedRoute.MESSAGES}?userId=${user.id}`}
                   >
-                    <MessageCircle className="h-4 w-4" />
+                    <MessageCircleIcon className="h-4 w-4" />
                   </Link>
                 </Button>
                 <FollowButton userId={user.id} initialState={followerInfo} />
@@ -128,21 +128,21 @@ export default function UserCard({ user, showBio = true }: UserCardProps) {
       <div className="mt-4 flex flex-wrap items-center justify-between gap-y-2 border-t pt-3 text-xs text-muted-foreground">
         <div className="flex items-center gap-4">
           <span className="flex items-center gap-1" title="Followers">
-            <Users className="h-3.5 w-3.5 text-primary" />
+            <UsersIcon className="h-3.5 w-3.5 text-primary" />
             <strong className="font-semibold text-foreground">
               {formatNumber(user._count.followers)}
             </strong>{" "}
             followers
           </span>
           <span className="flex items-center gap-1" title="Following">
-            <UserCheck className="h-3.5 w-3.5 text-primary" />
+            <UserCheckIcon className="h-3.5 w-3.5 text-primary" />
             <strong className="font-semibold text-foreground">
               {formatNumber(user._count.following || 0)}
             </strong>{" "}
             following
           </span>
           <span className="hidden items-center gap-1 sm:flex" title="Posts">
-            <FileText className="h-3.5 w-3.5 text-muted-foreground" />
+            <FileTextIcon className="h-3.5 w-3.5 text-muted-foreground" />
             <strong className="font-semibold text-foreground">
               {formatNumber(user._count.posts)}
             </strong>{" "}
@@ -151,7 +151,7 @@ export default function UserCard({ user, showBio = true }: UserCardProps) {
         </div>
 
         <span className="flex items-center gap-1 text-[11px]">
-          <Calendar className="h-3 w-3" />
+          <CalendarIcon className="h-3 w-3" />
           Joined {formatDate(user.createdAt)}
         </span>
       </div>

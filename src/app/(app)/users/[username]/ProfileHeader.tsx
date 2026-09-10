@@ -9,12 +9,12 @@ import RouteConfig from "@/constrants/RouteConfig";
 import { FollowerInfo, UserData } from "@/lib/types";
 import { formatDate, formatNumber } from "@/lib/utils";
 import {
-  Calendar,
-  FileText,
-  MessageCircle,
-  UserCheck,
-  Users,
-} from "lucide-react";
+  CalendarIcon,
+  FileTextIcon,
+  MessageCircleIcon,
+  UserCheckIcon,
+  UsersIcon,
+} from "@/constrants/ImageConfig";
 import Link from "next/link";
 import React from "react";
 import EditProfileButton from "./EditProfileButton";
@@ -95,7 +95,7 @@ export default function ProfileHeader({
                     <Link
                       href={`${RouteConfig.protectedRoute.MESSAGES}?userId=${user.id}`}
                     >
-                      <MessageCircle className="h-4 w-4" />
+                      <MessageCircleIcon className="h-4 w-4" />
                     </Link>
                   </Button>
                   <FollowButton userId={user.id} initialState={followerInfo} />
@@ -106,14 +106,14 @@ export default function ProfileHeader({
 
           {/* Member Since & Meta */}
           <div className="flex items-center justify-center sm:justify-start gap-1.5 text-xs text-muted-foreground">
-            <Calendar className="h-3.5 w-3.5" />
+            <CalendarIcon className="h-3.5 w-3.5" />
             <span>Member since {formatDate(user.createdAt)}</span>
           </div>
 
           {/* Stats Row */}
           <div className="flex flex-wrap items-center justify-center sm:justify-start gap-4 text-sm pt-1">
             <span className="flex items-center gap-1.5 font-medium">
-              <FileText className="h-4 w-4 text-muted-foreground" />
+              <FileTextIcon className="h-4 w-4 text-muted-foreground" />
               <strong className="font-bold text-foreground">
                 {formatNumber(user._count.posts)}
               </strong>{" "}
@@ -121,12 +121,12 @@ export default function ProfileHeader({
             </span>
 
             <span className="flex items-center gap-1.5 font-medium">
-              <Users className="h-4 w-4 text-primary" />
+              <UsersIcon className="h-4 w-4 text-primary" />
               <FollowerCount userId={user.id} initialState={followerInfo} />
             </span>
 
             <span className="flex items-center gap-1.5 font-medium">
-              <UserCheck className="h-4 w-4 text-primary" />
+              <UserCheckIcon className="h-4 w-4 text-primary" />
               <span>
                 <strong className="font-bold text-foreground">
                   {formatNumber(user._count.following || 0)}

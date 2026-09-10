@@ -1,5 +1,5 @@
 import { cn } from "@/lib/utils";
-import { Eye, EyeOff } from "lucide-react";
+import { EyeIcon, EyeOffIcon } from "@/constrants/ImageConfig";
 import React, { useState } from "react";
 import { Input } from "./ui/input";
 
@@ -24,9 +24,9 @@ const PasswordInput = React.forwardRef<
         className="absolute right-3 top-1/2 -translate-y-1/2 transform text-muted-foreground"
       >
         {showPassword ? (
-          <EyeOff className="size-5" />
+          <EyeOffIcon className="size-5" />
         ) : (
-          <Eye className="size-5" />
+          <EyeIcon className="size-5" />
         )}
       </button>
     </div>
