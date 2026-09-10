@@ -14,6 +14,36 @@ A modern social media application built with Next.js, inspired by platforms like
 - **Responsive Design**: Modern UI with dark/light theme support
 - **Microservices Architecture**: Separate chat service for scalable real-time features
 
+## 📸 Screenshots
+
+Here is a quick look at the core features of the application:
+
+<details>
+<summary><b>Click to view screenshots</b></summary>
+
+### Home & Feed
+
+![Home Page](screenshots/home.png)
+
+### Messaging
+
+![Messaging Interface](screenshots/messaging.png)
+
+### Find Friends
+
+![Discover Users](screenshots/find-friends.png)
+
+### User Profile
+
+![Profile Page](screenshots/profile.png)
+
+### Authentication (Login / Signup)
+
+![Login Page](screenshots/login.png)
+![Signup Page](screenshots/signup.png)
+
+</details>
+
 ## Tech Stack
 
 ### Frontend
