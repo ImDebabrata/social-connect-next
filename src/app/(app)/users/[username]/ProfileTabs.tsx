@@ -6,7 +6,11 @@ import APIConfig from "@/constrants/ApiConfig";
 import ApiService from "@/lib/api.service";
 import { UserData, UsersPage } from "@/lib/types";
 import { useInfiniteQuery } from "@tanstack/react-query";
-import { FileText, UserCheck, Users } from "lucide-react";
+import {
+  FileTextIcon,
+  UserCheckIcon,
+  UsersIcon,
+} from "@/constrants/ImageConfig";
 import React, { useState } from "react";
 import UserPosts from "./UserPosts";
 
@@ -63,15 +67,15 @@ export default function ProfileTabs({ user }: ProfileTabsProps) {
       <div className="rounded-2xl bg-card p-2 shadow-sm border">
         <TabsList className="grid w-full grid-cols-3">
           <TabsTrigger value="posts" className="flex items-center gap-2">
-            <FileText className="h-4 w-4" />
+            <FileTextIcon className="h-4 w-4" />
             <span>Posts</span>
           </TabsTrigger>
           <TabsTrigger value="following" className="flex items-center gap-2">
-            <UserCheck className="h-4 w-4" />
+            <UserCheckIcon className="h-4 w-4" />
             <span>Following ({user._count.following || 0})</span>
           </TabsTrigger>
           <TabsTrigger value="followers" className="flex items-center gap-2">
-            <Users className="h-4 w-4" />
+            <UsersIcon className="h-4 w-4" />
             <span>Followers ({user._count.followers})</span>
           </TabsTrigger>
         </TabsList>

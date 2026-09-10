@@ -13,7 +13,14 @@ import {
   DropdownMenuTrigger,
 } from "./ui/dropdown-menu";
 import UserAvatar from "./UserAvatar";
-import { Check, LogOutIcon, Monitor, Moon, Sun, UserIcon } from "lucide-react";
+import {
+  CheckIcon,
+  LogOutIcon,
+  MonitorIcon,
+  MoonIcon,
+  SunIcon,
+  UserIcon,
+} from "@/constrants/ImageConfig";
 import { getCurrentUser, handleLogOut } from "@/app/action";
 import { useQuery, useQueryClient } from "@tanstack/react-query";
 import { useTheme } from "next-themes";
@@ -57,25 +64,25 @@ function UserButton(props: UserButtonProps) {
         </DropdownMenuItem>
         <DropdownMenuSub>
           <DropdownMenuSubTrigger>
-            <Monitor className="mr-2 size-4" />
+            <MonitorIcon className="mr-2 size-4" />
             Theme
           </DropdownMenuSubTrigger>
           <DropdownMenuPortal>
             <DropdownMenuSubContent>
               <DropdownMenuItem onClick={() => setTheme("light")}>
-                <Sun className="mr-2 size-4" />
+                <SunIcon className="mr-2 size-4" />
                 Light
-                {theme === "light" && <Check className="mr-2 size-4" />}
+                {theme === "light" && <CheckIcon className="mr-2 size-4" />}
               </DropdownMenuItem>
               <DropdownMenuItem onClick={() => setTheme("dark")}>
-                <Moon className="mr-2 size-4" />
+                <MoonIcon className="mr-2 size-4" />
                 Dark
-                {theme === "dark" && <Check className="mr-2 size-4" />}
+                {theme === "dark" && <CheckIcon className="mr-2 size-4" />}
               </DropdownMenuItem>
               <DropdownMenuItem onClick={() => setTheme("system")}>
-                <Monitor className="mr-2 size-4" />
+                <MonitorIcon className="mr-2 size-4" />
                 System
-                {theme === "system" && <Check className="mr-2 size-4" />}
+                {theme === "system" && <CheckIcon className="mr-2 size-4" />}
               </DropdownMenuItem>
             </DropdownMenuSubContent>
           </DropdownMenuPortal>

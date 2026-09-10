@@ -6,7 +6,7 @@ import APIConfig from "@/constrants/ApiConfig";
 import { PostsPage } from "@/lib/types";
 import { fetchData } from "@/lib/utils";
 import { useInfiniteQuery } from "@tanstack/react-query";
-import { Loader2 } from "lucide-react";
+import { LoadingIcon } from "@/constrants/ImageConfig";
 
 import React from "react";
 
@@ -49,7 +49,7 @@ function FollowingFeed() {
             <Post key={post.id} post={post} />
           ))}
           {isFetchingNextPage && (
-            <Loader2 className="mx-auto animate-spin my-3" />
+            <LoadingIcon className="mx-auto animate-spin my-3" />
           )}
         </InfiniteScrollContainer>
       ) : (

@@ -7,12 +7,12 @@ import UserAvatar from "@/components/UserAvatar";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import {
-  Send,
-  ArrowLeft,
-  Check,
-  CheckCheck,
-  MessagesSquare,
-} from "lucide-react";
+  ArrowLeftIcon,
+  CheckCheckIcon,
+  CheckIcon,
+  MessagesSquareIcon,
+  SendIcon,
+} from "@/constrants/ImageConfig";
 import RouteConfig from "@/constrants/RouteConfig";
 import { UserData, ChatMessage as Message } from "@/lib/types";
 import { formatDayLabel, formatMessageTime } from "@/lib/utils";
@@ -188,7 +188,7 @@ export default function ChatChannel({
     return (
       <div className="hidden md:flex h-full w-full flex-col items-center justify-center gap-3 text-center">
         <div className="flex h-14 w-14 items-center justify-center rounded-full bg-muted">
-          <MessagesSquare className="h-6 w-6 text-muted-foreground" />
+          <MessagesSquareIcon className="h-6 w-6 text-muted-foreground" />
         </div>
         <div>
           <h3 className="font-medium">Your messages</h3>
@@ -209,7 +209,7 @@ export default function ChatChannel({
           className="-ml-1 flex h-9 w-9 items-center justify-center rounded-full text-muted-foreground transition-colors hover:bg-accent md:hidden"
           aria-label="Back to conversations"
         >
-          <ArrowLeft className="h-5 w-5" />
+          <ArrowLeftIcon className="h-5 w-5" />
         </button>
         <div className="relative">
           <UserAvatar avatarUrl={selectedUser?.avatarUrl ?? null} size={40} />
@@ -282,9 +282,9 @@ export default function ChatChannel({
                             {group.isMine &&
                               message.id === lastMine?.id &&
                               (lastMine?.read ? (
-                                <CheckCheck className="h-3.5 w-3.5 text-primary" />
+                                <CheckCheckIcon className="h-3.5 w-3.5 text-primary" />
                               ) : (
-                                <Check className="h-3.5 w-3.5" />
+                                <CheckIcon className="h-3.5 w-3.5" />
                               ))}
                           </div>
                         )}
@@ -324,9 +324,9 @@ export default function ChatChannel({
           onClick={sendMessage}
           disabled={!messageInput.trim()}
           className="h-10 w-10 shrink-0 rounded-full"
-          aria-label="Send message"
+          aria-label="SendIcon message"
         >
-          <Send size={18} />
+          <SendIcon size={18} />
         </Button>
       </div>
     </div>

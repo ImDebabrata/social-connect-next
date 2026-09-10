@@ -4,7 +4,7 @@ import { BookmarkInfo } from "@/lib/types";
 import { useQueryClient } from "@tanstack/react-query";
 import { cn, fetchData } from "@/lib/utils";
 import APIConfig from "@/constrants/ApiConfig";
-import { BookmarkIcon } from "lucide-react";
+import { BookmarkIcon } from "@/constrants/ImageConfig";
 
 interface BookmarkButtonProps {
   postId: string;

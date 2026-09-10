@@ -2,7 +2,11 @@
 
 import InfiniteScrollContainer from "@/components/InfiniteScrollContainer";
 import { UserData } from "@/lib/types";
-import { AlertCircle, Loader2, Users } from "lucide-react";
+import {
+  AlertCircleIcon,
+  LoadingIcon,
+  UsersIcon,
+} from "@/constrants/ImageConfig";
 import React from "react";
 import UserCard from "./UserCard";
 import UserCardSkeleton from "./UserCardSkeleton";
@@ -49,7 +53,7 @@ export default function UserList({
   if (status === "error") {
     return (
       <div className="flex flex-col items-center justify-center rounded-2xl border border-destructive/20 bg-destructive/5 p-10 text-center">
-        <AlertCircle className="h-10 w-10 text-destructive" />
+        <AlertCircleIcon className="h-10 w-10 text-destructive" />
         <h3 className="mt-3 text-lg font-semibold text-destructive">
           Error loading users
         </h3>
@@ -64,7 +68,7 @@ export default function UserList({
     return (
       <div className="flex flex-col items-center justify-center rounded-2xl border bg-card p-12 text-center shadow-sm">
         <div className="flex h-16 w-16 items-center justify-center rounded-full bg-primary/10 text-primary">
-          <Users className="h-8 w-8" />
+          <UsersIcon className="h-8 w-8" />
         </div>
         <h3 className="mt-4 text-xl font-bold">{emptyTitle}</h3>
         <p className="mt-2 max-w-sm text-sm text-muted-foreground">
@@ -93,7 +97,7 @@ export default function UserList({
       ))}
       {isFetchingNextPage && (
         <div className="col-span-full flex justify-center py-4">
-          <Loader2 className="h-6 w-6 animate-spin text-primary" />
+          <LoadingIcon className="h-6 w-6 animate-spin text-primary" />
         </div>
       )}
     </InfiniteScrollContainer>

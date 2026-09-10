@@ -9,17 +9,17 @@ import ApiService from "@/lib/api.service";
 import { FollowFilterType, UsersPage } from "@/lib/types";
 import { useInfiniteQuery } from "@tanstack/react-query";
 import {
-  Compass,
-  Flame,
-  LayoutGrid,
-  List,
-  Search,
-  Sparkles,
-  UserCheck,
-  UserPlus,
-  Users,
-  X,
-} from "lucide-react";
+  CloseIcon,
+  CompassIcon,
+  FlameIcon,
+  LayoutGridIcon,
+  ListIcon,
+  SearchIcon,
+  SparklesIcon,
+  UserCheckIcon,
+  UserPlusIcon,
+  UsersIcon,
+} from "@/constrants/ImageConfig";
 import React, { useState } from "react";
 
 const FILTER_OPTIONS: {
@@ -27,26 +27,26 @@ const FILTER_OPTIONS: {
   label: string;
   icon: React.ReactNode;
 }[] = [
-  { key: "all", label: "All Members", icon: <Users className="h-4 w-4" /> },
+  { key: "all", label: "All Members", icon: <UsersIcon className="h-4 w-4" /> },
   {
     key: "not_following",
     label: "Suggested / New",
-    icon: <Sparkles className="h-4 w-4 text-amber-500" />,
+    icon: <SparklesIcon className="h-4 w-4 text-amber-500" />,
   },
   {
     key: "mutual",
     label: "Mutual Friends",
-    icon: <UserCheck className="h-4 w-4 text-emerald-500" />,
+    icon: <UserCheckIcon className="h-4 w-4 text-emerald-500" />,
   },
   {
     key: "popular",
     label: "Top Creators",
-    icon: <Flame className="h-4 w-4 text-rose-500" />,
+    icon: <FlameIcon className="h-4 w-4 text-rose-500" />,
   },
   {
     key: "recent",
     label: "Recently Joined",
-    icon: <Compass className="h-4 w-4 text-sky-500" />,
+    icon: <CompassIcon className="h-4 w-4 text-sky-500" />,
   },
 ];
 
@@ -85,7 +85,7 @@ export default function FindFriendsView() {
         <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
           <div className="space-y-1">
             <div className="flex items-center gap-2 text-primary font-semibold text-sm">
-              <UserPlus className="h-4 w-4" />
+              <UserPlusIcon className="h-4 w-4" />
               <span>Discover & Connect</span>
             </div>
             <h1 className="text-2xl sm:text-3xl font-bold tracking-tight">
@@ -103,9 +103,9 @@ export default function FindFriendsView() {
               size="icon"
               className="h-9 w-9"
               onClick={() => setLayout("list")}
-              title="List view"
+              title="ListIcon view"
             >
-              <List className="h-4 w-4" />
+              <ListIcon className="h-4 w-4" />
             </Button>
             <Button
               variant={layout === "grid" ? "secondary" : "ghost"}
@@ -114,20 +114,20 @@ export default function FindFriendsView() {
               onClick={() => setLayout("grid")}
               title="Grid view"
             >
-              <LayoutGrid className="h-4 w-4" />
+              <LayoutGridIcon className="h-4 w-4" />
             </Button>
           </div>
         </div>
       </div>
 
-      {/* Search & Filter Controls */}
+      {/* SearchIcon & Filter Controls */}
       <div className="space-y-3 rounded-2xl bg-card p-4 shadow-sm border">
         <div className="relative">
-          <Search className="pointer-events-none absolute left-3.5 top-1/2 h-4 w-4 -translate-y-1/2 text-muted-foreground" />
+          <SearchIcon className="pointer-events-none absolute left-3.5 top-1/2 h-4 w-4 -translate-y-1/2 text-muted-foreground" />
           <Input
             value={searchQuery}
             onChange={(e) => setSearchQuery(e.target.value)}
-            placeholder="Search by name, @username, or keywords in bio..."
+            placeholder="SearchIcon by name, @username, or keywords in bio..."
             className="rounded-xl pl-10 pr-10 h-11 bg-muted/40 focus-visible:bg-card"
           />
           {searchQuery && (
@@ -135,7 +135,7 @@ export default function FindFriendsView() {
               onClick={() => setSearchQuery("")}
               className="absolute right-3.5 top-1/2 -translate-y-1/2 rounded-full p-1 text-muted-foreground hover:bg-muted hover:text-foreground"
             >
-              <X className="h-4 w-4" />
+              <CloseIcon className="h-4 w-4" />
             </button>
           )}
         </div>
@@ -195,7 +195,7 @@ export default function FindFriendsView() {
         emptySubtext={
           debouncedQuery
             ? `We couldn't find anyone matching "${debouncedQuery}". Try another keyword or reset filters.`
-            : "Check back later or browse all members to find new connections."
+            : "CheckIcon back later or browse all members to find new connections."
         }
         emptyAction={
           debouncedQuery || activeFilter !== "all" ? (
@@ -206,7 +206,7 @@ export default function FindFriendsView() {
                 setActiveFilter("all");
               }}
             >
-              Reset Search & Filters
+              Reset SearchIcon & Filters
             </Button>
           ) : undefined
         }

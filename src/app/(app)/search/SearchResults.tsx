@@ -10,7 +10,13 @@ import useDebounce from "@/hooks/useDebounce";
 import ApiService from "@/lib/api.service";
 import { PostData, UserData } from "@/lib/types";
 import { useQuery } from "@tanstack/react-query";
-import { FileText, Loader2, Search, Users, X } from "lucide-react";
+import {
+  CloseIcon,
+  FileTextIcon,
+  LoadingIcon,
+  SearchIcon,
+  UsersIcon,
+} from "@/constrants/ImageConfig";
 import { useRouter, useSearchParams } from "next/navigation";
 import React, { useEffect, useState } from "react";
 
@@ -62,18 +68,18 @@ export default function SearchResults() {
 
   return (
     <div className="space-y-5">
-      {/* Search Header */}
+      {/* SearchIcon Header */}
       <div className="rounded-2xl bg-card p-5 shadow-sm border space-y-4">
         <div className="flex items-center gap-2 text-primary font-semibold text-sm">
-          <Search className="h-4 w-4" />
-          <span>Global Search</span>
+          <SearchIcon className="h-4 w-4" />
+          <span>Global SearchIcon</span>
         </div>
         <div className="relative">
-          <Search className="pointer-events-none absolute left-3.5 top-1/2 h-4 w-4 -translate-y-1/2 text-muted-foreground" />
+          <SearchIcon className="pointer-events-none absolute left-3.5 top-1/2 h-4 w-4 -translate-y-1/2 text-muted-foreground" />
           <Input
             value={query}
             onChange={(e) => setQuery(e.target.value)}
-            placeholder="Search people, usernames, keywords, hashtags, and posts..."
+            placeholder="SearchIcon people, usernames, keywords, hashtags, and posts..."
             className="rounded-xl pl-10 pr-10 h-11 bg-muted/40 focus-visible:bg-card text-base"
             autoFocus
           />
@@ -82,7 +88,7 @@ export default function SearchResults() {
               onClick={() => setQuery("")}
               className="absolute right-3.5 top-1/2 -translate-y-1/2 rounded-full p-1 text-muted-foreground hover:bg-muted hover:text-foreground"
             >
-              <X className="h-4 w-4" />
+              <CloseIcon className="h-4 w-4" />
             </button>
           )}
         </div>
@@ -100,21 +106,21 @@ export default function SearchResults() {
                 value="people"
                 className="flex items-center gap-2 rounded-lg"
               >
-                <Users className="h-4 w-4" />
+                <UsersIcon className="h-4 w-4" />
                 People ({users.length})
               </TabsTrigger>
               <TabsTrigger
                 value="posts"
                 className="flex items-center gap-2 rounded-lg"
               >
-                <FileText className="h-4 w-4" />
+                <FileTextIcon className="h-4 w-4" />
                 Posts ({posts.length})
               </TabsTrigger>
             </TabsList>
 
             {isFetching && (
               <div className="flex items-center gap-2 text-xs text-muted-foreground">
-                <Loader2 className="h-3.5 w-3.5 animate-spin text-primary" />
+                <LoadingIcon className="h-3.5 w-3.5 animate-spin text-primary" />
                 Searching...
               </div>
             )}
@@ -139,7 +145,7 @@ export default function SearchResults() {
             ) : posts.length === 0 ? (
               <div className="flex flex-col items-center justify-center rounded-2xl border bg-card p-12 text-center shadow-sm">
                 <div className="flex h-16 w-16 items-center justify-center rounded-full bg-primary/10 text-primary">
-                  <FileText className="h-8 w-8" />
+                  <FileTextIcon className="h-8 w-8" />
                 </div>
                 <h3 className="mt-4 text-xl font-bold">
                   No posts found for &ldquo;{debouncedQuery}&rdquo;
@@ -160,9 +166,9 @@ export default function SearchResults() {
       ) : (
         <div className="flex flex-col items-center justify-center rounded-2xl border bg-card p-12 text-center shadow-sm">
           <div className="flex h-16 w-16 items-center justify-center rounded-full bg-primary/10 text-primary">
-            <Search className="h-8 w-8" />
+            <SearchIcon className="h-8 w-8" />
           </div>
-          <h3 className="mt-4 text-xl font-bold">Search Social Connect</h3>
+          <h3 className="mt-4 text-xl font-bold">SearchIcon Social Connect</h3>
           <p className="mt-2 max-w-sm text-sm text-muted-foreground">
             Type anything above to find people, friends, hashtags, or posts.
           </p>

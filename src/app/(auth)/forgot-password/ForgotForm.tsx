@@ -16,7 +16,11 @@ import { useState, useTransition } from "react";
 import { useForm } from "react-hook-form";
 import { forgotPassword } from "./action";
 import { toast } from "@/hooks/use-toast";
-import { AlertCircle, MailCheck, RotateCcw } from "lucide-react";
+import {
+  AlertCircleIcon,
+  MailCheckIcon,
+  RotateCcwIcon,
+} from "@/constrants/ImageConfig";
 import { Button } from "@/components/ui/button";
 import Link from "next/link";
 
@@ -60,11 +64,11 @@ export default function ForgotForm() {
     return (
       <div className="space-y-5 rounded-xl border border-emerald-500/30 bg-emerald-500/10 p-6 text-center">
         <div className="mx-auto flex size-12 items-center justify-center rounded-full bg-emerald-500/20 text-emerald-600 dark:text-emerald-400">
-          <MailCheck className="size-6" />
+          <MailCheckIcon className="size-6" />
         </div>
         <div className="space-y-1">
           <h2 className="text-lg font-semibold text-foreground">
-            Check your inbox
+            CheckIcon your inbox
           </h2>
           <p className="text-sm text-muted-foreground">
             If an account matches{" "}
@@ -89,7 +93,7 @@ export default function ForgotForm() {
               form.reset();
             }}
           >
-            <RotateCcw className="mr-1.5 size-3.5" />
+            <RotateCcwIcon className="mr-1.5 size-3.5" />
             Didn&apos;t receive the email? Try again
           </Button>
         </div>
@@ -102,7 +106,7 @@ export default function ForgotForm() {
       <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-4">
         {error && (
           <div className="flex items-center gap-2 rounded-lg border border-destructive/30 bg-destructive/10 p-3 text-sm text-destructive">
-            <AlertCircle className="size-4 shrink-0" />
+            <AlertCircleIcon className="size-4 shrink-0" />
             <span>{error}</span>
           </div>
         )}
@@ -129,7 +133,7 @@ export default function ForgotForm() {
           type="submit"
           className="w-full font-medium"
         >
-          Send reset link
+          SendIcon reset link
         </LoadingButton>
       </form>
     </Form>

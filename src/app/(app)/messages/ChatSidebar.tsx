@@ -4,7 +4,7 @@ import RouteConfig from "@/constrants/RouteConfig";
 import { useRouter, useSearchParams } from "next/navigation";
 import { useCallback, useEffect, useMemo, useState } from "react";
 import { Input } from "@/components/ui/input";
-import { Search } from "lucide-react";
+import { SearchIcon } from "@/constrants/ImageConfig";
 import type { UserWithMessageInfo } from "./SocketChatWrapper";
 import { formatChatListTime } from "@/lib/utils";
 
@@ -61,18 +61,18 @@ export default function ChatSidebar({
       <div className="border-b p-3">
         <h2 className="mb-3 px-1 text-lg font-semibold">Messages</h2>
         <div className="relative">
-          <Search className="pointer-events-none absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-muted-foreground" />
+          <SearchIcon className="pointer-events-none absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-muted-foreground" />
           <Input
-            placeholder="Search people…"
+            placeholder="SearchIcon people…"
             value={searchQuery}
             onChange={(e) => setSearchQuery(e.target.value)}
             className="rounded-full pl-9"
-            aria-label="Search people"
+            aria-label="SearchIcon people"
           />
         </div>
       </div>
 
-      {/* List */}
+      {/* ListIcon */}
       <div className="flex-1 overflow-y-auto p-1.5">
         {sortedUsers.length === 0 ? (
           <p className="p-6 text-center text-sm text-muted-foreground">

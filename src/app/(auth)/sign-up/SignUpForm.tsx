@@ -16,7 +16,7 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import { useState, useTransition } from "react";
 import { useForm } from "react-hook-form";
 import { signup } from "./action";
-import { AlertCircle } from "lucide-react";
+import { AlertCircleIcon } from "@/constrants/ImageConfig";
 
 export default function SignUpForm() {
   const [error, setError] = useState<string>();
@@ -45,7 +45,7 @@ export default function SignUpForm() {
       <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-4">
         {error && (
           <div className="flex items-center gap-2 rounded-lg border border-destructive/30 bg-destructive/10 p-3 text-sm text-destructive">
-            <AlertCircle className="size-4 shrink-0" />
+            <AlertCircleIcon className="size-4 shrink-0" />
             <span>{error}</span>
           </div>
         )}

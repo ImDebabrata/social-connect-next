@@ -3,7 +3,11 @@ import RouteConfig from "@/constrants/RouteConfig";
 import { NotificationData } from "@/lib/types";
 import { cn } from "@/lib/utils";
 import { NotificationType } from "@prisma/client";
-import { Heart, MessageCircle, User2 } from "lucide-react";
+import {
+  HeartIcon,
+  MessageCircleIcon,
+  User2Icon,
+} from "@/constrants/ImageConfig";
 import Link from "next/link";
 import { JSX } from "react";
 
@@ -18,7 +22,7 @@ export default function Notification({ notification }: NotificationProps) {
   > = {
     [NotificationType.FOLLOW]: {
       message: `${notification.issuer.displayName} followed you`,
-      icon: <User2 className="size-7 text-primary" />,
+      icon: <User2Icon className="size-7 text-primary" />,
       href: RouteConfig.protectedRoute.PROFILE.replace(
         ":username",
         notification.issuer.username,
@@ -26,7 +30,7 @@ export default function Notification({ notification }: NotificationProps) {
     },
     [NotificationType.LIKE]: {
       message: `${notification.issuer.displayName} liked your post`,
-      icon: <Heart className="size-7 text-red-500 fill-red-500" />,
+      icon: <HeartIcon className="size-7 text-red-500 fill-red-500" />,
       href: RouteConfig.protectedRoute.POST.replace(
         ":postId",
         notification.postId || "",
@@ -34,7 +38,7 @@ export default function Notification({ notification }: NotificationProps) {
     },
     [NotificationType.COMMENT]: {
       message: `${notification.issuer.displayName} commented on your post`,
-      icon: <MessageCircle className="size-7 text-primary" />,
+      icon: <MessageCircleIcon className="size-7 text-primary" />,
       href: RouteConfig.protectedRoute.POST.replace(
         ":postId",
         notification.postId || "",

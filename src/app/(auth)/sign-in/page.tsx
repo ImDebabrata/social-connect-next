@@ -4,7 +4,7 @@ import Link from "next/link";
 import LoginForm from "./LoginForm";
 import Misc from "@/constrants/Misc";
 import AuthLayout from "../AuthLayout";
-import { CheckCircle2 } from "lucide-react";
+import { CheckCircle2Icon } from "@/constrants/ImageConfig";
 
 export const metadata: Metadata = {
   title: "Login",
@@ -31,14 +31,14 @@ export default async function Page({
 
         {params.registered === "true" && (
           <div className="flex items-center gap-2 rounded-lg border border-emerald-500/30 bg-emerald-500/10 p-3 text-sm text-emerald-600 dark:text-emerald-400">
-            <CheckCircle2 className="size-4 shrink-0" />
+            <CheckCircle2Icon className="size-4 shrink-0" />
             <span>Account created successfully! Please log in.</span>
           </div>
         )}
 
         {params.reset === "true" && (
           <div className="flex items-center gap-2 rounded-lg border border-emerald-500/30 bg-emerald-500/10 p-3 text-sm text-emerald-600 dark:text-emerald-400">
-            <CheckCircle2 className="size-4 shrink-0" />
+            <CheckCircle2Icon className="size-4 shrink-0" />
             <span>
               Password updated successfully! Please log in with your new
               password.

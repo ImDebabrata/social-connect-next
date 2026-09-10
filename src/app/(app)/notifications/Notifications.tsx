@@ -9,7 +9,7 @@ import {
   useMutation,
   useQueryClient,
 } from "@tanstack/react-query";
-import { Loader2 } from "lucide-react";
+import { LoadingIcon } from "@/constrants/ImageConfig";
 
 import React, { useEffect } from "react";
 import Notification from "./Notification";
@@ -78,7 +78,7 @@ function Notifications() {
             <Notification key={notification.id} notification={notification} />
           ))}
           {isFetchingNextPage && (
-            <Loader2 className="mx-auto animate-spin my-3" />
+            <LoadingIcon className="mx-auto animate-spin my-3" />
           )}
         </InfiniteScrollContainer>
       ) : (

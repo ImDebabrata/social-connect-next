@@ -3,7 +3,11 @@ import { Metadata } from "next";
 import Link from "next/link";
 import ResetForm from "./ResetForm";
 import AuthLayout from "../AuthLayout";
-import { AlertTriangle, ArrowLeft, ShieldCheck } from "lucide-react";
+import {
+  AlertTriangleIcon,
+  ArrowLeftIcon,
+  ShieldCheckIcon,
+} from "@/constrants/ImageConfig";
 import { Button } from "@/components/ui/button";
 
 export const metadata: Metadata = {
@@ -22,7 +26,7 @@ export default async function Page({
       <AuthLayout image={ImageConfig.ResetImage}>
         <div className="space-y-6 text-center">
           <div className="mx-auto flex size-12 items-center justify-center rounded-full bg-destructive/10 text-destructive">
-            <AlertTriangle className="size-6" />
+            <AlertTriangleIcon className="size-6" />
           </div>
           <div className="space-y-2">
             <h1 className="text-2xl font-bold tracking-tight sm:text-3xl">
@@ -43,7 +47,7 @@ export default async function Page({
                 href="/sign-in"
                 className="inline-flex items-center gap-1.5 text-sm font-medium text-muted-foreground transition-colors hover:text-foreground hover:underline"
               >
-                <ArrowLeft className="size-4" />
+                <ArrowLeftIcon className="size-4" />
                 Back to log in
               </Link>
             </div>
@@ -58,7 +62,7 @@ export default async function Page({
       <div className="space-y-6">
         <div className="space-y-2 text-center">
           <div className="mx-auto mb-2 flex size-12 items-center justify-center rounded-full bg-primary/10 text-primary">
-            <ShieldCheck className="size-6" />
+            <ShieldCheckIcon className="size-6" />
           </div>
           <h1 className="text-2xl font-bold tracking-tight sm:text-3xl">
             Set a new password
@@ -75,7 +79,7 @@ export default async function Page({
             href="/sign-in"
             className="inline-flex items-center gap-1.5 text-sm font-medium text-muted-foreground transition-colors hover:text-foreground hover:underline"
           >
-            <ArrowLeft className="size-4" />
+            <ArrowLeftIcon className="size-4" />
             Back to log in
           </Link>
         </div>

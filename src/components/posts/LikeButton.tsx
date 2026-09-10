@@ -4,7 +4,7 @@ import { LikeInfo } from "@/lib/types";
 import { useQueryClient } from "@tanstack/react-query";
 import { cn, fetchData } from "@/lib/utils";
 import APIConfig from "@/constrants/ApiConfig";
-import { HeartIcon } from "lucide-react";
+import { HeartIcon } from "@/constrants/ImageConfig";
 
 interface LikeButtonProps {
   postId: string;

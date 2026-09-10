@@ -14,7 +14,7 @@ import Image from "next/image";
 import RouteConfig from "@/constrants/RouteConfig";
 import LikeButton from "./LikeButton";
 import BookmarkButton from "./BookmarkButton";
-import { MessageSquareIcon, Play } from "lucide-react";
+import { MessageSquareIcon, PlayIcon } from "@/constrants/ImageConfig";
 import Comments from "../comments/Comments";
 import MediaLightbox from "./MediaLightbox";
 interface PostProps {
@@ -193,7 +193,7 @@ function MediaPreviews({ attachments, onOpenLightbox }: MediaPreviewsProps) {
                 />
                 <div className="absolute inset-0 flex items-center justify-center pointer-events-none bg-black/20">
                   <div className="rounded-full bg-black/60 p-3 text-white backdrop-blur-sm border border-white/20">
-                    <Play className="size-6 fill-white" />
+                    <PlayIcon className="size-6 fill-white" />
                   </div>
                 </div>
               </div>
@@ -232,7 +232,7 @@ function MediaPreviews({ attachments, onOpenLightbox }: MediaPreviewsProps) {
               />
               <div className="absolute inset-0 flex items-center justify-center pointer-events-none bg-black/20">
                 <div className="rounded-full bg-black/60 p-3 text-white backdrop-blur-sm border border-white/20">
-                  <Play className="size-6 fill-white" />
+                  <PlayIcon className="size-6 fill-white" />
                 </div>
               </div>
             </div>
@@ -264,7 +264,7 @@ function MediaPreviews({ attachments, onOpenLightbox }: MediaPreviewsProps) {
                 />
                 <div className="absolute inset-0 flex items-center justify-center pointer-events-none bg-black/20">
                   <div className="rounded-full bg-black/60 p-3 text-white backdrop-blur-sm border border-white/20">
-                    <Play className="size-6 fill-white" />
+                    <PlayIcon className="size-6 fill-white" />
                   </div>
                 </div>
               </div>
@@ -307,7 +307,7 @@ function MediaPreviews({ attachments, onOpenLightbox }: MediaPreviewsProps) {
                 />
                 <div className="absolute inset-0 flex items-center justify-center pointer-events-none bg-black/20">
                   <div className="rounded-full bg-black/60 p-3 text-white backdrop-blur-sm border border-white/20">
-                    <Play className="size-6 fill-white" />
+                    <PlayIcon className="size-6 fill-white" />
                   </div>
                 </div>
               </div>
