@@ -32,7 +32,7 @@ function getKey(): Uint8Array {
   const secretKey = process.env.JWT_SECRET;
   if (!secretKey) {
     throw new Error(
-      "JWT_SECRET is not set. The chat-service cannot verify session tokens without it."
+      "JWT_SECRET is not set. The chat-service cannot verify session tokens without it.",
     );
   }
   cachedKey = new TextEncoder().encode(secretKey);
@@ -59,7 +59,7 @@ interface SessionPayload {
  */
 export async function authenticateSocket(
   socket: Socket,
-  next: (err?: Error) => void
+  next: (err?: Error) => void,
 ) {
   try {
     // Prefer the httpOnly cookie; fall back to an explicit auth token

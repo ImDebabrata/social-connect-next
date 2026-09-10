@@ -45,4 +45,3 @@ export const useSocket = (): Socket | null => {
 
   return sock;
 };
-

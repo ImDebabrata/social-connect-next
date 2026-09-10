@@ -6,13 +6,13 @@ import { validateFile } from "@/lib/mediaValidation";
 
 /**
  * API route handler for post media uploads (images and videos)
- * 
+ *
  * Processes media files for social posts, uploading to Cloudinary and creating database records
- * 
+ *
  * @route POST /api/posts/media
  * @param req - Next.js request object containing form data with "media" files
  * @returns JSON response with array of created media objects or error message
- * 
+ *
  * @example
  * // Client-side usage:
  * const formData = new FormData();
@@ -44,11 +44,14 @@ export async function POST(req: NextRequest) {
     // Process each file
     for (const file of files) {
       const validation = validateFile(file);
-      
+
       if (!validation.isValid) {
-        return Response.json({
-          error: validation.error,
-        }, { status: 400 });
+        return Response.json(
+          {
+            error: validation.error,
+          },
+          { status: 400 },
+        );
       }
 
       // Prepare file for upload
@@ -58,7 +61,9 @@ export async function POST(req: NextRequest) {
       const result = await uploadToCloudinary(buffer, {
         folder: validation.isImage ? "post_images" : "post_videos",
         resourceType: validation.isImage ? "image" : "video",
-        transformation: validation.isImage ? [{ quality: "auto" } as Record<string, unknown>] : undefined
+        transformation: validation.isImage
+          ? [{ quality: "auto" } as Record<string, unknown>]
+          : undefined,
       });
 
       // Check if upload was successful
@@ -85,7 +90,7 @@ export async function POST(req: NextRequest) {
       {
         error: "Oops! Something went wrong. Please try again.",
       },
-      { status: 500 }
+      { status: 500 },
     );
   }
-} 
+}

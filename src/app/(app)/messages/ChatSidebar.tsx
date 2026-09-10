@@ -28,7 +28,7 @@ export default function ChatSidebar({
     (e: KeyboardEvent) => {
       if (e.key === "Escape") router.push(RouteConfig.protectedRoute.MESSAGES);
     },
-    [router]
+    [router],
   );
 
   useEffect(() => {
@@ -42,10 +42,11 @@ export default function ChatSidebar({
       .filter(
         (u) =>
           u.displayName.toLowerCase().includes(q) ||
-          (u.bio && u.bio.toLowerCase().includes(q))
+          (u.bio && u.bio.toLowerCase().includes(q)),
       )
       .sort((a, b) => {
-        if (a.unreadCount !== b.unreadCount) return b.unreadCount - a.unreadCount;
+        if (a.unreadCount !== b.unreadCount)
+          return b.unreadCount - a.unreadCount;
         if (a.lastMessageTime && b.lastMessageTime)
           return b.lastMessageTime.getTime() - a.lastMessageTime.getTime();
         if (a.lastMessageTime) return -1;

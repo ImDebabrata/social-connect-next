@@ -45,12 +45,7 @@ export interface UsersPage {
 }
 
 export type FollowFilterType =
-  | "all"
-  | "not_following"
-  | "mutual"
-  | "popular"
-  | "recent";
-
+  "all" | "not_following" | "mutual" | "popular" | "recent";
 
 export function getPostDataInclude(loggedInUserId: string) {
   return {
@@ -124,9 +119,9 @@ export const notificationsInclude = {
   },
 } satisfies Prisma.NotificationInclude;
 
-export type NotificationData=Prisma.NotificationGetPayload<{
-  include:typeof notificationsInclude
-}>
+export type NotificationData = Prisma.NotificationGetPayload<{
+  include: typeof notificationsInclude;
+}>;
 
 export interface NotificationsPage {
   notifications: NotificationData[];
@@ -147,8 +142,8 @@ export interface BookmarkInfo {
   isBookmarkedByUser: boolean;
 }
 
-export interface NotificationCountInfo{
-  unreadCount:number
+export interface NotificationCountInfo {
+  unreadCount: number;
 }
 export interface ChatMessage {
   id: string;

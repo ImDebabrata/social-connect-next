@@ -44,7 +44,8 @@ export async function forgotPassword(
         },
       });
 
-      const baseUrl = process.env.NEXT_PUBLIC_API_URL || "http://localhost:3000";
+      const baseUrl =
+        process.env.NEXT_PUBLIC_API_URL || "http://localhost:3000";
       const resetUrl = `${baseUrl.replace(/\/$/, "")}${RouteConfig.authScreens.RESET_PASSWORD}?token=${resetToken}`;
       try {
         if (existingUser.email) {

@@ -13,7 +13,7 @@ export default async function middleware(req: NextRequest) {
   const path = req.nextUrl.pathname;
   const isPublicRoute = publicRoutes.some((route) => isRouteMatch(route, path));
   const isProtectedRoute = protectedRoutes.some((route) =>
-    isRouteMatch(route, path)
+    isRouteMatch(route, path),
   );
 
   // 3. Decrypt the session from the cookie
@@ -24,14 +24,14 @@ export default async function middleware(req: NextRequest) {
   // 4. Redirect unauthenticated users away from protected routes
   if (isProtectedRoute && !session?.userId) {
     return NextResponse.redirect(
-      new URL(RouteConfig.authScreens.SIGN_IN, req.nextUrl)
+      new URL(RouteConfig.authScreens.SIGN_IN, req.nextUrl),
     );
   }
 
   // 5. Redirect authenticated users away from auth screens
   if (isPublicRoute && session?.userId) {
     return NextResponse.redirect(
-      new URL(RouteConfig.protectedRoute.MAIN_SCREEN, req.nextUrl)
+      new URL(RouteConfig.protectedRoute.MAIN_SCREEN, req.nextUrl),
     );
   }
 

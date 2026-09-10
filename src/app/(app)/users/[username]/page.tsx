@@ -55,10 +55,23 @@ export default async function Page({ params }: PageProps) {
 
   const user = await getUser(username, loggedInUser.userId);
 
+  let email: string | null = null;
+  if (user.id === loggedInUser.userId) {
+    const userWithEmail = await prisma.user.findUnique({
+      where: { id: user.id },
+      select: { email: true },
+    });
+    email = userWithEmail?.email ?? null;
+  }
+
   return (
     <main className="flex w-full min-w-0 gap-5">
       <div className="w-full min-w-0 space-y-5">
-        <ProfileHeader user={user} loggedInUserId={loggedInUser.userId} />
+        <ProfileHeader
+          user={user}
+          loggedInUserId={loggedInUser.userId}
+          email={email}
+        />
         <ProfileTabs user={user} />
       </div>
       <TrendsSidebar />

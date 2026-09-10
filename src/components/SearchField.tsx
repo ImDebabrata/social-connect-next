@@ -16,7 +16,7 @@ function SearchField() {
       if (!q) return;
       router.push(`/search?q=${encodeURIComponent(q)}`);
     },
-    [router]
+    [router],
   );
 
   const handleSearchIconClick = (e: React.MouseEvent<SVGElement>) => {

@@ -61,7 +61,7 @@ const Linkify: React.FC<LinkifyProps> = ({ children }) => {
             className="text-blue-600 hover:underline"
           >
             {url}
-          </a>
+          </a>,
         );
       }
       // Handle @mentions
@@ -69,7 +69,7 @@ const Linkify: React.FC<LinkifyProps> = ({ children }) => {
         parts.push(
           <UserLinkWithTooltip key={`link-${keyCount++}`} username={mention}>
             @{mention}
-          </UserLinkWithTooltip>
+          </UserLinkWithTooltip>,
         );
       }
       // Handle #hashtags
@@ -81,7 +81,7 @@ const Linkify: React.FC<LinkifyProps> = ({ children }) => {
             className="text-primary hover:underline font-medium"
           >
             {`#${hashtag}`}
-          </Link>
+          </Link>,
         );
       }
 
@@ -111,7 +111,7 @@ const Linkify: React.FC<LinkifyProps> = ({ children }) => {
     if (isValidElement(node)) {
       const element = node as ReactElement<LinkifyProps>;
       const children = Children.map(element.props.children, (child) =>
-        processNode(child)
+        processNode(child),
       );
 
       // Clone the element with processed children while preserving original props

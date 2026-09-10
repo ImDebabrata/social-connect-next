@@ -35,7 +35,7 @@ function UserButton(props: UserButtonProps) {
     staleTime: Infinity,
     queryFn: getCurrentUser,
   });
-  const { avatarUrl = "", username= "" } = data || {};
+  const { avatarUrl = "", username = "" } = data || {};
   return (
     <DropdownMenu>
       <DropdownMenuTrigger className={className}>
@@ -45,7 +45,12 @@ function UserButton(props: UserButtonProps) {
         <DropdownMenuLabel>My Account</DropdownMenuLabel>
         <DropdownMenuSeparator />
         <DropdownMenuItem asChild>
-          <Link href={RouteConfig.protectedRoute.PROFILE.replace(":username", username)}>
+          <Link
+            href={RouteConfig.protectedRoute.PROFILE.replace(
+              ":username",
+              username,
+            )}
+          >
             <UserIcon className="mr-2 size-4" />
             Profile
           </Link>

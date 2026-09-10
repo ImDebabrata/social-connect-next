@@ -7,7 +7,7 @@ export const signUpSchema = z.object({
   email: requiredString.email("Invalid email address"),
   username: requiredString.regex(
     /^[a-zA-Z0-9_-]+$/,
-    "Only letters, numbers, - and _ allowed"
+    "Only letters, numbers, - and _ allowed",
   ),
   password: passwordSchema,
 });
@@ -15,7 +15,7 @@ export const signUpSchema = z.object({
 export type SignUpValues = z.infer<typeof signUpSchema>;
 
 export const loginSchema = z.object({
-  username: requiredString,
+  usernameOrEmail: requiredString,
   password: requiredString,
 });
 
@@ -28,6 +28,10 @@ export const createPostSchema = z.object({
 
 export const updateUserProfileSchema = z.object({
   displayName: requiredString,
+  username: requiredString.regex(
+    /^[a-zA-Z0-9_-]+$/,
+    "Only letters, numbers, - and _ allowed",
+  ),
   bio: z.string().max(1000, "Must be at most 1000 characters"),
 });
 
@@ -40,7 +44,7 @@ export const createCommentSchema = z.object({
 export type SessionPayload = {
   userId: string;
   expiresAt: Date;
-  username:string;
+  username: string;
   avatarUrl: string | null | undefined;
 };
 
@@ -67,4 +71,6 @@ export const resetPasswordClientSchema = z
     path: ["confirmPassword"],
   });
 
-export type ResetPasswordClientValues = z.infer<typeof resetPasswordClientSchema>;
+export type ResetPasswordClientValues = z.infer<
+  typeof resetPasswordClientSchema
+>;

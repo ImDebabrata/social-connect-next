@@ -100,7 +100,7 @@ export default function useMediaUpload() {
                 };
               }
               return attachment;
-            }
+            },
           );
 
           return [...notUploadingAttachments, ...updatedAttachments];
@@ -115,8 +115,8 @@ export default function useMediaUpload() {
         prev.map((attachment) =>
           attachment.isUploading
             ? { ...attachment, isUploading: false, progress: 0 }
-            : attachment
-        )
+            : attachment,
+        ),
       );
 
       toast({
@@ -137,18 +137,18 @@ export default function useMediaUpload() {
         });
         return;
       }
-      
+
       // Validate files using our shared utility
       const { validFiles, errors } = validateFiles(files, attachments.length);
-      
+
       // Show errors for invalid files if any
       if (errors.length > 0) {
         toast({
           variant: "destructive",
           title: "Some files couldn't be uploaded",
-          description: errors.join('\n').substring(0, 255), // Truncate long error messages
+          description: errors.join("\n").substring(0, 255), // Truncate long error messages
         });
-        
+
         // If no valid files remain, exit early
         if (validFiles.length === 0) {
           return;
@@ -165,8 +165,8 @@ export default function useMediaUpload() {
           prev.map((attachment, i) =>
             i >= startIndex
               ? { ...attachment, isUploading: true, progress: 0 }
-              : attachment
-          )
+              : attachment,
+          ),
         );
 
         // Start upload with all valid files
@@ -180,7 +180,7 @@ export default function useMediaUpload() {
         });
       }
     },
-    [attachments.length, uploadMutation, toast, addAttachments]
+    [attachments.length, uploadMutation, toast, addAttachments],
   );
 
   return {

@@ -6,10 +6,11 @@ import EditProfileDialog from "./EditProfileDialog";
 
 interface EditProfileButtonProps {
   user: UserData;
+  email?: string | null;
 }
 
 function EditProfileButton(props: EditProfileButtonProps) {
-  const { user } = props;
+  const { user, email } = props;
   const [showDialog, setShowDialog] = useState(false);
   return (
     <>
@@ -18,6 +19,7 @@ function EditProfileButton(props: EditProfileButtonProps) {
       </Button>
       <EditProfileDialog
         user={user}
+        email={email}
         open={showDialog}
         onOpenChange={setShowDialog}
       />

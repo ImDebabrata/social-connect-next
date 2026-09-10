@@ -82,8 +82,7 @@ export async function GET(req: NextRequest) {
       }),
     ]);
 
-    const nextCursor =
-      users.length > pageSize ? users[pageSize].id : null;
+    const nextCursor = users.length > pageSize ? users[pageSize].id : null;
 
     const data: UsersPage = {
       users: users.slice(0, pageSize),
@@ -98,9 +97,6 @@ export async function GET(req: NextRequest) {
     });
   } catch (error) {
     console.error("Error in user discovery route:", error);
-    return Response.json(
-      { error: "Internal server error" },
-      { status: 500 }
-    );
+    return Response.json({ error: "Internal server error" }, { status: 500 });
   }
 }

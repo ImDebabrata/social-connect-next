@@ -26,7 +26,7 @@ export default function SearchResults() {
 
   const [query, setQuery] = useState(initialQ);
   const [activeTab, setActiveTab] = useState<"people" | "posts">(
-    initialQ.startsWith("#") ? "posts" : "people"
+    initialQ.startsWith("#") ? "posts" : "people",
   );
   const debouncedQuery = useDebounce(query, 350);
 
@@ -52,7 +52,7 @@ export default function SearchResults() {
         APIConfig.SEARCH_ALL.URL as string,
         {
           q: debouncedQuery,
-        }
+        },
       ).then((res) => res.data),
     enabled: !!debouncedQuery.trim(),
   });

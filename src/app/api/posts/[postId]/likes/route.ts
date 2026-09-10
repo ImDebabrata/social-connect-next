@@ -5,7 +5,7 @@ import { NotificationType } from "@prisma/client";
 
 export async function GET(
   request: Request,
-  { params }: { params: Promise<{ postId: string }> }
+  { params }: { params: Promise<{ postId: string }> },
 ) {
   try {
     const { postId } = await params;
@@ -50,7 +50,7 @@ export async function GET(
 
 export async function POST(
   request: Request,
-  { params }: { params: Promise<{ postId: string }> }
+  { params }: { params: Promise<{ postId: string }> },
 ) {
   try {
     const { postId } = await params;
@@ -115,7 +115,7 @@ export async function POST(
 
 export async function DELETE(
   request: Request,
-  { params }: { params: Promise<{ postId: string }> }
+  { params }: { params: Promise<{ postId: string }> },
 ) {
   try {
     const { postId } = await params;

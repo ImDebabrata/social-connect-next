@@ -10,7 +10,11 @@ export const ALLOWED_IMAGE_TYPES = [
   "image/gif",
 ];
 
-export const ALLOWED_VIDEO_TYPES = ["video/mp4", "video/quicktime", "video/webm"];
+export const ALLOWED_VIDEO_TYPES = [
+  "video/mp4",
+  "video/quicktime",
+  "video/webm",
+];
 
 // Reusable file validation
 export interface ValidationResult {
@@ -29,7 +33,8 @@ export const validateFile = (file: File): ValidationResult => {
   if (!isImage && !isVideo) {
     return {
       isValid: false,
-      error: "Unsupported file format. Please upload JPG, PNG, WEBP, GIF, MP4, WEBM, or MOV.",
+      error:
+        "Unsupported file format. Please upload JPG, PNG, WEBP, GIF, MP4, WEBM, or MOV.",
     };
   }
 
@@ -51,7 +56,10 @@ export const validateFile = (file: File): ValidationResult => {
 };
 
 // Validate multiple files
-export const validateFiles = (files: File[], currentCount = 0): {
+export const validateFiles = (
+  files: File[],
+  currentCount = 0,
+): {
   validFiles: File[];
   errors: string[];
 } => {
@@ -77,4 +85,4 @@ export const validateFiles = (files: File[], currentCount = 0): {
   }
 
   return { validFiles, errors };
-}; 
+};

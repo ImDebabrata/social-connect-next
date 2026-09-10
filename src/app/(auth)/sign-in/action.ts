@@ -34,24 +34,37 @@ export async function guestSignin(): Promise<{ error?: string }> {
     return {};
   } catch (error) {
     if (isRedirectError(error)) throw error;
-    return { error: "Guest login failed, the server may still be waking up. Please try again." };
+    return {
+      error:
+        "Guest login failed, the server may still be waking up. Please try again.",
+    };
   }
 }
 
 export async function signin(
-  credentials: LoginValues
+  credentials: LoginValues,
 ): Promise<{ error?: string; success?: string }> {
   try {
     // 1. Validate fields
-    const { username, password } = loginSchema.parse(credentials);
+    const { usernameOrEmail, password } = loginSchema.parse(credentials);
 
     // 2. Check is user available
     const existingUser = await prisma.user.findFirst({
       where: {
-        username: {
-          equals: username,
-          mode: "insensitive",
-        },
+        OR: [
+          {
+            username: {
+              equals: usernameOrEmail,
+              mode: "insensitive",
+            },
+          },
+          {
+            email: {
+              equals: usernameOrEmail,
+              mode: "insensitive",
+            },
+          },
+        ],
       },
     });
 

@@ -5,7 +5,7 @@ import { NextRequest, NextResponse } from "next/server";
 
 export async function GET(
   req: NextRequest,
-  { params }: { params: Promise<{ postId: string }> }
+  { params }: { params: Promise<{ postId: string }> },
 ) {
   try {
     const { postId } = await params;
@@ -25,20 +25,19 @@ export async function GET(
       cursor: cursor ? { id: cursor } : undefined,
     });
 
-    const previousCursor = comments.length>pageSize?comments[0].id:null;
+    const previousCursor = comments.length > pageSize ? comments[0].id : null;
 
-    const data:CommentsPage={
-        comments:comments.length>pageSize?comments.slice(1):comments,
-        previousCursor,
-    }
+    const data: CommentsPage = {
+      comments: comments.length > pageSize ? comments.slice(1) : comments,
+      previousCursor,
+    };
 
     return NextResponse.json({ data }, { status: 200 });
-
   } catch (error) {
     console.error(error);
     return NextResponse.json(
       { error: "Internal Server Error" },
-      { status: 500 }
+      { status: 500 },
     );
   }
 }

@@ -10,7 +10,7 @@ import { redirect } from "next/navigation";
 import RouteConfig from "@/constrants/RouteConfig";
 
 export async function signup(
-  credentials: SignUpValues
+  credentials: SignUpValues,
 ): Promise<{ error?: string; success?: string }> {
   try {
     // 1. Validate form fields

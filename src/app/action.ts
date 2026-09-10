@@ -14,7 +14,7 @@ export async function handleLogOut() {
 export async function getCurrentUser(): Promise<SessionPayload | null> {
   const cookie = (await cookies()).get(Misc.SESSION_COOKIE)?.value;
   const user = (await decrypt(cookie)) as SessionPayload | null;
-  console.log("the file is running",new Date());
+  console.log("the file is running", new Date());
   return { ...user, avatarUrl: user?.avatarUrl || "" } as SessionPayload | null;
 }
 

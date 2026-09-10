@@ -1,0 +1,25 @@
+# Dependencies
+node_modules
+
+# Build outputs
+.next
+dist
+build
+out
+
+# Generated files
+*.lock
+yarn.lock
+package-lock.json
+tsconfig.tsbuildinfo
+
+# Prisma (generated client)
+prisma/migrations
+
+# Environment files
+.env*
+
+# Others
+.vercel
+.git
+public

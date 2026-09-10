@@ -1,13 +1,7 @@
 import { getCurrentUser } from "@/app/action";
 import RouteConfig from "@/constrants/RouteConfig";
 import prisma from "@/lib/prisma";
-import {
-  Bell,
-  Bookmark,
-  Home,
-  Mail,
-  Users,
-} from "lucide-react";
+import { Bell, Bookmark, Home, Mail, Users } from "lucide-react";
 import Link from "next/link";
 import React from "react";
 import NotificationButton from "./NotificationButton";

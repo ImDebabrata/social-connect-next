@@ -41,7 +41,8 @@ export default function ForgotForm() {
         setSubmittedEmail(values.email);
         toast({
           title: "Reset link sent",
-          description: "If an account exists with this email, a reset link was sent.",
+          description:
+            "If an account exists with this email, a reset link was sent.",
         });
       }
       if (error) {
@@ -66,15 +67,17 @@ export default function ForgotForm() {
             Check your inbox
           </h2>
           <p className="text-sm text-muted-foreground">
-            If an account matches <span className="font-medium text-foreground">{submittedEmail}</span>, we&apos;ve sent a password reset link.
+            If an account matches{" "}
+            <span className="font-medium text-foreground">
+              {submittedEmail}
+            </span>
+            , we&apos;ve sent a password reset link.
           </p>
         </div>
 
         <div className="space-y-2 pt-2">
           <Button asChild className="w-full font-medium">
-            <Link href="/sign-in">
-              Return to log in
-            </Link>
+            <Link href="/sign-in">Return to log in</Link>
           </Button>
 
           <Button

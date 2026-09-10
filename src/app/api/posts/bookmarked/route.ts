@@ -9,7 +9,7 @@ export async function GET(req: NextRequest) {
     const cursor = req.nextUrl.searchParams.get("cursor") || undefined;
     const pageSize = 10;
     const user = await getCurrentUser();
-    
+
     if (!user) {
       return Response.json({ error: "Unauthorized" }, { status: 401 });
     }
@@ -20,19 +20,22 @@ export async function GET(req: NextRequest) {
         userId: user.userId,
       },
       include: {
-        post:{
-            include:getPostDataInclude(user.userId)
-        }
+        post: {
+          include: getPostDataInclude(user.userId),
+        },
       },
       orderBy: { createdAt: "desc" },
       take: pageSize + 1,
       cursor: cursor ? { id: cursor } : undefined,
     });
 
-    const nextCursor = bookmarkedPosts.length > pageSize ? bookmarkedPosts[pageSize].id : null;
+    const nextCursor =
+      bookmarkedPosts.length > pageSize ? bookmarkedPosts[pageSize].id : null;
 
     const data: PostsPage = {
-      posts: bookmarkedPosts.slice(0, pageSize).map((bookmark) => bookmark.post),
+      posts: bookmarkedPosts
+        .slice(0, pageSize)
+        .map((bookmark) => bookmark.post),
       nextCursor,
     };
 

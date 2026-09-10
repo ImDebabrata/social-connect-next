@@ -9,7 +9,13 @@ import RouteConfig from "@/constrants/RouteConfig";
 import { useCurrentSession } from "@/hooks/useCurrentSession";
 import { FollowerInfo, UserData } from "@/lib/types";
 import { formatDate, formatNumber } from "@/lib/utils";
-import { Calendar, FileText, MessageCircle, UserCheck, Users } from "lucide-react";
+import {
+  Calendar,
+  FileText,
+  MessageCircle,
+  UserCheck,
+  Users,
+} from "lucide-react";
 import Link from "next/link";
 import React from "react";
 
@@ -24,9 +30,10 @@ export default function UserCard({ user, showBio = true }: UserCardProps) {
 
   const isCurrentUser = loggedInUser?.userId === user.id;
 
-  const isFollowedByUser = user.followers?.some(
-    (follower) => follower.followerId === loggedInUser?.userId
-  ) ?? false;
+  const isFollowedByUser =
+    user.followers?.some(
+      (follower) => follower.followerId === loggedInUser?.userId,
+    ) ?? false;
 
   const followsYou = (user.following?.length ?? 0) > 0;
 
@@ -37,7 +44,7 @@ export default function UserCard({ user, showBio = true }: UserCardProps) {
 
   const profileUrl = RouteConfig.protectedRoute.PROFILE.replace(
     ":username",
-    user.username
+    user.username,
   );
 
   return (

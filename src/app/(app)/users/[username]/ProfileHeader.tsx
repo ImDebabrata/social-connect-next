@@ -8,7 +8,13 @@ import UserAvatar from "@/components/UserAvatar";
 import RouteConfig from "@/constrants/RouteConfig";
 import { FollowerInfo, UserData } from "@/lib/types";
 import { formatDate, formatNumber } from "@/lib/utils";
-import { Calendar, FileText, MessageCircle, UserCheck, Users } from "lucide-react";
+import {
+  Calendar,
+  FileText,
+  MessageCircle,
+  UserCheck,
+  Users,
+} from "lucide-react";
 import Link from "next/link";
 import React from "react";
 import EditProfileButton from "./EditProfileButton";
@@ -16,15 +22,17 @@ import EditProfileButton from "./EditProfileButton";
 interface ProfileHeaderProps {
   user: UserData;
   loggedInUserId: string;
+  email?: string | null;
 }
 
 export default function ProfileHeader({
   user,
   loggedInUserId,
+  email,
 }: ProfileHeaderProps) {
   const isCurrentUser = user.id === loggedInUserId;
   const isFollowedByUser = user.followers.some(
-    (follower) => follower.followerId === loggedInUserId
+    (follower) => follower.followerId === loggedInUserId,
   );
   const followsYou = (user.following?.length ?? 0) > 0;
 
@@ -43,28 +51,38 @@ export default function ProfileHeader({
           className="size-28 sm:size-36 rounded-full ring-4 ring-card shadow-lg"
         />
 
-        <div className="flex-1 space-y-4 text-center sm:text-left">
-          <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3">
-            <div>
+        <div className="flex-1 min-w-0 space-y-4 text-center sm:text-left">
+          <div className="flex flex-col sm:flex-row sm:items-start justify-between gap-3">
+            <div className="min-w-0">
               <div className="flex items-center justify-center sm:justify-start gap-2 flex-wrap">
-                <h1 className="text-2xl sm:text-3xl font-bold tracking-tight">
+                <h1 className="text-2xl sm:text-3xl font-bold tracking-tight truncate">
                   {user.displayName}
                 </h1>
                 {followsYou && !isCurrentUser && (
-                  <span className="rounded-md bg-muted px-2 py-0.5 text-xs font-medium text-muted-foreground">
+                  <span className="rounded-md bg-muted px-2 py-0.5 text-xs font-medium text-muted-foreground shrink-0">
                     Follows you
                   </span>
                 )}
               </div>
-              <div className="text-sm text-muted-foreground">
-                @{user.username}
+              <div className="text-sm text-muted-foreground flex flex-col items-center sm:items-start gap-0.5 mt-1 min-w-0">
+                <span
+                  className="break-all line-clamp-1"
+                  title={`@${user.username}`}
+                >
+                  @{user.username}
+                </span>
+                {email && (
+                  <span className="break-all line-clamp-1" title={email}>
+                    {email}
+                  </span>
+                )}
               </div>
             </div>
 
             {/* Action Buttons */}
-            <div className="flex items-center justify-center sm:justify-end gap-2">
+            <div className="flex items-center justify-center sm:justify-end gap-2 shrink-0">
               {isCurrentUser ? (
-                <EditProfileButton user={user} />
+                <EditProfileButton user={user} email={email} />
               ) : (
                 <>
                   <Button
@@ -80,10 +98,7 @@ export default function ProfileHeader({
                       <MessageCircle className="h-4 w-4" />
                     </Link>
                   </Button>
-                  <FollowButton
-                    userId={user.id}
-                    initialState={followerInfo}
-                  />
+                  <FollowButton userId={user.id} initialState={followerInfo} />
                 </>
               )}
             </div>
@@ -107,10 +122,7 @@ export default function ProfileHeader({
 
             <span className="flex items-center gap-1.5 font-medium">
               <Users className="h-4 w-4 text-primary" />
-              <FollowerCount
-                userId={user.id}
-                initialState={followerInfo}
-              />
+              <FollowerCount userId={user.id} initialState={followerInfo} />
             </span>
 
             <span className="flex items-center gap-1.5 font-medium">

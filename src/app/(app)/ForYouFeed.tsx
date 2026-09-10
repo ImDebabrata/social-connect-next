@@ -25,7 +25,7 @@ function ForYouFeed() {
         APIConfig.GET_POSTS.URL as string,
         {
           cursor: pageParam,
-        }
+        },
       ).then((response) => response.data),
     initialPageParam: null as string | null,
     getNextPageParam: (lastPage) => lastPage.nextCursor,

@@ -77,7 +77,8 @@ export function initializeSocket(server: http.Server): Server {
     // Allow a (re)mounted client to re-sync the online roster on demand, since
     // presence:init only fires once per physical connection.
     socket.on("presence:get", (callback: (ids: string[]) => void) => {
-      if (typeof callback === "function") callback(Array.from(onlineUsers.keys()));
+      if (typeof callback === "function")
+        callback(Array.from(onlineUsers.keys()));
     });
 
     // Mark all unread messages from `otherUserId` to this user as read, and let
@@ -93,25 +94,28 @@ export function initializeSocket(server: http.Server): Server {
     };
 
     // ---- Get all other users --------------------------------------------
-    socket.on("getUsers", async (_arg, callback: (users: UserData[]) => void) => {
-      try {
-        const users = await prisma.user.findMany({
-          where: { NOT: { id: userId } },
-          select: getUserDataSelect(userId),
-        });
-        if (typeof callback === "function") callback(users as UserData[]);
-      } catch (error) {
-        console.error("Error fetching users:", error);
-        if (typeof callback === "function") callback([]);
-      }
-    });
+    socket.on(
+      "getUsers",
+      async (_arg, callback: (users: UserData[]) => void) => {
+        try {
+          const users = await prisma.user.findMany({
+            where: { NOT: { id: userId } },
+            select: getUserDataSelect(userId),
+          });
+          if (typeof callback === "function") callback(users as UserData[]);
+        } catch (error) {
+          console.error("Error fetching users:", error);
+          if (typeof callback === "function") callback([]);
+        }
+      },
+    );
 
     // ---- Last message + unread count per conversation --------------------
     socket.on(
       "getLastMessages",
       async (
         _data: unknown,
-        callback: (response: SocketResponse<LastMessageResult[]>) => void
+        callback: (response: SocketResponse<LastMessageResult[]>) => void,
       ) => {
         try {
           // Latest message per partner (DISTINCT ON) and unread counts grouped
@@ -136,7 +140,7 @@ export function initializeSocket(server: http.Server): Server {
           ]);
 
           const unreadBySender = new Map(
-            unreadGroups.map((g) => [g.senderId, g._count._all])
+            unreadGroups.map((g) => [g.senderId, g._count._all]),
           );
 
           const results: LastMessageResult[] = latest.map((row) => {
@@ -153,34 +157,34 @@ export function initializeSocket(server: http.Server): Server {
           console.error("Error fetching last messages:", error);
           callback({ success: false, error: "Failed to fetch last messages" });
         }
-      }
+      },
     );
 
     // ---- Mark a conversation's incoming messages as read -----------------
-    socket.on(
-      "markMessagesAsRead",
-      async (data: { otherUserId: string }) => {
-        try {
-          const { otherUserId } = data;
-          if (!otherUserId) return;
-          await markConversationRead(otherUserId);
-        } catch (error) {
-          console.error("Error marking messages as read:", error);
-        }
+    socket.on("markMessagesAsRead", async (data: { otherUserId: string }) => {
+      try {
+        const { otherUserId } = data;
+        if (!otherUserId) return;
+        await markConversationRead(otherUserId);
+      } catch (error) {
+        console.error("Error marking messages as read:", error);
       }
-    );
+    });
 
     // ---- Conversation history (and mark incoming as read) ----------------
     socket.on(
       "getConversation",
       async (
         data: { otherUserId: string },
-        callback: (response: SocketResponse<Message[]>) => void
+        callback: (response: SocketResponse<Message[]>) => void,
       ) => {
         try {
           const otherUserId = data.otherUserId;
           if (!otherUserId) {
-            return callback({ success: false, error: "otherUserId is required" });
+            return callback({
+              success: false,
+              error: "otherUserId is required",
+            });
           }
 
           // Mark incoming messages read first, then fetch, so the returned rows
@@ -203,7 +207,7 @@ export function initializeSocket(server: http.Server): Server {
           console.error("Error fetching conversation:", error);
           callback({ success: false, error: "Failed to fetch conversation" });
         }
-      }
+      },
     );
 
     // ---- Send a chat message --------------------------------------------
@@ -211,7 +215,7 @@ export function initializeSocket(server: http.Server): Server {
       "chatMessage",
       async (
         data: { receiverId: string; content: string },
-        callback?: (response: SocketResponse<ChatMessageResponse>) => void
+        callback?: (response: SocketResponse<ChatMessageResponse>) => void,
       ) => {
         try {
           const receiverId = data?.receiverId;
@@ -241,7 +245,7 @@ export function initializeSocket(server: http.Server): Server {
           console.error("Error saving message:", error);
           callback?.({ success: false, error: "Failed to save message" });
         }
-      }
+      },
     );
 
     // ---- Typing indicators (targeted to the recipient only) --------------

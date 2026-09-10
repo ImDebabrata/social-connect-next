@@ -91,7 +91,7 @@ async function UserInfoSidebar({ user }: UserInfoSidebarProps) {
         <Link
           href={RouteConfig.protectedRoute.PROFILE.replace(
             ":username",
-            user.username
+            user.username,
           )}
           className="flex items-center gap-3"
         >
@@ -117,7 +117,7 @@ async function UserInfoSidebar({ user }: UserInfoSidebarProps) {
           initialState={{
             followers: user._count.followers,
             isFollowedByUser: user.followers.some(
-              ({ followerId }) => followerId === loggedInUser.userId
+              ({ followerId }) => followerId === loggedInUser.userId,
             ),
           }}
         />

@@ -20,7 +20,7 @@ export async function PATCH() {
 
     return Response.json(
       { message: "Notifications marked as read" },
-      { status: 200 }
+      { status: 200 },
     );
   } catch (error) {
     console.error(error);
