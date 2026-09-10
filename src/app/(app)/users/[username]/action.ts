@@ -16,6 +16,16 @@ export async function updateUserProfile(values: UpdateUserProfileValues) {
 
   if (!loggedInUser) throw new Error("Unauthorized");
 
+  if (validatedValues.username) {
+    const existingUser = await prisma.user.findFirst({
+      where: {
+        username: { equals: validatedValues.username, mode: "insensitive" },
+        id: { not: loggedInUser.userId },
+      },
+    });
+    if (existingUser) return { error: "Username already taken" };
+  }
+
   const updatedUser = await prisma.user.update({
     where: { id: loggedInUser.userId },
     data: validatedValues,

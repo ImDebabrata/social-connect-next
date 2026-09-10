@@ -33,17 +33,19 @@ import ImageCropper from "@/components/ImageCropper";
 
 interface EditProfileDialogProps {
   user: UserData;
+  email?: string | null;
   open: boolean;
   onOpenChange: (open: boolean) => void;
 }
 
 function EditProfileDialog(props: EditProfileDialogProps) {
-  const { user, open, onOpenChange } = props;
+  const { user, email, open, onOpenChange } = props;
 
   const form = useForm<UpdateUserProfileValues>({
     resolver: zodResolver(updateUserProfileSchema),
     defaultValues: {
       displayName: user.displayName,
+      username: user.username,
       bio: user.bio || "",
     },
   });
@@ -64,6 +66,14 @@ function EditProfileDialog(props: EditProfileDialogProps) {
         onSuccess: () => {
           onOpenChange(false);
         },
+        onError: (error) => {
+          if (error.message === "Username already taken") {
+            form.setError("username", {
+              type: "server",
+              message: "This username is already taken.",
+            });
+          }
+        },
       },
     );
   }
@@ -77,6 +87,11 @@ function EditProfileDialog(props: EditProfileDialogProps) {
             You can change your profile here
           </DialogDescription>
         </DialogHeader>
+        {email && (
+          <div className="text-sm text-muted-foreground mb-4">
+            <strong>Email:</strong> {email}
+          </div>
+        )}
         <div className="space-y-1.5 ">
           <Label>Avatar</Label>
           <AvatarInput
@@ -98,6 +113,19 @@ function EditProfileDialog(props: EditProfileDialogProps) {
                   <FormLabel>Display Name</FormLabel>
                   <FormControl>
                     <Input placeholder="Display Name" {...field} />
+                  </FormControl>
+                  <FormMessage />
+                </FormItem>
+              )}
+            />
+            <FormField
+              control={form.control}
+              name="username"
+              render={({ field }) => (
+                <FormItem>
+                  <FormLabel>Username</FormLabel>
+                  <FormControl>
+                    <Input placeholder="Username" {...field} />
                   </FormControl>
                   <FormMessage />
                 </FormItem>

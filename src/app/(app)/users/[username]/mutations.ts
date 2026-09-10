@@ -28,15 +28,21 @@ export function useUpdateProfileMutation() {
     }) => {
       const formData = new FormData();
       if (avatar) formData.append("avatar", avatar);
-      return Promise.all([
-        updateUserProfile(values),
-        avatar &&
-          fetchData<{ avatarUrl: string | null }>({
+
+      const updatedUserResult = await updateUserProfile(values);
+      if ("error" in updatedUserResult) {
+        throw new Error(updatedUserResult.error);
+      }
+
+      const uploadResult = avatar
+        ? await fetchData<{ avatarUrl: string | null }>({
             url: APIConfig.UPLOAD_AVATAR.URL as string,
             method: APIConfig.UPLOAD_AVATAR.METHOD,
             payload: formData,
-          }),
-      ]);
+          })
+        : undefined;
+
+      return [updatedUserResult, uploadResult] as const;
     },
     onSuccess: async ([updatedUser, uploadResult]) => {
       const newAvatarUrl = uploadResult?.avatarUrl;
@@ -74,6 +80,7 @@ export function useUpdateProfileMutation() {
           };
         },
       );
+      router.push(`/users/${updatedUser.username}`);
       router.refresh();
       toast({
         description: "Profile updated successfully",
@@ -81,9 +88,11 @@ export function useUpdateProfileMutation() {
     },
     onError(error) {
       console.log(error);
+      if (error.message === "Username already taken") return;
       toast({
         variant: "destructive",
-        description: "Something went wrong. Please try again later.",
+        description:
+          error.message || "Something went wrong. Please try again later.",
       });
     },
   });

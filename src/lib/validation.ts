@@ -28,6 +28,10 @@ export const createPostSchema = z.object({
 
 export const updateUserProfileSchema = z.object({
   displayName: requiredString,
+  username: requiredString.regex(
+    /^[a-zA-Z0-9_-]+$/,
+    "Only letters, numbers, - and _ allowed",
+  ),
   bio: z.string().max(1000, "Must be at most 1000 characters"),
 });
 
