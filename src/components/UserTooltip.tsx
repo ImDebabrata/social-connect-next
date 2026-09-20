@@ -31,7 +31,9 @@ function UserTooltip(props: UserTooltipProps) {
   return (
     <TooltipProvider>
       <Tooltip>
-        <TooltipTrigger asChild>{children}</TooltipTrigger>
+        <TooltipTrigger asChild>
+          <span className="flex min-w-0 items-center">{children}</span>
+        </TooltipTrigger>
         <TooltipContent>
           <div className="flex max-w-80 flex-col gap-3 break-words px-1 py-2.5 md:min-w-52">
             <div className="flex items-center justify-between gap-2">
